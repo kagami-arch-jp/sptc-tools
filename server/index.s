@@ -6,9 +6,12 @@ define('__CONF__', __dirname+'/conf')
 define('__IS_DEV__', process.env.ENV!=='PROD')
 define('__DEV_WWW_DIR__', __dirname+'/..')
 define('__WWW_DIR__', __dirname+'/public')
+
+define('__FE_DOC__', __dirname+'/docs/frontend')
+
 setDebug(__IS_DEV__)
 
-//define('__DISABLE_SSR__', true)
+define('__DISABLE_SSR__', true)
 
 __autoload(classname=>{
   if(classname.endsWith('Controller')) {

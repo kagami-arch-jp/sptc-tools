@@ -1,3 +1,17 @@
+
+function clientFetch(action, data) {
+  if("@IS_DEV") {
+    action=location.origin+action
+  }
+  return window.fetch(action, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    mode: 'cors',
+    body: JSON.stringify(data),
+    credentials: 'include',
+  })
+}
+
 #ifndef IS_NODE_TARGET
 import {sleep} from './base'
 
@@ -5,13 +19,7 @@ const FETCH_TIMEOUT=10e3
 
 async function _fetch(action, data) {
   const ret=await Promise.race([
-    window.fetch(action, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      mode: 'cors',
-      body: JSON.stringify(data),
-      credentials: 'include',
-    }),
+    clientFetch(action, data),
     sleep(FETCH_TIMEOUT).then(_=>new Error('Network hung up')),
   ])
   return await ret.json()
@@ -32,5 +40,35 @@ export async function fetch(action, data) {
     return ret.data
   }catch(e) {
     throw e
+  }
+}
+
+export async function fetchStream(action, data, onData) {
+  const response = await clientFetch(action, data)
+
+  // Network‑level error handling
+  if (!response.ok) {
+    const error = new Error(`HTTP ${response.status} - ${response.statusText}`);
+    error.status = response.status;
+    throw error;
+  }
+
+  const reader = response.body.getReader()
+  const dec=new TextDecoder()
+  for(let head='', skip=false;;) {
+    const {done, value}=await reader.read()
+    if(value) {
+      const txt=dec.decode(value)
+      if(!skip) {
+        head+=txt
+        if(head.length>=4096) {
+          onData(head.substr(4096))
+          skip=true
+        }
+      }else{
+        onData(txt)
+      }
+    }
+    if(done) break
   }
 }

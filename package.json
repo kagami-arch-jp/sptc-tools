@@ -2,23 +2,30 @@
   "scripts": {
     "dev": "node build/webpack5 dev",
     "build": "node build/webpack5 build",
-    "serve": "cross-env ENV=PROD sptcd -rindex.s -wserver"
+    "serve": "cross-env ENV=PROD sptcd -d -rindex.s -wserver"
   },
   "dependencies": {
+    "highlight.js": "^11.11.1",
+    "markdown-it": "^13.0.2",
+    "ollama": "^0.6.3",
     "react": "19.2.4",
-    "react-cross-component-state": "^1.0.5",
+    "react-cross-component-state": "^1.0.7",
     "react-dom": "19.2.4",
+    "react-layout-masonry": "^2.0.0",
+    "react-markdown": "^9.0.1",
+    "react-syntax-highlighter": "^15.6.1",
+    "remark-gfm": "^4.0.1",
     "sptc": "0.0.38"
   },
   "devDependencies": {
-    "@babel/runtime": "^7.29.2",
-    "core-js": "^3.49.0",
     "@babel/plugin-transform-runtime": "^7.29.0",
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-react": "^7.28.5",
+    "@babel/runtime": "^7.29.2",
     "autoprefixer": "^9.8.8",
     "babel-loader": "^10.1.1",
     "chalk": "^4.1.2",
+    "core-js": "^3.49.0",
     "cross-env": "7.0.3",
     "css-loader": "^7.1.4",
     "mini-css-extract-plugin": "1.6.2",

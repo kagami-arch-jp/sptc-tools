@@ -1,4 +1,3 @@
-// webpack.common.js
 const path = require('path');
 const fs=require('fs')
 const webpack = require('webpack');
@@ -35,6 +34,11 @@ class RemoveAssetsPlugin {
   }
 }
 
+function replaceDevName(x) {
+  if(IS_DEV) return x.replace(/\[contenthash\]/g, '')
+  return x
+}
+
 const common = (isServer)=>({
   optimization: {
     runtimeChunk: false,
@@ -51,7 +55,6 @@ const common = (isServer)=>({
     },
   },
 
-  // すべての JavaScript / TypeScript ファイルに AAA Loader を適用
   module: {
     rules: [
       {
@@ -142,13 +145,13 @@ const client = merge(common(false), {
   output: {
     path: APP_PATH+'/'+outputPath,
     publicPath: publicPath,
-    filename: 'client/js/[name].[contenthash].js',
+    filename: replaceDevName(`client/js/[name].[contenthash].js`),
   },
 
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'client/css/[name].[contenthash].css',
-      chunkFilename: 'client/css/[name].[contenthash].chunk.css',
+      filename: replaceDevName(`client/css/[name].[contenthash].css`),
+      chunkFilename: replaceDevName(`client/css/[name].[contenthash].chunk.css`),
     }),
   ],
 
@@ -159,7 +162,7 @@ const server = merge(common(true), {
   target: 'node',               // Node 用ビルド
   mode: IS_DEV? 'development': 'production',
   entry: {
-    main: path.resolve(APP_PATH, 'src/bootstrap.jsx')
+    server: path.resolve(APP_PATH, 'src/bootstrap.jsx')
   },
 
   // Node のモジュールはバンドルしない（高速化・サイズ削減）
@@ -194,14 +197,15 @@ function getWebpackCompiler() {
     if(errors.length) {
       console.log(chalk.red('Failed to compile.\n'))
       console.log(errors[0])
-    }else if(warnings.length) {
-      console.log(chalk.yellow('Compiled with warnings.\n'))
-      console.log(warnings.join('\n\n'))
-    }else{
-      const assets=resolveAssets(clientStats.entrypoints.main.assets)
-      fs.writeFileSync(APP_PATH+'/'+outputPath+'/assets.json', JSON.stringify(assets))
-      console.info(stats.toString({ colors: true }))
     }
+    if(warnings.length) {
+      console.log(chalk.yellow('Compiled with warnings.\n'))
+      console.log(warnings.map(x=>x.message).join('\n'))
+    }
+
+    const assets=resolveAssets(clientStats.entrypoints.main.assets)
+    fs.writeFileSync(APP_PATH+'/'+outputPath+'/assets.json', JSON.stringify(assets))
+    console.info(stats.toString({ colors: true }))
   })
   return multiCompiler
 }
@@ -222,19 +226,14 @@ function devServer() {
   const WebpackDevServer=require('webpack-dev-server')
   const multiCompiler=getWebpackCompiler()
   const devServerOptions = {
-    open: true,
     compress: true,
     hot: true,
     port: 3000,
-    historyApiFallback: true, // SPA の場合は必須
-    // SSR 用サーバー（ポート 9090）へのプロキシ例
-    proxy: [
-      {
-        context: ["/"],
-        target: "http://127.0.0.1:9090",
-      },
-    ],
-
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'true',
+    },
+    historyApiFallback: true,
     devMiddleware: {
       // Enables writing files to disk
       writeToDisk: filePath=>/server\.js/.test(filePath),

@@ -30,10 +30,19 @@ async function resolvePOSTData() {
 class apiController{
   async init(argv) {
     const ssrParam=argv?.arguments?.[0]
-    this.ssrQueryData=ssrParam?.ssrQueryData || await resolvePOSTData() || null
+		this.postData=await resolvePOSTData()
+    this.ssrQueryData=ssrParam?.ssrQueryData || this.postData || null
     this.isSSR=!!ssrParam
   }
+  setAsStreamResponse() {
+		this.isStream=true
+		echo(' '.repeat(4096))
+		flush()
+	}
   finish(err, ret) {
+
+		if(this.isStream) return;
+
     const res={
       success: !err,
       errMsg: err?.message || null,
