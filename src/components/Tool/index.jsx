@@ -22,7 +22,7 @@ const TOOLS_DATA = [
     id: 1,
     name: 'AI Code Architect',
     description: 'PRDからコードに実装',
-    image: 'example.png',
+    image: *IMG('./imgs/codeAgent.png'),
     alt: 'A futuristic digital landscape with neon lights and floating islands, high resolution, cinematic lighting',
     Component: <CodeAgent />,
   }

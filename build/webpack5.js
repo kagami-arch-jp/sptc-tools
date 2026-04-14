@@ -125,6 +125,13 @@ const client = merge(common(false), {
   module: {
     rules: [
       {
+        test: /\.(png|jpe?g|gif)$/i,
+        loader: 'file-loader',
+        options: {
+          outputPath: 'client/images',
+        },
+      },
+      {
         test: /\.s[ac]ss$/i,
         use: [
           MiniCssExtractPlugin.loader,
@@ -163,6 +170,28 @@ const server = merge(common(true), {
   mode: IS_DEV? 'development': 'production',
   entry: {
     server: path.resolve(APP_PATH, 'src/bootstrap.jsx')
+  },
+
+  module: {
+    rules: [
+      {
+        loader: 'file-loader',
+        options: {
+          emitFile: false,
+        },
+      },
+    ]
+  },
+
+  module: {
+    rules: [
+      {
+        loader: 'file-loader',
+        options: {
+          emitFile: false,
+        },
+      },
+    ]
   },
 
   // Node のモジュールはバンドルしない（高速化・サイズ削減）
