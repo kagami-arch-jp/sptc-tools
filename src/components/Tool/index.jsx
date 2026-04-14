@@ -16,6 +16,7 @@ import SettingButton from '@/components/SettingButton';
 import './index.scss';
 
 import CodeAgent from '@/components/CodeAgent'
+import ImageGenerator from '@/components/ImageGenerator'
 
 const TOOLS_DATA = [
   {
@@ -25,6 +26,14 @@ const TOOLS_DATA = [
     image: *IMG('./imgs/codeAgent.png'),
     alt: 'A futuristic digital landscape with neon lights and floating islands, high resolution, cinematic lighting',
     Component: <CodeAgent />,
+  },
+  {
+    id: 2,
+    name: 'Image Generator',
+    description: 'テキストから写真を生成',
+    image: *IMG('./imgs/imageGenerator.png'),
+    alt: 'A black cosmic background with a colored pencil drawing a rainbow.',
+    Component: <ImageGenerator />,
   }
 ];
 

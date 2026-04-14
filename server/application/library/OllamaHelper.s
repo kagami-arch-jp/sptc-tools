@@ -11,8 +11,7 @@ class OllamaHelper{
     this.think=this.think || false
     Application.OLLAMA_CLIENTS=Application.OLLAMA_CLIENTS || {}
   }
-  async callApi(apiMethod, { onClient, onData, onEnd, query } = {}) {
-
+  async callApi(apiMethod, { onData, query } = {}) {
     // API キーがあれば認証付きクライアント、無ければデフォルトクライアント
     const client = this.key
       ? new Ollama({
@@ -27,7 +26,7 @@ class OllamaHelper{
       // onData が無い場合は単なる結果オブジェクトを返す
       if (!onData) return response;
 
-      onClient && onClient(client)
+      this.bind(client)
 
       // ストリーミング結果をコールバックで流す
       try {
@@ -43,7 +42,7 @@ class OllamaHelper{
       onData(e, true, null);
     }
 
-    onEnd && onEnd(client)
+    this.unbind()
   }
   bind(c) {
     Application.OLLAMA_CLIENTS[this.key]=c
@@ -66,12 +65,6 @@ class OllamaHelper{
           temperature: this.temperature,
           num_ctx: this.contextLength,
         },
-      },
-      onClient: client=>{
-        this.bind(client)
-      },
-      onEnd: client=>{
-        this.unbind()
       },
       onData: (err, isEnd, part) => {
         if (err) {
@@ -96,5 +89,27 @@ class OllamaHelper{
     })
 
     return res
+  }
+  async startGenerateImage(option, onData) {
+    await this.callApi('generate', {
+      query: {
+        stream: true,
+        model: this.model,
+        width: 256,
+        height: 256,
+        steps: 3,
+        ...option
+      },
+      onData: (err, isEnd, part) => {
+        if (err) {
+          console.log({ err: err.message });
+          echo('Error: '+err.message)
+        } else if (part) {
+          console.log(part)
+          const {total, completed, image}=part
+          onData(Math.round(completed/total*100 || 0), image)
+        }
+      },
+    })
   }
 }

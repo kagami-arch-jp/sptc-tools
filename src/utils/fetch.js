@@ -72,3 +72,26 @@ export async function fetchStream(action, data, onData) {
     if(done) break
   }
 }
+
+/**
+ Test:
+
+ const e=resolveFragment(x=>console.log([x]))
+ e('1cs')
+ e('dc\n')
+ e('2csdc\n')
+ e('3cds\n')
+ */
+export function resolveFragment(fn) {
+  let stack=''
+  return txt=>{
+    stack+=txt
+    for(;;) {
+      const idx=stack.indexOf('\n')
+      if(idx===-1) break
+      const str=stack.substr(0, idx)
+      stack=stack.substr(idx+1, stack.length)
+      fn(str)
+    }
+  }
+}

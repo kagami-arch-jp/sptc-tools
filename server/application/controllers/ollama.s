@@ -5,17 +5,14 @@ const fs=require('fs')
 
 class ollamaController extends apiController{
 
-  async _callOllamaEcho(md) {
+  _initOllama() {
     const {
-      requirement,
       apiKey,
       model,
       temperature=0,
       contextLength=8192,
     }=this.postData
-
     this.setAsStreamResponse()
-
     const helper=new OllamaHelper({
       apiKey,
       model,
@@ -23,7 +20,13 @@ class ollamaController extends apiController{
       contextLength,
       think: false,
     })
-    helper.unbind()
+    helper.unbind(true)
+    return helper
+  }
+
+  async _callOllamaEcho(md) {
+    const {requirement}=this.postData
+    const helper=this._initOllama()
     return await helper.startStreamEcho([
       {
         role: 'user',
@@ -81,4 +84,28 @@ class ollamaController extends apiController{
     ls.unshift({name: '-- not selected --'})
     return ls
   }
+
+  async generateImageAction() {
+    const helper=this._initOllama()
+    const {
+      prompt,
+      size,
+      steps,
+    }=this.postData
+    await helper.startGenerateImage({
+      prompt,
+      width: size,
+      height: size,
+      steps,
+    }, (progress, image)=>{
+      if(progress) {
+        echo(JSON.stringify({progress})+'\n')
+        flush()
+      }else if(image) {
+        echo(JSON.stringify({progress: 100, image})+'\n')
+        flush()
+      }
+    })
+  }
+
 }
