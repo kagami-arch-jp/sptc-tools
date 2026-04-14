@@ -156,7 +156,7 @@ export default function CodeAgent() {
               return <CodeFiles codeFiles={codeFiles} />
             }
             if(result) {
-              return <MarkdownViewer copyAll={true} content={result} />
+              return <MarkdownViewer copyAll={true} copyCode={true} content={result} />
             }
             return <div className="empty-state">
               <p>下のボタンをクリックして、分析またはコード生成を開始してください</p>
