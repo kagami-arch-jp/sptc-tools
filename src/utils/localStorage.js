@@ -1,3 +1,5 @@
+import createSharedState from 'react-cross-component-state';
+
 export function helper(key) {
   return {
     setValue: newValue=>{
@@ -5,10 +7,23 @@ export function helper(key) {
     },
     getValue: defaultValue=>{
       try{
-        return JSON.parse(localStorage.getItem(key))
+        const p=localStorage.getItem(key)
+        if(!p) throw p
+        return JSON.parse(p)
       }catch(e) {
         return defaultValue
       }
     }
   }
+}
+
+export function createStoreSharedState(key, initialValue) {
+  const storageHelper=helper(key)
+  const store=createSharedState(storageHelper.getValue(initialValue))
+  const originalSetValue=store.setValue
+  store.setValue=value=>{
+    originalSetValue(value)
+    storageHelper.setValue(store.getValue())
+  }
+  return store
 }
