@@ -98,7 +98,6 @@ export default function CodeAgent() {
 
   return (
     <div className={`code-agent-container ${isDarkMode ? 'dark-mode' : ''}`}>
-      <h1 className="main-title">AI Code Architect</h1>
       <p className="workdir">workdir: {workdir || 'loading..'}</p>
       <div className="main-content">
         <div className="left-panel">

@@ -1,0 +1,26 @@
+.resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 2px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid #888;
+    border-bottom: 2px solid #888;
+  }
+}

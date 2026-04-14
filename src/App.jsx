@@ -1,12 +1,11 @@
 import React from 'react'
 import './App.scss'
 
-import SettingButton from '@/components/SettingButton'
-import CodeAgent from '@/components/CodeAgent'
+import Tool from '@/components/Tool'
 
 export default function() {
+  const [isOpen, setIsOpen]=React.useState(false)
   return <>
-    <SettingButton />
-    <CodeAgent />
+    <Tool />
   </>
 }

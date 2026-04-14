@@ -14,7 +14,7 @@ function SettingButton({ onClick }) {
   const isDarkMode = darkMode.useValue();
   return (
     <div className={`setting-button ${isDarkMode? 'dark-mode': ''}`} onClick={onClick}>
-      Setting
+      ⚙️
     </div>
   );
 }

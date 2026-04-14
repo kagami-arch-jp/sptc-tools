@@ -1,0 +1,78 @@
+
+.mini-win-container {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  user-select: none;
+
+  &.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  &.dark-mode {
+    background-color: #1c1c1e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+}
+
+.mini-win-titlebar {
+  height: 40px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.03);
+  cursor: grab;
+  transition: background-color 0.2s ease;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  .dark-mode & {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .title-text {
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  .close-button {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(255, 59, 48, 0.15);
+      color: #ff3b30;
+    }
+  }
+}
+
+.mini-win-content {
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+  min-height: 100px;
+  min-width: 100px;
+  color: #333;
+
+  .dark-mode & {
+    color: #e5e5e7;
+  }
+}
