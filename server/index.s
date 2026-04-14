@@ -7,7 +7,7 @@ define('__IS_DEV__', process.env.ENV!=='PROD')
 define('__DEV_WWW_DIR__', __dirname+'/..')
 define('__WWW_DIR__', __dirname+'/public')
 
-define('__FE_DOC__', __dirname+'/docs/frontend')
+define('__DOC_DIR__', __dirname+'/docs')
 
 setDebug(__IS_DEV__)
 

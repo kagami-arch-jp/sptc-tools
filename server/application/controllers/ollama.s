@@ -3,6 +3,8 @@
 const path=require('path')
 const fs=require('fs')
 
+const __FE_DOC__=__DOC_DIR__+'/codeAgent/frontend-react'
+
 class ollamaController extends apiController{
 
   _initOllama() {
@@ -24,35 +26,34 @@ class ollamaController extends apiController{
     return helper
   }
 
-  async _callOllamaEcho(md) {
-    const {requirement}=this.postData
+  async _callOllamaEcho(...any) {
     const helper=this._initOllama()
     return await helper.startStreamEcho([
       {
         role: 'user',
         content: 'Now is '+(new Date).toUTCString(),
       },
-      {
+      ...any.map(x=>({
         role: 'user',
-        content: FileHelper.loadMarkdownFile(__FE_DOC__+'/basicRules.md'),
-      },
-      {
-        role: 'user',
-        content: FileHelper.loadMarkdownFile(md),
-      },
-      {
-        role: 'user',
-        content: requirement,
-      }
-    ])
+        content: x.md? FileHelper.loadMarkdownFile(x.md): x.txt,
+      }))
+    ].filter(x=>x.content))
   }
 
   async generateAnalysisAction() {
-    await this._callOllamaEcho(__FE_DOC__+'/1-rewritePRD.md')
+    await this._callOllamaEcho(
+      {md: __FE_DOC__+'/basicRules.md'},
+      {md: __FE_DOC__+'/1-rewritePRD.md'},
+      {txt: this.postData.requirement},
+    )
   }
 
   async generateCodeAction() {
-    await this._callOllamaEcho(__FE_DOC__+'/2-generateCode.md')
+    await this._callOllamaEcho(
+      {md: __FE_DOC__+'/basicRules.md'},
+      {md: __FE_DOC__+'/2-generateCode.md'},
+      {txt: this.postData.requirement},
+    )
   }
 
   getWorkdirAction() {
@@ -107,5 +108,24 @@ class ollamaController extends apiController{
       }
     })
   }
+
+  async writerSuggestionAction() {
+
+    const {txt, role, queryType}=this.postData
+
+    if(!txt) return;
+
+    await this._callOllamaEcho(
+      {txt: role},
+      {md: ({
+        after: __DOC_DIR__+'/writer/After.md',
+        rewrite: __DOC_DIR__+'/writer/Rewrite.md',
+        expand: __DOC_DIR__+'/writer/Expand.md',
+      })[queryType]},
+      {txt},
+    )
+
+  }
+
 
 }

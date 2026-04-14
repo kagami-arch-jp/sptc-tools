@@ -17,6 +17,7 @@ import './index.scss';
 
 import CodeAgent from '@/components/CodeAgent'
 import ImageGenerator from '@/components/ImageGenerator'
+import Writer from '@/components/Writer'
 
 const TOOLS_DATA = [
   {
@@ -34,6 +35,14 @@ const TOOLS_DATA = [
     image: *IMG('./imgs/imageGenerator.png'),
     alt: 'A black cosmic background with a colored pencil drawing a rainbow.',
     Component: <ImageGenerator />,
+  },
+  {
+    id: 3,
+    name: 'Writer',
+    description: '執筆アシスタント',
+    image: *IMG('./imgs/writer.png'),
+    alt: 'After a summer rain, a thin mist hangs in the air of the rainforest, filled with the fragrance of earth and decaying plants. Glistening raindrops slide slowly down the massive broadleaf leaves, dripping into the thick layer of fallen leaves below with a soft "plop." Sunlight penetrates the layers of the canopy, forming clear beams that illuminate the insects flitting about and the damp moss. From the depths of the distant forest, the occasional clear bird song breaks the vibrant yet tranquil atmosphere.',
+    Component: <Writer />,
   }
 ];
 

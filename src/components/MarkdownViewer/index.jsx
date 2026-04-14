@@ -1,12 +1,12 @@
 /**
  * MarkdownViewer コンポーネント
- * 
+ *
  * 機能:
  * - Markdown形式のテキストをHTMLにレンダリング
  * - 表(Table)を含むGFM構文のサポート
  * - 全体コピー機能
  * - ダークモード対応
- * 
+ *
  * 作成日: 2026-04-13
  * 呼び出し方: <MarkdownViewer content="## Hello" copyAll={true} copyCode={true} />
  */
@@ -18,7 +18,7 @@ import { copyToClipboard } from '@/utils/base';
 import CodeBlock from './CodeBlock';
 import './index.scss';
 
-const MarkdownViewer = ({ content, copyAll = false, copyCode = false }) => {
+const MarkdownViewer = ({ className, content, copyAll = false, copyCode = false }) => {
   const isDarkMode = darkMode.useValue();
   const [copied, setCopied] = useState(false);
 
@@ -33,11 +33,11 @@ const MarkdownViewer = ({ content, copyAll = false, copyCode = false }) => {
   };
 
   return (
-    <div className={`markdown-viewer-container ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div className={`markdown-viewer-container ${isDarkMode ? 'dark-mode' : ''} ${className || ''}`}>
       {copyAll && (
         <div className="toolbar">
-          <button 
-            className="copy-all-btn" 
+          <button
+            className="copy-all-btn"
             onClick={handleCopyAll}
           >
             {copied ? 'コピー完了' : 'すべてコピー'}
@@ -45,17 +45,17 @@ const MarkdownViewer = ({ content, copyAll = false, copyCode = false }) => {
         </div>
       )}
       <div className="markdown-content">
-        <ReactMarkdown 
-          remarkPlugins={[remarkGfm]} 
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
           components={{
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
               return !inline ? (
-                <CodeBlock 
-                  language={match ? match[1] : 'text'} 
-                  value={String(children).replace(/\n$/, '')} 
+                <CodeBlock
+                  language={match ? match[1] : 'text'}
+                  value={String(children).replace(/\n$/, '')}
                   copyCode={copyCode}
-                  {...props} 
+                  {...props}
                 />
               ) : (
                 <code className="inline-code" {...props}>
