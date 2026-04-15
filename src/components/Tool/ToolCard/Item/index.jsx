@@ -28,16 +28,11 @@ import './index.scss';
  * @param {string} [props.description] - 裏面に表示する説明文
  */
 const Item = ({ image, title, description, onClick }) => {
-  // 画像がない場合のフォールバック用スタイル
-  const fallbackStyle = {
-    background: 'linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%)'
-  };
-
   return (
     <div className="item-container" onClick={onClick}>
       <div className="item-card">
         {/* 表面 (Front) */}
-        <div className="item-face item-front" style={!image ? fallbackStyle : {}}>
+        <div className="item-face item-front">
           {image && (
             <div
               className="item-image"

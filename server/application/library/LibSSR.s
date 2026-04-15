@@ -69,11 +69,7 @@ class LibSSR{
 
   getVm() {
     const filename=this.getDistDir()+'/server.js'
-    const contentWrapper=__IS_DEV__?
-      source=>source.replace(/(throw new Error.+?HMR.+?Hot Module Replacement is disabled.)/, 'return;$1'):
-      undefined
     return Utils.compileFile(filename, {
-      contentWrapper,
       compileFunc: source=>{
         const vm=require('vm')
         const path=require('path')

@@ -229,7 +229,6 @@ function getWebpackCompiler() {
       console.log(chalk.yellow('Compiled with warnings.\n'))
       console.log(warnings.map(x=>x.message).join('\n'))
     }
-
     const assets=resolveAssets(clientStats.entrypoints.main.assets)
     fs.writeFileSync(APP_PATH+'/'+outputPath+'/assets.json', JSON.stringify(assets))
     console.info(stats.toString({ colors: true }))
@@ -253,7 +252,7 @@ function devServer() {
   const WebpackDevServer=require('webpack-dev-server')
   const multiCompiler=getWebpackCompiler()
   const devServerOptions = {
-    compress: true,
+    compress: false,
     hot: true,
     port: 3000,
     headers: {

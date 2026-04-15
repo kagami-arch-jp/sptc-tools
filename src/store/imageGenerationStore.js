@@ -1,6 +1,7 @@
 import {createStoreSharedState} from '@/store/storage';
+import createSharedState from 'react-cross-component-state';
 
-export const imageGenerationStore = createStoreSharedState('imageGenerationStore.main', {
+export const imageGenerationStore = createSharedState({
   progress: 0,
   imageUrl: null,
   status: 'idle', // 'idle' | 'loading' | 'success' | 'error'

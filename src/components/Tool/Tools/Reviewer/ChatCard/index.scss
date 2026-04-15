@@ -4,7 +4,7 @@
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
-
+  user-select: text;
   &:hover {
     transform: translateY(-2px);
   }
@@ -25,7 +25,7 @@
 
     .question-text {
       font-weight: 60;
-      font-size: 15px;
+      font-size: 18px;
       color: #3a3a3c;
     }
 
@@ -55,7 +55,7 @@
 
   .answer-section {
     .answer-text {
-      font-size: 15px;
+      font-size: 18px;
       line-height: 1.5;
       color: #1d1d1f;
       white-space: pre-wrap;

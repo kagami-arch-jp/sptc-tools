@@ -29,7 +29,6 @@ const TOOLS_DATA = [
     name: 'Code Agent',
     description: 'PRDからコードに実装',
     image: *IMG('./imgs/codeAgent.png'),
-    alt: 'A futuristic digital landscape with neon lights and floating islands, high resolution, cinematic lighting',
     Component: <CodeAgent />,
   },
   {
@@ -37,7 +36,6 @@ const TOOLS_DATA = [
     name: 'Image Generator',
     description: 'テキストから写真を生成',
     image: *IMG('./imgs/imageGenerator.png'),
-    alt: 'A black cosmic background with a colored pencil drawing a rainbow.',
     Component: <ImageGenerator />,
   },
   {
@@ -45,7 +43,6 @@ const TOOLS_DATA = [
     name: 'Writer',
     description: '執筆アシスタント',
     image: *IMG('./imgs/writer.png'),
-    alt: 'After a summer rain, a thin mist hangs in the air of the rainforest, filled with the fragrance of earth and decaying plants. Glistening raindrops slide slowly down the massive broadleaf leaves, dripping into the thick layer of fallen leaves below with a soft "plop." Sunlight penetrates the layers of the canopy, forming clear beams that illuminate the insects flitting about and the damp moss. From the depths of the distant forest, the occasional clear bird song breaks the vibrant yet tranquil atmosphere.',
     Component: <Writer />,
   },
   {
@@ -53,7 +50,6 @@ const TOOLS_DATA = [
     name: 'Reader',
     description: '日本語を繰り返して読む',
     image: *IMG('./imgs/reader.png'),
-    alt: 'A speaker contains a magical chip; whispering into it allows for conversations across time and space. It not only amplifies sound but also captures faint echoes forgotten deep in the past. **Disney-style**',
     Component: <Reader />,
   },
   {
@@ -61,7 +57,6 @@ const TOOLS_DATA = [
     name: 'TodoList',
     description: 'これからやるべきことを',
     image: *IMG('./imgs/todoList.png'),
-    alt: 'Inside the old house, sunlight streamed in through the window. On the wooden desk sat a yellow notebook, closed, with a pencil resting on top. It had a certain vintage feel. The artwork was painted in a Disney style.',
     Component: <TodoList />,
   },
   {
@@ -69,7 +64,6 @@ const TOOLS_DATA = [
     name: 'Answer',
     description: 'ドキュメントについて質問を回答する',
     image: *IMG('./imgs/reviewer.png'),
-    alt: 'At a computer desk, a robot from the last century is reading a newspaper. Please use a **cyberpunk** style.',
     Component: <Reviewer />,
   }
 ];

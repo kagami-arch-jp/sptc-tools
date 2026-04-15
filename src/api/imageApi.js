@@ -1,15 +1,6 @@
 import { fetchStream, resolveFragment } from '@/utils/fetch';
 
-import settingStore from '@/store/settingStore';
-
-function getCommonParams() {
-  const {
-    imageModel,
-  }=settingStore.getValue()
-  return {
-    model: imageModel,
-  }
-}
+import settingStore, {getCommonParams} from '@/store/settingStore';
 
 /**
  * 画像生成をシミュレートするジェネレーター関数
@@ -20,7 +11,7 @@ function getCommonParams() {
 export async function generateImage(params, onProgress) {
   await fetchStream('/ollama/generateImage', {
     ...params,
-    ...getCommonParams()
+    ...getCommonParams(true)
   }, resolveFragment(fragment=>{
     const p=JSON.parse(fragment)
     onProgress(p.progress, p.image)

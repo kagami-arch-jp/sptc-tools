@@ -1,6 +1,6 @@
 import {createStoreSharedState} from '@/store/storage';
 
-export default createStoreSharedState('app_settings', {
+const settingStore=createStoreSharedState('app_settings', {
   onlineMode: true,
   apiKey: '',
   textModelLocal: '',
@@ -12,6 +12,8 @@ export default createStoreSharedState('app_settings', {
   temperature: 0,
   contextLength: 8,
 });
+
+export default settingStore
 
 export function getCommonParams(isGenerateImage=false) {
   const {

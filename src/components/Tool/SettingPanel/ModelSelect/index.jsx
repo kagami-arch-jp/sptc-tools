@@ -16,6 +16,7 @@ function ModelSelect({ label, value, onChange, models=[] }) {
 
       <div className="select-wrapper">
         <select
+          key={models.join('-')}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={!models.length}
@@ -26,7 +27,7 @@ function ModelSelect({ label, value, onChange, models=[] }) {
             options.push(<option value="">モデルが見つかりません</option>)
           }else{
             models.map(m =>{
-              options.push(<option key={m.name} selected={m.name===value} value={m.name}>{m.name}</option>)
+              options.push(<option key={m.name} value={m.name}>{m.name}</option>)
             })
           }
           return options

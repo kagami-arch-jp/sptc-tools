@@ -17,7 +17,6 @@ import Item from './Item'
  * @param {string} props.tool.name - ツール名
  * @param {string} props.tool.description - ツールの説明
  * @param {string} props.tool.image - 画像URL
- * @param {string} props.tool.alt - 画像のaltテキスト（プロンプト）
  */
 const ToolCard = ({ tool }) => {
   const [isOpen, setIsOpen]=React.useState(false)
