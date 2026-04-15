@@ -1,6 +1,6 @@
 import React from 'react';
 import MarkdownViewer from '@/components/MarkdownViewer'
-import CollapsibleList from '@/components/CollapsibleList'
+import CollapsibleList from './CollapsibleList'
 import './index.scss'
 
 export default function CodeFiles({ codeFiles }) {

@@ -11,6 +11,14 @@ class FileHelper{
 		}
 	}
 
+	static existsFile(fn) {
+		try{
+			return fs.statSync(fn).isFile()
+		}catch(e) {
+			return false
+		}
+	}
+
 	static walkDir(dir, filter) {
 		const ret=[]
 		const ls=(dir, stack=[])=>{
@@ -32,7 +40,7 @@ class FileHelper{
 		return ret.map(fn=>fn.substr(dir.length+1)).sort()
 	}
 
-	static loadMarkdownFile(fn) {
+	static readTextFile(fn) {
 	  return fs.readFileSync(fn, 'utf8')
 	}
 

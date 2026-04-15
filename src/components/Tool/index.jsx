@@ -13,15 +13,15 @@ import ToolCard from './ToolCard';
 
 // 既存のコンポーネントを想定
 import ModalButton from '@/components/ModalButton';
-import SettingPanel from '@/components/SettingPanel';
+import SettingPanel from './SettingPanel';
 import './index.scss';
 
-import CodeAgent from '@/components/CodeAgent'
-import ImageGenerator from '@/components/ImageGenerator'
-import Writer from '@/components/Writer'
-import Reader from '@/components/Reader'
-import TodoList from '@/components/TodoList'
-import Reviewer from '@/components/Reviewer'
+import CodeAgent from './Tools/CodeAgent'
+import ImageGenerator from './Tools/ImageGenerator'
+import Writer from './Tools/Writer'
+import Reader from './Tools/Reader'
+import TodoList from './Tools/TodoList'
+import Reviewer from './Tools/Reviewer'
 
 const TOOLS_DATA = [
   {

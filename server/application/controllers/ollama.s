@@ -28,16 +28,30 @@ class ollamaController extends apiController{
 
   async _callOllamaEcho(...any) {
     const helper=this._initOllama()
-    return await helper.startStreamEcho([
-      {
+    const msgs=[{
+      role: 'user',
+      content: 'Now is '+(new Date).toUTCString(),
+    }]
+    for(const {md, txt} of any) {
+      const text=md? FileHelper.readTextFile(md): txt
+      const files=[]
+      const mdStr=text.replace(/@code-file=(.+)/g, (_, name)=>{
+        const originalName=name.trim()
+        const fullname=__DEV_WWW_DIR__+'/'+originalName
+        if(FileHelper.existsFile(fullname)) {
+          files.push(`<code-file path="${originalName}">\n${FileHelper.readTextFile(fullname)}\n</code-file>`)
+        }
+        return ''
+      })
+      msgs.push({
         role: 'user',
-        content: 'Now is '+(new Date).toUTCString(),
-      },
-      ...any.map(x=>({
-        role: 'user',
-        content: x.md? FileHelper.loadMarkdownFile(x.md): x.txt,
-      }))
-    ].filter(x=>x.content))
+        content: mdStr,
+      })
+      for(let file of files) {
+        msgs.push({role: 'user', content: file})
+      }
+    }
+    return await helper.startStreamEcho(msgs.filter(x=>x.content))
   }
 
   async generateAnalysisAction() {
