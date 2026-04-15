@@ -1,0 +1,95 @@
+.todo-card {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  gap: 12px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  &.completed {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  &.deleting {
+    animation: pulse-red 2s infinite;
+    .delete-btn.confirm {
+      background-color: #ff3b30;
+      color: white;
+    }
+  }
+
+  .drag-handle {
+    cursor: grab;
+    font-size: 18px;
+    user-select: none;
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .content-area {
+    flex: 1;
+    cursor: pointer;
+    font-size: 15px;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  .edit-container {
+    flex: 1;
+    input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid currentColor;
+      color: inherit;
+      font-size: 15px;
+      outline: none;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+
+    button {
+      background: rgba(0, 0, 0, 0.05);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      color: inherit;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .delete-btn {
+      &.confirm {
+        background: #ff3b30;
+        color: white;
+      }
+    }
+  }
+  
+  &.deleting .actions button:not(.delete-btn) {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 59, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+}

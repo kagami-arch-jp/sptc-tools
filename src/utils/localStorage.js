@@ -25,5 +25,12 @@ export function createStoreSharedState(key, initialValue) {
     originalSetValue(value)
     storageHelper.setValue(store.getValue())
   }
+  window.addEventListener('storage', e=>{
+    if(e.key!==key) return;
+    if(e.oldValue===e.newValue) return;
+    try{
+      originalSetValue(JSON.parse(e.newValue))
+    }catch(err) {}
+  })
   return store
 }

@@ -19,6 +19,7 @@ import CodeAgent from '@/components/CodeAgent'
 import ImageGenerator from '@/components/ImageGenerator'
 import Writer from '@/components/Writer'
 import Reader from '@/components/Reader'
+import TodoList from '@/components/TodoList'
 
 const TOOLS_DATA = [
   {
@@ -52,6 +53,14 @@ const TOOLS_DATA = [
     image: *IMG('./imgs/reader.png'),
     alt: 'A speaker contains a magical chip; whispering into it allows for conversations across time and space. It not only amplifies sound but also captures faint echoes forgotten deep in the past. **Disney-style**',
     Component: <Reader />,
+  },
+  {
+    id: 5,
+    name: 'TodoList',
+    description: 'これからやるべきことを',
+    image: *IMG('./imgs/todoList.png'),
+    alt: 'Inside the old house, sunlight streamed in through the window. On the wooden desk sat a yellow notebook, closed, with a pencil resting on top. It had a certain vintage feel. The artwork was painted in a Disney style.',
+    Component: <TodoList />,
   }
 ];
 
