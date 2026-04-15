@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import imageGenerationStore from '@/store/imageGenerationStore';
+import {imageGenerationStore} from '@/store/imageGenerationStore';
 import './index.scss';
 
 function ImagePreview() {

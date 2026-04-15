@@ -33,6 +33,10 @@ class LibSSR{
     const NOOP=function() {}
     Object.assign(self, {
       window: self,
+
+			innerWidth: 1024,
+			innerHeight: 768,
+
       addEventListener: NOOP,
       WebSocket: NOOP,
       setInterval: NOOP,

@@ -11,6 +11,14 @@ class FileHelper{
 		}
 	}
 
+	static mkdirSync(dir) {
+		try{
+  		fs.mkdirSync(dir)
+		}catch(e) {
+			return false
+		}
+	}
+
 	static existsFile(fn) {
 		try{
 			return fs.statSync(fn).isFile()
@@ -42,6 +50,10 @@ class FileHelper{
 
 	static readTextFile(fn) {
 	  return fs.readFileSync(fn, 'utf8')
+	}
+
+	static writeFile(fn, data) {
+		return fs.writeFileSync(fn, data)
 	}
 
 }

@@ -1,16 +1,18 @@
 /**
  * CodeBlock コンポーネント
- * 
+ *
  * 機能:
  * - シンタックスハイライト付きのコード表示
  * - 個別コードブロックのコピー機能
  * - ダークモード対応
- * 
+ *
  * 作成日: 2026-04-13
  */
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneLight, oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import duotoneLight from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-light';
+import duotoneForest from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-forest';
+
 import { darkMode } from '@/store/darkMode';
 import { copyToClipboard } from '@/utils/base';
 import './index.scss';
@@ -36,9 +38,9 @@ const CodeBlock = ({ language, value, copyCode }) => {
           {copied ? '完了' : 'コピー'}
         </button>
       )}
-      <SyntaxHighlighter 
-        language={language} 
-        style={isDarkMode ? oneDark : oneLight}
+      <SyntaxHighlighter
+        language={language}
+        style={isDarkMode ? duotoneForest: duotoneLight}
         customStyle={{ margin: 0 }}
       >
         {value}

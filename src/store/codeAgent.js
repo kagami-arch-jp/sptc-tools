@@ -1,4 +1,4 @@
-import {createStoreSharedState} from '@/utils/localStorage';
+import {createStoreSharedState} from '@/store/storage';
 import {getHistoryListStoreByKey} from '@/store/historyStore'
 
 export const codeAgentInputText = createStoreSharedState('codeAgent.store.inputtext', '')

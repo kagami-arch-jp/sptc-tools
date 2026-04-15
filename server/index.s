@@ -7,11 +7,13 @@ define('__IS_DEV__', process.env.ENV!=='PROD')
 define('__DEV_WWW_DIR__', __dirname+'/..')
 define('__WWW_DIR__', __dirname+'/public')
 
+define('__STORAGE_DIR__', require('os').homedir()+'/sptc-tool-storage')
+
 define('__DOC_DIR__', __dirname+'/docs')
 
 setDebug(__IS_DEV__)
 
-define('__DISABLE_SSR__', true)
+//define('__DISABLE_SSR__', true)
 
 __autoload(classname=>{
   if(classname.endsWith('Controller')) {

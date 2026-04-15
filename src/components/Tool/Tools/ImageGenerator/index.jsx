@@ -11,17 +11,20 @@
 
 import React, { useState, useCallback } from 'react';
 import { generateImage } from '@/api/imageApi';
-import imageGenerationStore from '@/store/imageGenerationStore'
+import {
+  imageGenerationStore,
+  promptStore,
+  sizeStore,
+  stepsStore,
+} from '@/store/imageGenerationStore'
 import ProgressDisplay from './ProgressDisplay';
 import ImagePreview from './ImagePreview';
 import './index.scss';
-import {useStorageValue} from '@/hooks/useStorageValue'
 
 function ImageGenerator() {
-  const [prompt, setPrompt] = useStorageValue('ImageGenerator.promot', '');
-  const [size, setSize] = useStorageValue('ImageGenerator.size', 256);
-  const [steps, setSteps] = useStorageValue('ImageGenerator.steps', 9);
-
+  const [prompt, setPrompt] = promptStore.use()
+  const [size, setSize] = sizeStore.use()
+  const [steps, setSteps] = stepsStore.use()
   const [store, setStore] = imageGenerationStore.use();
 
   const handleGenerate = useCallback(async () => {

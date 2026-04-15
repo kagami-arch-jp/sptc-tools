@@ -1,4 +1,4 @@
-import {createStoreSharedState} from '@/utils/localStorage';
+import {createStoreSharedState} from '@/store/storage';
 
 const initialSession = {
   id: Date.now().toString(),
