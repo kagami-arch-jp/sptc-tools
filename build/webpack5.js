@@ -287,6 +287,9 @@ function build() {
 
 checkEnv()
 
+const fse=require('fs-extra')
+fse.removeSync(APP_PATH+'/'+outputPath)
+
 if(IS_DEV) {
   devServer()
 }else if(IS_BUILD) {
