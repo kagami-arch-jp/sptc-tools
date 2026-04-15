@@ -68,14 +68,19 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, chi
         y: newy
       }));
     },
-    () => {}
+    () => {
+      setPosition(prev=>({
+        x: Math.max(0, prev.x),
+        y: Math.max(0, prev.y),
+      }))
+    }
   );
 
   // リサイズロジック
   const { startResize } = useResizable((newWidth, newHeight) => {
     setSize({
-      width: Math.max(200, newWidth),
-      height: Math.max(150, newHeight)
+      width: Math.min(innerWidth-position.x, Math.max(200, newWidth)),
+      height: Math.min(innerHeight-position.y, Math.max(150, newHeight))
     });
   });
 

@@ -6,27 +6,11 @@ import {
   removeDuplicateString,
 } from '@/utils/textSelection';
 import {querySuggestion} from '@/api/writer'
-
+import {writerSessions} from '@/store/writer'
 import MarkdownViewer from '@/components/MarkdownViewer'
 
-const STORAGE_KEY = 'writer_sessions';
-
-function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { sessions: [], selectedId: '' };
-    return JSON.parse(raw);
-  } catch {
-    return { sessions: [], selectedId: '' };
-  }
-}
-
-function saveToStorage(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
 export default function Writer() {
-  const [{ sessions, selectedId }, setState] = useState(loadFromStorage);
+  const [{ sessions, selectedId }, setState] = writerSessions.use();
   const contentRef = useRef(null);
   const ruleRef = useRef(null);
 
@@ -110,11 +94,6 @@ export default function Writer() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
-
-  // ---- ローカルストレージ自動保存 ---------------------------------
-  useEffect(() => {
-    saveToStorage({ sessions, selectedId });
-  }, [sessions, selectedId]);
 
   // ---- セッション操作 -----------------------------------------------
   const addSession = () => {
