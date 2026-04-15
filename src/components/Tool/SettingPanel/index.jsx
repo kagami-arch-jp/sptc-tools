@@ -8,7 +8,7 @@ import './index.scss';
 import ModelSelect from './ModelSelect';
 import settingStore from '@/store/settingStore';
 import { darkMode } from '@/store/darkMode';
-import { fetchTextModels, fetchImageModels } from '@/api/settings';
+import { fetchModels } from '@/api/settings';
 
 function SettingPanel() {
   const [settings, setSettings] = settingStore.use();
@@ -16,6 +16,11 @@ function SettingPanel() {
   const updateSetting = (key, value) => {
     setSettings({ ...settings, [key]: value });
   };
+
+  React.useEffect(()=>{
+    const key=settings.onlineMode? 'onlineModels': 'localModels'
+    fetchModels().then(models=>updateSetting(key, models))
+  }, [settings.onlineMode])
 
   return (
     <div className={`setting-panel ${isDarkMode ? 'dark-mode' : ''}`}>
@@ -51,15 +56,15 @@ function SettingPanel() {
         <section className="setting-group">
           <ModelSelect
             label="テキストモデル"
-            apiFunc={fetchTextModels}
-            value={settings.textModel}
-            onChange={(val) => updateSetting('textModel', val)}
+            models={settings.onlineMode? settings.onlineModels: settings.localModels}
+            value={settings.onlineMode? settings.textModelOnline: settings.textModelLocal}
+            onChange={(val) => updateSetting(settings.onlineMode? 'textModelOnline': 'textModelLocal', val)}
           />
           <ModelSelect
             label="画像生成モデル"
-            apiFunc={fetchImageModels}
-            value={settings.imageModel}
-            onChange={(val) => updateSetting('imageModel', val)}
+            models={settings.onlineMode? settings.onlineModels: settings.localModels}
+            value={settings.onlineMode? settings.imageModelOnline: settings.imageModelLocal}
+            onChange={(val) => updateSetting(settings.onlineMode? 'imageModelOnline': 'imageModelLocal', val)}
           />
         </section>
 

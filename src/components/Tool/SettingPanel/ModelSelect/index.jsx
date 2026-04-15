@@ -6,52 +6,31 @@
 import React, { useState, useEffect } from 'react';
 import './index.scss';
 
-function ModelSelect({ label, apiFunc, value, onChange }) {
-  const [models, setModels] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const loadModels = async () => {
-    setLoading(true);
-    setError(false);
-    try {
-      const data = await apiFunc();
-      setModels(data || []);
-    } catch (e) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadModels();
-  }, []);
+function ModelSelect({ label, value, onChange, models=[] }) {
 
   return (
     <div className="model-select-container">
       <div className="label-row">
         <label>{label}</label>
-        <button className="refresh-btn" onClick={loadModels} disabled={loading}>
-          {loading ? '...' : '更新'}
-        </button>
       </div>
 
       <div className="select-wrapper">
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          disabled={loading}
+          disabled={!models.length}
         >
-          {loading ? (
-            <option>読み込み中...</option>
-          ) : error ? (
-            <option value="">エラーが発生しました</option>
-          ) : models.length === 0 ? (
-            <option value="">モデルが見つかりません</option>
-          ) : (
-            models.map(m => <option key={m.name} value={m.name}>{m.name}</option>)
-          )}
+        {(()=>{
+          const options=[]
+          if(models.length===0) {
+            options.push(<option value="">モデルが見つかりません</option>)
+          }else{
+            models.map(m =>{
+              options.push(<option key={m.name} selected={m.name===value} value={m.name}>{m.name}</option>)
+            })
+          }
+          return options
+        })()}
         </select>
       </div>
     </div>

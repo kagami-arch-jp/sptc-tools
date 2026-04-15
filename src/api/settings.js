@@ -7,10 +7,6 @@ function getApiKey() {
   return onlineMode && apiKey || ''
 }
 
-export async function fetchTextModels() {
-  return await fetch('/ollama/listModels', {apiKey: getApiKey()});
-}
-
-export async function fetchImageModels() {
+export async function fetchModels() {
   return await fetch('/ollama/listModels', {apiKey: getApiKey()});
 }
