@@ -90,8 +90,8 @@
         position: sticky;
         top: 0;
         z-index: 10;
+        gap: 10px;
         .dark-mode & { border-color: #3a3a3c; }
-
       }
 
       .requirement-input {

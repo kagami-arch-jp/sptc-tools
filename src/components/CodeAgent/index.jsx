@@ -9,6 +9,9 @@ import { analyzeRequirement, generateCode, writeToFile, getWorkdir } from '@/api
 import MarkdownViewer from '@/components/MarkdownViewer';
 import CodeFiles from './CodeFiles';
 import './index.scss';
+import HistoryList from '@/components/HistoryList'
+import ModalButton from '@/components/ModalButton'
+import {getHistoryListStoreByKey} from '@/store/historyStore'
 
 import {useStorageValue} from '@/hooks/useStorageValue'
 
@@ -33,6 +36,8 @@ export default function CodeAgent() {
   const [workdir, setWorkdir]=useState(null)
 
   const rightPanelRef=React.useRef(null)
+  const historyKey='codeAgent'
+  const historyStore=getHistoryListStoreByKey(historyKey)
 
   function clear() {
     setResult('')
@@ -43,6 +48,7 @@ export default function CodeAgent() {
     if (!inputtext) return alert('要件を入力してください');
     setLoading(prev => ({ ...prev, analyze: true }));
     clear()
+    historyStore.addHistory(inputtext)
     try {
       await analyzeRequirement(inputtext, (txt, d)=>{
         setResult(x=>x+txt)
@@ -58,6 +64,7 @@ export default function CodeAgent() {
     if (!inputtext) return alert('要件を入力してください');
     setLoading(prev => ({ ...prev, generate: true }));
     clear()
+    historyStore.addHistory(inputtext)
     try {
       await generateCode(inputtext, (txt, d)=>{
         setResult(x=>x+txt)
@@ -109,6 +116,9 @@ export default function CodeAgent() {
               >
                 {isPreview ? '編集' : 'プレビュー'}
               </button>
+              <ModalButton className='btn' text={'履歴'}>
+                <HistoryList historyKey={historyKey} />
+              </ModalButton>
             </div>
             {!isPreview ? (
               <textarea

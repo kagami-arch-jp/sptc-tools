@@ -12,7 +12,8 @@ import { darkMode } from '@/store/darkMode';
 import ToolCard from './ToolCard';
 
 // 既存のコンポーネントを想定
-import SettingButton from '@/components/SettingButton';
+import ModalButton from '@/components/ModalButton';
+import SettingPanel from '@/components/SettingPanel';
 import './index.scss';
 
 import CodeAgent from '@/components/CodeAgent'
@@ -72,7 +73,9 @@ const Tool = () => {
       <header className="tool-header">
         <h1 className="tool-title">AI Portal</h1>
         <div className="tool-header-actions">
-          <SettingButton />
+          <ModalButton className='setting-button' text='⚙️'>
+            <SettingPanel />
+          </ModalButton>
         </div>
       </header>
 

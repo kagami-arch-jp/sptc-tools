@@ -4,7 +4,5 @@ import './App.scss'
 import Tool from '@/components/Tool'
 
 export default function() {
-  return <>
-    <Tool />
-  </>
+  return <Tool />
 }
