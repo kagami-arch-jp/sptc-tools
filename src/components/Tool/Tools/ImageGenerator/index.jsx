@@ -53,7 +53,7 @@ function ImageGenerator() {
   return (
     <div className="image-generator-container">
       <div className="generator-card">
-        <div className="input-group">
+        <div className="input-group textarea-area">
           <label className="input-label">プロンプト</label>
           <textarea
             className="prompt-textarea"
