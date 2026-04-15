@@ -127,5 +127,17 @@ class ollamaController extends apiController{
 
   }
 
+  async answerTheContentAction() {
+    const {documentContent, question}=this.postData
+
+    if(!documentContent || !question) return;
+
+    await this._callOllamaEcho(
+      {md: __DOC_DIR__+'/answer/basic.md'},
+      {txt: `<Content>\n${documentContent}\n</Content>`},
+      {txt: `<Question>\n${question}\n</Question>`},
+    )
+  }
+
 
 }

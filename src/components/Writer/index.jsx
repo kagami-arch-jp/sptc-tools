@@ -75,16 +75,6 @@ export default function Writer() {
         const {selectedText, start, end}=getSelectionInfo(contentRef.current)
         selectedText && doQuery(selectedText, 'rewrite', [start, end])
       }
-      if (e.ctrlKey && e.key === 'b') {
-        e.preventDefault();
-        const {selectedText}=getSelectionInfo(contentRef.current)
-        if (selectedText) {
-          const synth = window.speechSynthesis;
-          const utterance = new SpeechSynthesisUtterance(selectedText);
-          utterance.lang='ja-jp';
-          synth.speak(utterance);
-        }
-      }
       if (e.ctrlKey && e.key === 'j') {
         e.preventDefault();
         const {selectedText, start, end}=getSelectionInfo(contentRef.current)
@@ -253,7 +243,6 @@ export default function Writer() {
           <ul className="writer__inst-list">
             <li>Press <b>Ctrl+I</b> to generate suggestions after the cursor.</li>
             <li>Press <b>Ctrl+R</b> (with a selection) to generate replacement suggestions.</li>
-            <li>Press <b>Ctrl+B</b> (with a selection) to read the text in Japanese.</li>
             <li>Press <b>Ctrl+J</b> (with a selection) to expand the user's requirements into a more precise and detailed list..</li>
           </ul>
         </section>}

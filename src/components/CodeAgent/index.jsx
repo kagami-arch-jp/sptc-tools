@@ -11,9 +11,14 @@ import CodeFiles from './CodeFiles';
 import './index.scss';
 import HistoryList from '@/components/HistoryList'
 import ModalButton from '@/components/ModalButton'
-import {getHistoryListStoreByKey} from '@/store/historyStore'
 
-import {useStorageValue} from '@/hooks/useStorageValue'
+import {
+  codeAgentInputText,
+  codeAgentResult,
+  codeAgentCopyFiles,
+  historyKey,
+  historyStore,
+} from '@/store/codeAgent'
 
 function parseCodeFiles(str) {
   const p={}
@@ -27,17 +32,16 @@ function parseCodeFiles(str) {
 
 export default function CodeAgent() {
   const isDarkMode = darkMode.useValue();
-  const [inputtext, setInputtext] = useStorageValue('codeAgent.requirement', '');
+
+  const [inputtext, setInputtext] = codeAgentInputText.use()
   const [isPreview, setIsPreview] = useState(false);
-  const [result, setResult] = useState('');
+  const [result, setResult] = codeAgentResult.use()
   const [loading, setLoading] = useState({ analyze: false, generate: false, write: false });
-  const [codeFiles, setCodeFiles]=useState(null)
+  const [codeFiles, setCodeFiles] = codeAgentCopyFiles.use()
 
   const [workdir, setWorkdir]=useState(null)
 
   const rightPanelRef=React.useRef(null)
-  const historyKey='codeAgent'
-  const historyStore=getHistoryListStoreByKey(historyKey)
 
   function clear() {
     setResult('')

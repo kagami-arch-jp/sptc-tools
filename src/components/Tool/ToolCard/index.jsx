@@ -7,9 +7,9 @@
  */
 
 import React from 'react';
-import './index.scss';
 
 import MiniWin from '@/components/MiniWin'
+import Item from './Item'
 
 /**
  * @param {Object} props
@@ -22,21 +22,14 @@ import MiniWin from '@/components/MiniWin'
 const ToolCard = ({ tool }) => {
   const [isOpen, setIsOpen]=React.useState(false)
   return <>
-    <div className="tool-card" onClick={()=>{
-      setIsOpen(true)
-    }}>
-      <div className="tool-card-image-container">
-        <img
-          src={tool.image}
-          alt={tool.alt}
-          className="tool-card-image"
-        />
-      </div>
-      <div className="tool-card-info">
-        <h3 className="tool-card-title">{tool.name}</h3>
-        <p className="tool-card-description">{tool.description}</p>
-      </div>
-    </div>
+    <Item
+      image={tool.image}
+      title={tool.name}
+      description={tool.description}
+      onClick={()=>{
+        setIsOpen(true)
+      }}
+    />
     <MiniWin
       id={"win"+tool.id}
       title={tool.name}

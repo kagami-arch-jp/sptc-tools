@@ -70,8 +70,8 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, chi
     },
     () => {
       setPosition(prev=>({
-        x: Math.max(0, prev.x),
-        y: Math.max(0, prev.y),
+        x: Math.max(5, prev.x),
+        y: Math.max(5, prev.y),
       }))
     }
   );
@@ -79,8 +79,8 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, chi
   // リサイズロジック
   const { startResize } = useResizable((newWidth, newHeight) => {
     setSize({
-      width: Math.min(innerWidth-position.x, Math.max(200, newWidth)),
-      height: Math.min(innerHeight-position.y, Math.max(150, newHeight))
+      width: Math.min(innerWidth-position.x-5, Math.max(200, newWidth)),
+      height: Math.min(innerHeight-position.y-5, Math.max(150, newHeight))
     });
   });
 

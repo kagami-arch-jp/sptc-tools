@@ -55,18 +55,21 @@ export async function fetchStream(action, data, onData) {
 
   const reader = response.body.getReader()
   const dec=new TextDecoder()
-  for(let head='', skip=false;;) {
+  for(let head='', skip=false, all='';;) {
     const {done, value}=await reader.read()
     if(value) {
       const txt=dec.decode(value)
       if(!skip) {
         head+=txt
         if(head.length>=4096) {
-          onData(head.substr(4096))
+          const x=head.substr(4096)
+          all+=x
+          onData(x, all)
           skip=true
         }
       }else{
-        onData(txt)
+        all+=txt
+        onData(txt, all)
       }
     }
     if(done) break

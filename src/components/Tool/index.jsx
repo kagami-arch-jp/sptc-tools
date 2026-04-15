@@ -21,11 +21,12 @@ import ImageGenerator from '@/components/ImageGenerator'
 import Writer from '@/components/Writer'
 import Reader from '@/components/Reader'
 import TodoList from '@/components/TodoList'
+import Reviewer from '@/components/Reviewer'
 
 const TOOLS_DATA = [
   {
     id: 1,
-    name: 'AI Code Architect',
+    name: 'Code Agent',
     description: 'PRDからコードに実装',
     image: *IMG('./imgs/codeAgent.png'),
     alt: 'A futuristic digital landscape with neon lights and floating islands, high resolution, cinematic lighting',
@@ -62,10 +63,19 @@ const TOOLS_DATA = [
     image: *IMG('./imgs/todoList.png'),
     alt: 'Inside the old house, sunlight streamed in through the window. On the wooden desk sat a yellow notebook, closed, with a pencil resting on top. It had a certain vintage feel. The artwork was painted in a Disney style.',
     Component: <TodoList />,
+  },
+  {
+    id: 6,
+    name: 'Answer',
+    description: 'ドキュメントについて質問を回答する',
+    image: *IMG('./imgs/reviewer.png'),
+    alt: 'At a computer desk, a robot from the last century is reading a newspaper. Please use a **cyberpunk** style.',
+    Component: <Reviewer />,
   }
 ];
 
 const Tool = () => {
+
   const isDarkMode = darkMode.useValue();
 
   return (

@@ -66,13 +66,13 @@
     width: 100%;
     overflow: hidden;
     word-break: break-all;
-    white-space: pre-wrap;
     font-size: 0.9rem;
   }
 
   .history-item-text {
     margin: 0;
     font-family: inherit;
+    white-space: break-spaces;
   }
 }
 
@@ -91,7 +91,7 @@
 
     .action-button {
       background-color: rgba(255, 255, 255, 0.1);
-      
+
       &:hover {
         background-color: rgba(255, 255, 255, 0.2);
       }
