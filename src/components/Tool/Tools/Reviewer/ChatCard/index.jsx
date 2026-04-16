@@ -6,11 +6,12 @@
 
 import React from 'react';
 import './index.scss';
+import Dialog from '@/components/Dialog'
 
 function ChatCard({ chat, onDelete }) {
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    alert('コピーしました');
+    Dialog.toast({message: 'コピーしました'});
  };
 
   return (

@@ -36,3 +36,9 @@ export function getCommonParams(isGenerateImage=false) {
     contextLength: contextLength * 1024,
   }
 }
+
+export function isReady() {
+  const c=settingStore.getValue()
+  if(!c.textModelLocal && !c.textModelOnline) return false
+  return true
+}

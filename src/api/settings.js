@@ -4,7 +4,7 @@ import settingStore from '@/store/settingStore';
 
 function getApiKey() {
   const {onlineMode, apiKey}=settingStore.getValue() || {}
-  return onlineMode && apiKey || ''
+  return onlineMode? apiKey || '/': ''
 }
 
 export async function fetchModels() {

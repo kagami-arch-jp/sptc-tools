@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import {getHistoryListStoreByKey} from '@/store/historyStore';
 import MarkdownViewer from '@/components/MarkdownViewer'; // 既存コンポーネントを想定
 import './index.scss';
+import Dialog from '@/components/Dialog'
 
 function HistoryItem({ historyKey, item }) {
   const historyStore=getHistoryListStoreByKey(historyKey)
@@ -21,12 +22,12 @@ function HistoryItem({ historyKey, item }) {
     try {
       setIsCopying(true);
       await navigator.clipboard.writeText(item.content);
-      // 成功時のフィードバック（簡易的な実装）
-      setTimeout(() => setIsCopying(false), 2000);
+      Dialog.toast('コピーしました')
+      setIsCopying(false)
     } catch (error) {
       console.error('Copy failed:', error);
       setIsCopying(false);
-      alert('コピーに失敗しました');
+      Dialog.toast('コピーに失敗しました');
     }
   };
 

@@ -4,6 +4,8 @@ const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin=require('mini-css-extract-plugin')
+const CaseSensitivePathsPlugin=require('case-sensitive-paths-webpack-plugin')
+
 const chalk=require('chalk')
 
 const {
@@ -108,6 +110,7 @@ const common = (isServer)=>({
 
   plugins: [
     new RemoveAssetsPlugin(),
+    new CaseSensitivePathsPlugin(),
   ],
 
 });

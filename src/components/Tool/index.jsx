@@ -16,12 +16,12 @@ import ModalButton from '@/components/ModalButton';
 import SettingPanel from './SettingPanel';
 import './index.scss';
 
-import CodeAgent from './Tools/CodeAgent'
-import ImageGenerator from './Tools/ImageGenerator'
-import Writer from './Tools/Writer'
-import Reader from './Tools/Reader'
-import TodoList from './Tools/TodoList'
-import Reviewer from './Tools/Reviewer'
+import CodeAgent from './tools/CodeAgent'
+import ImageGenerator from './tools/ImageGenerator'
+import Writer from './tools/Writer'
+import Reader from './tools/Reader'
+import TodoList from './tools/TodoList'
+import Reviewer from './tools/Reviewer'
 
 const TOOLS_DATA = [
   {
@@ -71,13 +71,12 @@ const TOOLS_DATA = [
 const Tool = () => {
 
   const isDarkMode = darkMode.useValue();
-
   return (
     <div className={`tool-page-container ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="tool-header">
         <h1 className="tool-title">AI Portal</h1>
         <div className="tool-header-actions">
-          <ModalButton className='setting-button' text='⚙️'>
+          <ModalButton id='setting-panel' className='setting-button' text='⚙️'>
             <SettingPanel />
           </ModalButton>
         </div>
