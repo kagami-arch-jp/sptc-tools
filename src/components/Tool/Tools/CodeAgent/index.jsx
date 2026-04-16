@@ -22,11 +22,30 @@ import {
 
 function parseCodeFiles(str) {
   const p={}
-  let _fn=null
-  str.replace(/\*\*(.+?)\*\*|```(jsx?|s?css|javascript|js)\s*([\s\S]+?)```(\n|$)/g, (_, fn, lang, code)=>{
-    if(fn) _fn=fn.trim()
-    else p[_fn]={lang, code: code.trim()}
+  let _fn=null, block=null
+  str.replace(/\*\*(.+?)\*\*(?=\n)|\n\- line=(\d+)\:(\d+)(?=\n)|\n```(jsx?|s?css|javascript|js)\s*([\s\S]+?)```(?=\n|$)/g, (_, fn, startLine, endLine, lang, code)=>{
+    if(fn) {
+      _fn=fn.trim()
+      block={create: true}
+      p[_fn]=[block]
+    }else if(startLine && endLine) {
+      Object.assign(block, {
+        create: false,
+        startLine: parseInt(startLine),
+        endLine: parseInt(endLine),
+      })
+    }else{
+      Object.assign(block, {
+        lang,
+        code: code.trim(),
+      })
+      block={create: true}
+      p[_fn].push(block)
+    }
   })
+  for(let fn in p) {
+    p[fn]=p[fn].filter(x=>x.code)
+  }
   return p
 }
 
@@ -38,7 +57,6 @@ export default function CodeAgent() {
   const [result, setResult] = codeAgentResult.use()
   const [loading, setLoading] = useState({ analyze: false, generate: false, write: false });
   const [codeFiles, setCodeFiles] = codeAgentCopyFiles.use()
-
   const [workdir, setWorkdir]=useState(null)
 
   const rightPanelRef=React.useRef(null)

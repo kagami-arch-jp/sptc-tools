@@ -9,9 +9,13 @@ export default function CodeFiles({ codeFiles }) {
       {(()=>{
         let blocks=[]
         for(const file in codeFiles) {
-          const code=(({lang, code})=>{
-            return "```"+lang+"\n"+code+"\n```"
-          })(codeFiles[file])
+          const code=codeFiles[file].map(({startLine, endLine, create, lang, code})=>{
+            //console.log({startLine, endLine, create, lang, code})
+            return [
+              startLine && endLine && `**line=${startLine}-${endLine}**`,
+              "```"+lang+"\n"+code+"\n```",
+            ].filter(Boolean).join('\n')
+          }).join('\n')
           blocks.push({title: file, content: <MarkdownViewer content={code} />})
         }
         return <CollapsibleList contentClassName='code-area' data={blocks} />

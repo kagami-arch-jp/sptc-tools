@@ -11,6 +11,8 @@ const settingStore=createStoreSharedState('app_settings', {
   onlineModels: [],
   temperature: 0,
   contextLength: 8,
+  language: '日本語',
+  tone: false,
 });
 
 export default settingStore
@@ -25,6 +27,8 @@ export function getCommonParams(isGenerateImage=false) {
     imageModelOnline,
     temperature,
     contextLength,
+    language,
+    tone,
   }=settingStore.getValue()
   const [textModel, imageModel]=onlineMode?
     [textModelOnline, imageModelOnline]:
@@ -34,6 +38,8 @@ export function getCommonParams(isGenerateImage=false) {
     model: isGenerateImage? imageModel: textModel,
     temperature,
     contextLength: contextLength * 1024,
+    language,
+    tone,
   }
 }
 

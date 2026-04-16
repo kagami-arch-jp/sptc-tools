@@ -56,45 +56,34 @@ function SettingPanel() {
         <section className="setting-group">
           <ModelSelect
             label="テキストモデル"
-            models={settings.onlineMode? settings.onlineModels: settings.localModels}
+            selectOptions={settings.onlineMode? settings.onlineModels: settings.localModels}
             value={settings.onlineMode? settings.textModelOnline: settings.textModelLocal}
             onChange={(val) => updateSetting(settings.onlineMode? 'textModelOnline': 'textModelLocal', val)}
           />
           <ModelSelect
             label="画像生成モデル"
-            models={settings.onlineMode? settings.onlineModels: settings.localModels}
+            selectOptions={settings.onlineMode? settings.onlineModels: settings.localModels}
             value={settings.onlineMode? settings.imageModelOnline: settings.imageModelLocal}
             onChange={(val) => updateSetting(settings.onlineMode? 'imageModelOnline': 'imageModelLocal', val)}
           />
         </section>
 
         <section className="setting-group">
-          <div className="slider-row">
-            <div className="label-val">
-              <label>Temperature</label>
-              <span>{settings.temperature}</span>
-            </div>
-            <input
-              type="range" min="0" max="2" step="0.1"
-              value={settings.temperature}
-              onChange={(e) => updateSetting('temperature', parseFloat(e.target.value))}
-            />
-          </div>
+          <ModelSelect
+            label="表示言語"
+            selectOptions={[{name: '中文'}, {name: 'English'}, {name: '日本語'}]}
+            value={settings.language}
+            onChange={(val) => updateSetting('language', val)}
+          />
+          <ModelSelect
+            label="応答トーン"
+            selectOptions={[{name: 'human'}, {name: 'assistant'}]}
+            value={settings.tone}
+            onChange={(val) => updateSetting('tone', val)}
+          />
+         </section>
 
-          <div className="slider-row">
-            <div className="label-val">
-              <label>Context Length</label>
-              <span>{settings.contextLength} k</span>
-            </div>
-            <input
-              type="range" min="8" max="128" step="1"
-              value={settings.contextLength}
-              onChange={(e) => updateSetting('contextLength', parseInt(e.target.value))}
-            />
-          </div>
-        </section>
-
-        <section className="setting-group">
+         <section className="setting-group">
           <div className="checkbox-row">
             <label>
               <input

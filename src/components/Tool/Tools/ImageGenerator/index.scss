@@ -9,7 +9,7 @@
   .generator-card {
     width: 100%;
     max-width: 600px;
-    height: 100%;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -136,6 +136,9 @@
 
     .display-area {
       margin-top: 10px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
     }
 }

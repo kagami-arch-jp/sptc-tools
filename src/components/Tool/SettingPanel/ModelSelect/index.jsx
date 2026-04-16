@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import './index.scss';
 
-function ModelSelect({ label, value, onChange, models=[] }) {
+function ModelSelect({ label, value, onChange, selectOptions=[] }) {
 
   return (
     <div className="model-select-container">
@@ -16,17 +16,17 @@ function ModelSelect({ label, value, onChange, models=[] }) {
 
       <div className="select-wrapper">
         <select
-          key={models.join('-')}
+          key={selectOptions.join('-')}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          disabled={!models.length}
+          disabled={!selectOptions.length}
         >
         {(()=>{
           const options=[]
-          if(models.length===0) {
+          if(selectOptions.length===0) {
             options.push(<option value="">モデルが見つかりません</option>)
           }else{
-            models.map(m =>{
+            selectOptions.map(m =>{
               options.push(<option key={m.name} value={m.name}>{m.name}</option>)
             })
           }

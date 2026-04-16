@@ -1,3 +1,4 @@
+import {startDance, stopDance} from './title'
 
 function clientFetch(action, data) {
   if("@IS_DEV") {
@@ -44,35 +45,42 @@ export async function fetch(action, data) {
 }
 
 export async function fetchStream(action, data, onData) {
-  const response = await clientFetch(action, data)
+  try{
+    startDance()
+    const response = await clientFetch(action, data)
 
-  // Network‑level error handling
-  if (!response.ok) {
-    const error = new Error(`HTTP ${response.status} - ${response.statusText}`);
-    error.status = response.status;
-    throw error;
-  }
-
-  const reader = response.body.getReader()
-  const dec=new TextDecoder()
-  for(let head='', skip=false, all='';;) {
-    const {done, value}=await reader.read()
-    if(value) {
-      const txt=dec.decode(value)
-      if(!skip) {
-        head+=txt
-        if(head.length>=4096) {
-          const x=head.substr(4096)
-          all+=x
-          onData(x, all)
-          skip=true
-        }
-      }else{
-        all+=txt
-        onData(txt, all)
-      }
+    // Network‑level error handling
+    if (!response.ok) {
+      const error = new Error(`HTTP ${response.status} - ${response.statusText}`);
+      error.status = response.status;
+      throw error;
     }
-    if(done) break
+
+    const reader = response.body.getReader()
+    const dec=new TextDecoder()
+    for(let head='', skip=false, all='';;) {
+      const {done, value}=await reader.read()
+      if(value) {
+        const txt=dec.decode(value)
+        if(!skip) {
+          head+=txt
+          if(head.length>=4096) {
+            const x=head.substr(4096)
+            all+=x
+            onData(x, all)
+            skip=true
+          }
+        }else{
+          all+=txt
+          onData(txt, all)
+        }
+      }
+      if(done) break
+    }
+  }catch(e) {
+    throw e
+  }finally{
+    stopDance()
   }
 }
 

@@ -13,7 +13,13 @@ class ollamaController extends apiController{
       model,
       temperature=0,
       contextLength=8192,
+      language='English',
+      tone='human',
     }=this.postData
+    this.systemSetting={
+      humanTone: tone==='human',
+      lang: language,
+    }
     this.setAsStreamResponse()
     const helper=new OllamaHelper({
       apiKey,
@@ -28,10 +34,16 @@ class ollamaController extends apiController{
 
   async _callOllamaEcho(...any) {
     const helper=this._initOllama()
-    const msgs=[{
-      role: 'user',
-      content: 'Now is '+(new Date).toUTCString(),
-    }]
+    const msgs=[
+      {
+        role: 'user',
+        content: 'Now is '+(new Date).toUTCString(),
+      },
+      {
+        role: 'user',
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
+      },
+    ]
     for(const {md, txt} of any) {
       const text=md? FileHelper.readTextFile(md): txt
       const files=[]
@@ -39,7 +51,9 @@ class ollamaController extends apiController{
         const originalName=name.trim()
         const fullname=__DEV_WWW_DIR__+'/'+originalName
         if(FileHelper.existsFile(fullname)) {
-          files.push(`<code-file path="${originalName}">\n${FileHelper.readTextFile(fullname)}\n</code-file>`)
+          const code=FileHelper.readTextFile(fullname)
+          const codeWithLineNum=code.split('\n').map((x, i)=>`/* LINE ${i+1} */ ${x}`).join('\n')
+          files.push(`<code-file path="${originalName}">\n${codeWithLineNum}\n</code-file>`)
         }
         return ''
       })
@@ -83,8 +97,23 @@ class ollamaController extends apiController{
       try{
         fs.mkdirSync(dir, {recursive: true})
       }catch(e){}
-      fs.writeFileSync(appDir+'/'+fn, x[fn].code)
-      writes.push(appDir+'/'+fn)
+
+      const fullname=appDir+'/'+fn
+      if(x[fn][0].create || !FileHelper.existsFile(fullname)) {
+        fs.writeFileSync(fullname, x[fn][0].code)
+      }else{
+        const source=FileHelper.readTextFile(fullname)
+        const lines=source.split('\n')
+        for(let item of x[fn]) {
+          const {code, startLine, endLine}=item
+          lines[startLine-1]=code
+          for(let i=startLine; i<endLine; i++) {
+            lines[i]=null
+          }
+        }
+        fs.writeFileSync(fullname, lines.filter(x=>x!==null).join('\n'))
+      }
+      writes.push(fullname)
     }
     return `Wrote files: \n${writes.join('\n')}`
   }

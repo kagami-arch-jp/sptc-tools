@@ -56,4 +56,9 @@ class FileHelper{
 		return fs.writeFileSync(fn, data)
 	}
 
+	static loadSptcDocumentFile(filename, argv) {
+	  flush()
+	  include(filename, argv)
+	  return readEchoed()
+	}
 }
