@@ -98,5 +98,7 @@
 2. Sass
 3. **Webpack 5**
 
-@code-file=node_modules/react-cross-component-state/index.js
-@code-file=node_modules/react-cross-component-state/README.md
+<external-files>
+  <file>node_modules/react-cross-component-state/index.js</file>
+  <file>node_modules/react-cross-component-state/README.md</file>
+</external-files>

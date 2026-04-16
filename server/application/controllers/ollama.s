@@ -34,27 +34,28 @@ class ollamaController extends apiController{
 
   async _callOllamaEcho(...any) {
     const helper=this._initOllama()
+    const appDir=path.resolve('.')
     const msgs=[
       {
         role: 'user',
-        content: 'Now is '+(new Date).toUTCString(),
-      },
-      {
-        role: 'user',
-        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
-      },
+        content: `<Tree>\n${FileHelper.walkDir(appDir+'/src', (fn, isDir)=>{
+          return fn.match(/\.(scss|jsx?)$/) || isDir
+        }).map(x=>'src/'+x).join('\n')}\n</Tree>`,
+      }
     ]
     for(const {md, txt} of any) {
       const text=md? FileHelper.readTextFile(md): txt
       const files=[]
-      const mdStr=text.replace(/@code-file=(.+)/g, (_, name)=>{
-        const originalName=name.trim()
-        const fullname=__DEV_WWW_DIR__+'/'+originalName
-        if(FileHelper.existsFile(fullname)) {
-          const code=FileHelper.readTextFile(fullname)
-          const codeWithLineNum=code.split('\n').map((x, i)=>`/* LINE ${i+1} */ ${x}`).join('\n')
-          files.push(`<code-file path="${originalName}">\n${codeWithLineNum}\n</code-file>`)
-        }
+      const mdStr=text.replace(/<external-files>([\s\S]+?)<\/external-files>/g, (_, requires)=>{
+        requires.replace(/<file>(.+?)<\/file>/g, (_, name)=>{
+          const originalName=name.trim()
+          const fullname=__DEV_WWW_DIR__+'/'+originalName
+          if(FileHelper.existsFile(fullname)) {
+            const code=FileHelper.readTextFile(fullname)
+            const codeWithLineNum=code.split('\n').map((x, i)=>`/* LINE ${i+1} */ ${x}`).join('\n')
+            files.push(`<code-file path="${originalName}">\n${codeWithLineNum}\n</code-file>`)
+          }
+        })
         return ''
       })
       msgs.push({
@@ -65,6 +66,16 @@ class ollamaController extends apiController{
         msgs.push({role: 'user', content: file})
       }
     }
+    msgs.push(
+      {
+        role: 'user',
+        content: 'Now is '+(new Date).toUTCString(),
+      },
+      {
+        role: 'user',
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
+      },
+    )
     return await helper.startStreamEcho(msgs.filter(x=>x.content))
   }
 
@@ -125,7 +136,7 @@ class ollamaController extends apiController{
     const ls=models.map(m=>({name: m.name})).sort((a, b)=>{
       return a.name.charCodeAt(0)-b.name.charCodeAt(0)
     })
-    ls.unshift({name: '-- not selected --'})
+    ls.unshift({name: '-- no model selected --'})
     return ls
   }
 

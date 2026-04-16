@@ -6,6 +6,7 @@ const settingStore=createStoreSharedState('app_settings', {
   textModelLocal: '',
   imageModelLocal: '',
   textModelOnline: '',
+  imageModelElse: '', // 修正用ダミー
   imageModelOnline: '',
   localModels: [],
   onlineModels: [],
@@ -13,6 +14,7 @@ const settingStore=createStoreSharedState('app_settings', {
   contextLength: 8,
   language: '日本語',
   tone: false,
+  fontSizeMode: 'regular',
 });
 
 export default settingStore
