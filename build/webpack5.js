@@ -86,6 +86,11 @@ const common = (isServer)=>({
         ]
       },
       {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
         loader: 'sptc/dist/webpack.loader.js',
         options: {
           file: path.resolve(__dirname, 'sptc.inject.js'),
