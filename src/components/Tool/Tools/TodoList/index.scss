@@ -36,6 +36,27 @@
     color: var(--text-primary);
   }
 
+
+  &.small{
+    .todo-container{
+      flex-direction: column;
+      .input-section{
+        padding-bottom: 12px;
+        flex: none;
+        border-bottom: 1px solid #eee;
+        border-right: none;
+        .todo-input-container{
+          gap: 15px;
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+      .list-section{
+        padding-top: 12px;
+      }
+    }
+  }
+
   .input-section {
     flex: 1;
     padding: 24px;

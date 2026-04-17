@@ -17,7 +17,7 @@ import InlineStyle from '@/components/InlineStyle'
 
 const FONT_SIZE_MODES = [
   { id: 'regular', label: '標準 (Regular)', size: '16px' },
-  { id: 'large', label: '大 (Large)', size: '20px' }
+  { id: 'large', label: '大 (Large)', size: '18px' }
 ];
 
 function FontSizeSelect() {
@@ -37,7 +37,7 @@ function FontSizeSelect() {
   return <>
     <InlineStyle css={
       `html, body{
-        font-size: ${settings.fontSizeMode === 'large'? 20: 16}px;
+        font-size: ${settings.fontSizeMode === 'large'? 18: 16}px;
       }`
     } />
     <div className="font-size-select">

@@ -20,6 +20,7 @@ import {
 import ProgressDisplay from './ProgressDisplay';
 import ImagePreview from './ImagePreview';
 import './index.scss';
+import SizeObserver from '@/components/SizeObserver'
 
 function ImageGenerator() {
   const [prompt, setPrompt] = promptStore.use()
@@ -54,7 +55,10 @@ function ImageGenerator() {
   };
 
   return (
-    <div className="image-generator-container">
+    <SizeObserver getClassName={e=>{
+      if(e.width<450) return 'small'
+      return ''
+    }} className="image-generator-container">
       <div className="generator-card">
         <div className="input-group textarea-area">
           <label className="input-label">プロンプト</label>
@@ -125,7 +129,7 @@ function ImageGenerator() {
           <ImagePreview />
         </div>
       </div>
-    </div>
+    </SizeObserver>
   );
 }
 

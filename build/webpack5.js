@@ -302,10 +302,11 @@ async function cleanDir(dir, stack=[]) {
   }
 }
 
-cleanDir(APP_PATH+'/'+outputPath)
+cleanDir(APP_PATH+'/'+outputPath).catch(e=>{}).finally(()=>{
 
-if(IS_DEV) {
-  devServer()
-}else if(IS_BUILD) {
-  build()
-}
+  if(IS_DEV) {
+    devServer()
+  }else if(IS_BUILD) {
+    build()
+  }
+})

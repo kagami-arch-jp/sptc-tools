@@ -9,6 +9,7 @@ import './index.scss';
 import ChatCard from '../ChatCard';
 import reviewerStore from '@/store/reviewerStore';
 import { getAiResponse } from '@/api/reviewerApi';
+import Dialog from '@/components/Dialog'
 
 function ChatPanel() {
   const [input, setInput] = useState('');
@@ -81,14 +82,18 @@ function ChatPanel() {
   };
 
   const handleDeleteChat = (chatId) => {
-    if(!confirm('delete this chat?')) return;
-    reviewerStore.setValue(prev => ({
-      ...prev,
-      sessions: prev.sessions.map(s => s.id === currentSessionId ? {
-        ...s,
-        chatHistory: s.chatHistory.filter(h => h.id !== chatId)
-      } : s)
-    }));
+    Dialog.confirm({
+      message: 'Delete this message?',
+      onConfirm: () => {
+        reviewerStore.setValue(prev => ({
+          ...prev,
+          sessions: prev.sessions.map(s => s.id === currentSessionId ? {
+            ...s,
+            chatHistory: s.chatHistory.filter(h => h.id !== chatId)
+          } : s)
+        }))
+      },
+    })
   };
 
   return (

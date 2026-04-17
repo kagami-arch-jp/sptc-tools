@@ -15,6 +15,9 @@ import todoStore, { moveTodo } from '@/store/todoStore';
 import TodoInput from './TodoInput';
 import TodoCard from './TodoCard';
 import './index.scss';
+import {cls} from '@/utils/css'
+
+import SizeObserver from '@/components/SizeObserver'
 
 function TodoList() {
   const { todos } = todoStore.useValue();
@@ -28,17 +31,18 @@ function TodoList() {
   };
 
   return (
-    <div className={`todo-list-wrapper ${isDarkMode ? 'dark-mode' : ''}`}>
+    <SizeObserver getClassName={({width})=>{
+      if(width<560) return 'small'
+      return 'normal'
+    }} className={cls(`todo-list-wrapper`, isDarkMode && 'dark-mode')}>
       <div className="todo-container">
         {/* Left Side: Input Area */}
         <aside className="input-section">
-          <h2 className="title">タスク作成</h2>
           <TodoInput />
         </aside>
 
         {/* Right Side: List Area */}
         <main className="list-section">
-          <h2 className="title">タスク一覧</h2>
           <div className="scroll-area">
             <DndContext
               collisionDetection={closestCenter}
@@ -62,7 +66,7 @@ function TodoList() {
           </div>
         </main>
       </div>
-    </div>
+    </SizeObserver>
   );
 }
 

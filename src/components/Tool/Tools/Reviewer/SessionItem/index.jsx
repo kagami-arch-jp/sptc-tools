@@ -6,6 +6,7 @@
 
 import React from 'react';
 import './index.scss';
+import Dialog from '@/components/Dialog'
 
 function SessionItem({ session, isActive, onSelect, onRename, onDelete }) {
   return (
@@ -21,9 +22,12 @@ function SessionItem({ session, isActive, onSelect, onRename, onDelete }) {
       />
       <div onClick={e=>{
         e.stopPropagation()
-        if(confirm('delete this session?')) {
-          onDelete(session.id)
-        }
+        Dialog.confirm({
+          message: 'Delete this session?',
+          onConfirm: () => {
+            onDelete(session.id)
+          }
+        })
       }}>x</div>
     </div>
   );
