@@ -193,5 +193,53 @@ class ollamaController extends apiController{
     )
   }
 
+  async chatAction() {
+    const {history}=this.postData
+    if(!history) return;
+    const helper=this._initOllama()
+    const msgs=[
+      {
+        role: 'user',
+        content: 'Now is '+(new Date('2024-12-8')).toUTCString(),
+      },
+      {
+        role: 'user',
+        content: FileHelper.readTextFile(__DOC_DIR__+'/chatBot/basic.md'),
+      },
+      {
+        role: 'user',
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
+      },
+      ...history
+    ]
+    return await helper.startStreamEcho(msgs.filter(x=>x.content))
+  }
+  async chatSummaryAction() {
+    const {history}=this.postData
+    if(!history) return;
+    const helper=this._initOllama()
+    const msgs=[
+      {
+        role: 'user',
+        content: FileHelper.readTextFile(__DOC_DIR__+'/chatBot/summary.md'),
+      },
+      ...history
+    ]
+    return await helper.startStreamEcho(msgs.filter(x=>x.content))
+  }
+  async chatUserImageAction() {
+    const {history}=this.postData
+    if(!history) return;
+    const helper=this._initOllama()
+    const msgs=[
+      {
+        role: 'user',
+        content: FileHelper.readTextFile(__DOC_DIR__+'/chatBot/userImage.md'),
+      },
+      ...history
+    ]
+    return await helper.startStreamEcho(msgs.filter(x=>x.content))
+  }
+
 
 }

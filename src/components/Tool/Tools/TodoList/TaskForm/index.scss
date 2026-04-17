@@ -1,0 +1,78 @@
+.dark-mode{
+  .task-form{
+    background: #000;
+  }
+  .task-input {
+    background: #222;
+    color: #ddd;
+  }
+}
+
+.task-form {
+  background: #fff;
+  margin: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .task-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      border-capacity: 1px;
+      border-color: #007aff;
+    }
+  }
+
+  .color-palette {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s;
+
+    &.active {
+      border-color: #333;
+      transform: scale(1.2);
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .add-btn {
+    cursor: pointer;
+    padding: 0.8rem;
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}

@@ -16,12 +16,16 @@ import ModalButton from '@/components/ModalButton';
 import SettingPanel from './SettingPanel';
 import './index.scss';
 
+import {getSubSettingStore} from '@/store/settingStore'
+
 import CodeAgent from './tools/CodeAgent'
 import ImageGenerator from './tools/ImageGenerator'
 import Writer from './tools/Writer'
 import Reader from './tools/Reader'
 import TodoList from './tools/TodoList'
 import Reviewer from './tools/Reviewer'
+import ChatBot from './tools/ChatBot'
+import {chatSettingStore} from '@/store/chatStore'
 
 const TOOLS_DATA = [
   {
@@ -65,6 +69,16 @@ const TOOLS_DATA = [
     description: 'ドキュメントについて質問を回答する',
     image: *IMG('./imgs/reviewer.png'),
     Component: <Reviewer />,
+  },
+  {
+    id: 7,
+    name: 'ChatBot',
+    description: '普通な会話練習',
+    image: *IMG('./imgs/chatBot.png'),
+    Component: <ChatBot />,
+    SettingBtn: <ModalButton id='chatBot-settingPanel' text='⚙️'>
+      <SettingPanel store={chatSettingStore} />
+    </ModalButton>,
   }
 ];
 

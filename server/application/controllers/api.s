@@ -1,18 +1,20 @@
 <?js
 
-const POSTDATA_MAXSIZE=50e3
+// const POSTDATA_MAXSIZE=50e3
 
 async function resolvePOSTData() {
 	return new Promise(resolve=>{
+		/*
 		if(!($_RAW_REQUEST.headers['content-length'] <= POSTDATA_MAXSIZE)) {
 			resolve(null)
 			return
 		}
+		*/
 		const buf=[]
     let size=0
 		$_RAW_REQUEST
 		  .on('data', c=>{
-        if(size>POSTDATA_MAXSIZE) return;
+        // if(size>POSTDATA_MAXSIZE) return;
         buf.push(c)
         size+=c.length
       })

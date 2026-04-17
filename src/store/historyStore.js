@@ -2,6 +2,8 @@ import {createStoreSharedState} from '@/store/storage';
 
 const caches={}
 
+const MAX_HISTORY=50
+
 export function getHistoryListStoreByKey(key) {
   const historyStore = caches[key]?
     caches[key]:
@@ -18,7 +20,10 @@ export function getHistoryListStoreByKey(key) {
       content: text,
       isMarkdown: false,
     };
-    historyStore.setValue((prev) => [newItem, ...prev]);
+    historyStore.setValue((prev) => {
+      const v=[newItem, ...prev]
+      return v.slice(0, MAX_HISTORY)
+    });
   };
 
   /**

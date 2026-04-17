@@ -11,16 +11,19 @@ import settingStore from '@/store/settingStore';
 import { darkMode } from '@/store/darkMode';
 import { fetchModels } from '@/api/settings';
 
-function SettingPanel() {
-  const [settings, setSettings] = settingStore.use();
+function SettingPanel(props) {
+  const {store}=props
+  const [settings, setSettings] = (store || settingStore).use();
   const isDarkMode = darkMode.useValue();
   const updateSetting = (key, value) => {
     setSettings({ ...settings, [key]: value });
   };
 
   React.useEffect(()=>{
-    const key=settings.onlineMode? 'onlineModels': 'localModels'
-    fetchModels().then(models=>updateSetting(key, models))
+    const {onlineMode, apiKey}=settings
+    const key=onlineMode? 'onlineModels': 'localModels'
+    const _apiKey=onlineMode? apiKey || '/': ''
+    fetchModels(_apiKey).then(models=>updateSetting(key, models))
   }, [settings.onlineMode])
 
   return (
@@ -69,7 +72,33 @@ function SettingPanel() {
           />
         </section>
 
-<section className="setting-group">
+        <section className="setting-group">
+         <div className="slider-row">
+           <div className="label-val">
+             <label>Temperature</label>
+             <span>{settings.temperature}</span>
+           </div>
+           <input
+             type="range" min="0" max="2" step="0.1"
+             value={settings.temperature}
+             onChange={(e) => updateSetting('temperature', parseFloat(e.target.value))}
+           />
+         </div>
+
+         <div className="slider-row">
+           <div className="label-val">
+             <label>Context Length</label>
+             <span>{settings.contextLength} k</span>
+           </div>
+           <input
+             type="range" min="8" max="128" step="1"
+             value={settings.contextLength}
+             onChange={(e) => updateSetting('contextLength', parseInt(e.target.value))}
+           />
+         </div>
+       </section>
+
+        <section className="setting-group">
           <FontSizeSelect />
         </section>
 

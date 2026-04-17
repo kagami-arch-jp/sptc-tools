@@ -60,6 +60,22 @@
     }
   }
 
+  .slider-row{
+    .label-val {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      label { color: #666; .dark-mode & { color: #aaa; } }
+      span { font-weight: 600; }
+    }
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+      accent-color: #007aff;
+    }
+  }
+
   .input-row {
     display: flex;
     flex-direction: column;

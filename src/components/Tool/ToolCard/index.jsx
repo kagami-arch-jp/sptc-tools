@@ -45,6 +45,9 @@ const ToolCard = ({ tool }) => {
       onClose={() => setIsOpen(false)}
       initialPosition={{ x: 100, y: 100 }}
       initialSize={{ width: innerWidth*.6|0, height: innerHeight*.6|0 }}
+      btns={[
+        tool.SettingBtn,
+      ].filter(Boolean)}
       children={tool.Component}
     />
   </>

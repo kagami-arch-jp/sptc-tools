@@ -1,81 +1,71 @@
-import {createStoreSharedState} from '@/store/storage';
-
-const initialState = {
-  todos: [],
-};
-
-const todoStore = createStoreSharedState('todoList.data', initialState);
-
 /**
- * @typedef {Object} TodoItem
- * @property {string} id - 一意のID
- * @param {string} text - タスク内容
- * @param {string} color - 背景色
- * @param {boolean} completed - 完了状態
+ * @file todoStore.js
+ * @description Todoリスト、完了済みタスク、およびフィルタ状態を管理する共有ストア。
+ * @author kagami-arch-jp@bot
+ * @create 2026-04-17
  */
 
-export const addTodo = (text, color) => {
+import { createStoreSharedState } from '@/store/storage';
+import createSharedState from 'react-cross-component-state';
+// タスクの型定義（モック）
+// id: string, text: string, color: string, completedAt?: Date, createdAt: Date
+
+export const todoStore = createStoreSharedState('todoStore', {
+  tasks: [],        // 現在のタスク一覧
+  isConfettiActive: false // 花火エフェクトの制御
+});
+
+export const filter=createSharedState({
+  startDate: null,
+  endDate: null
+})
+
+/**
+ * タスクを追加する
+ * @param {Object} task
+ */
+export const addTask = (task) => {
   todoStore.setValue(prev => ({
     ...prev,
-    todos: [
-      { id: Date.now().toString(), text, color, completed: false },
-      ...prev.todos
-    ]
+    tasks: [{ ...task, id: crypto.randomUUID(), createdAt: new Date() }, ...prev.tasks]
   }));
 };
 
-export const toggleTodo = (id) => {
+/**
+ * タスクを編集する
+ * @param {string} id
+ * @param {Object} updates
+ */
+export const updateTask = (id, updates) => {
   todoStore.setValue(prev => ({
     ...prev,
-    todos: prev.todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    )
+    tasks: prev.tasks.map(t => t.id === id ? { ...t, ...updates } : t)
   }));
 };
 
-export const updateTodo = (id, text) => {
-  todoStore.setValue(prev => ({
-    ...prev,
-    todos: prev.todos.map(todo =>
-      todo.id === id ? { ...todo, text } : todo
-    )
-  }));
-};
-
-export const deleteTodo = (id) => {
-  todoStore.setValue(prev => ({
-    ...prev,
-    todos: prev.todos.filter(todo => todo.id !== id)
-  }));
-};
-
-export const reorderTodos = (activeId, overId) => {
+/**
+ * タスクを完了（アーカイブ）する
+ * @param {string} id
+ */
+export const completeTask = (id) => {
   todoStore.setValue(prev => {
-    const newTodos = Array.from(prev.todos);
-    const activeIndex = newTodos.findIndex(t => t.id === activeId);
-    const overIndex = newTodos.findIndex(t => t.id === overId);
+    const taskToComplete = prev.tasks.find(t => t.id === id);
+    if (!taskToComplete) return prev;
 
-    if (activeIndex === -1 || overIndex === -1) return prev;
-
-    const [removed] = newTodos.splice(activeIndex, 1);
-    newASarray.splice(overIndex, 0, removed);
-
-    return { ...prev, todos: newTodos };
+    return {
+      ...prev,
+      tasks: prev.tasks.filter(t => t.id !== id),
+    };
   });
 };
 
-// Note: Reorder logic fix for implementation
-export const moveTodo = (activeId, overId) => {
-  todoStore.setValue(prev => {
-    const oldIndex = prev.todos.findIndex(t => t.id === activeId);
-    const newIndex = prev.todos.findIndex(t => t.id === overId);
-    if (oldIndex === -1 || newIndex === -1) return prev;
-
-    const newTodos = [...prev.todos];
-    const [movedItem] = newTodos.splice(oldIndex, 1);
-    newTodos.splice(newIndex, 0, movedItem);
-    return { ...prev, todos: newTodos };
-  });
+/**
+ * タスクの順序を入れ替える
+ * @param {Array} newOrder
+ */
+export const reorderTasks = (newOrder) => {
+  todoStore.setValue(prev => ({
+    ...prev,
+    tasks: newOrder
+  }));
 };
-
-export default todoStore;

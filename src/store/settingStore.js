@@ -1,25 +1,26 @@
 import {createStoreSharedState} from '@/store/storage';
 
-const settingStore=createStoreSharedState('app_settings', {
+const getInitialValue=()=>({
   onlineMode: true,
   apiKey: '',
   textModelLocal: '',
   imageModelLocal: '',
   textModelOnline: '',
-  imageModelElse: '', // 修正用ダミー
   imageModelOnline: '',
   localModels: [],
   onlineModels: [],
   temperature: 0,
   contextLength: 8,
   language: '日本語',
-  tone: false,
+  tone: 'assistant',
   fontSizeMode: 'regular',
-});
+})
+
+const settingStore=createStoreSharedState('app_settings', getInitialValue());
 
 export default settingStore
 
-export function getCommonParams(isGenerateImage=false) {
+export function getCommonParams(isGenerateImage=false, store=settingStore) {
   const {
     onlineMode,
     apiKey,
@@ -31,7 +32,7 @@ export function getCommonParams(isGenerateImage=false) {
     contextLength,
     language,
     tone,
-  }=settingStore.getValue()
+  }=store.getValue()
   const [textModel, imageModel]=onlineMode?
     [textModelOnline, imageModelOnline]:
     [textModelLocal, imageModelLocal]
@@ -45,8 +46,14 @@ export function getCommonParams(isGenerateImage=false) {
   }
 }
 
-export function isReady() {
-  const c=settingStore.getValue()
+export function isReady(store=settingStore) {
+  const c=store.getValue()
   if(!c.textModelLocal && !c.textModelOnline) return false
   return true
+}
+
+const stores={}
+export function getSubSettingStore(settingKey) {
+  stores[settingKey]=stores[settingKey] || createStoreSharedState('app_settings.'+settingKey, getInitialValue())
+  return stores[settingKey]
 }

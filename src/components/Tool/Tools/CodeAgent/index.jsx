@@ -11,6 +11,7 @@ import CodeFiles from './CodeFiles';
 import './index.scss';
 import HistoryList from '@/components/HistoryList'
 import ModalButton from '@/components/ModalButton'
+import Dialog from '@/components/Dialog'
 
 import {
   codeAgentInputText,
@@ -67,7 +68,7 @@ export default function CodeAgent() {
   }
 
   const handleAnalyze = async () => {
-    if (!inputtext) return alert('要件を入力してください');
+    if (!inputtext) return Dialog.toast('要件を入力してください');
     setLoading(prev => ({ ...prev, analyze: true }));
     clear()
     historyStore.addHistory(inputtext)
@@ -76,14 +77,14 @@ export default function CodeAgent() {
         setResult(x=>x+txt)
       });
     } catch (e) {
-      alert('分析中にエラーが発生しました');
+      Dialog.toast('分析中にエラーが発生しました');
     } finally {
       setLoading(prev => ({ ...prev, analyze: false }));
     }
   };
 
   const handleGenerate = async () => {
-    if (!inputtext) return alert('要件を入力してください');
+    if (!inputtext) return Dialog.toast('要件を入力してください');
     setLoading(prev => ({ ...prev, generate: true }));
     clear()
     historyStore.addHistory(inputtext)
@@ -96,22 +97,22 @@ export default function CodeAgent() {
         return ''
       })
     } catch (e) {
-      alert('コード生成中にエラーが発生しました');
+      Dialog.toast('コード生成中にエラーが発生しました');
     } finally {
       setLoading(prev => ({ ...prev, generate: false }));
     }
   };
 
   const handleWrite = async () => {
-    if (!codeFiles) return alert('書き込むコードがありません');
+    if (!codeFiles) return Dialog.toast('書き込むコードがありません');
     setLoading(prev => ({ ...prev, write: true }));
     try {
       const msg=await writeToFile(codeFiles);
       setCodeFiles(null)
-      alert(msg);
+      Dialog.toast(msg);
     } catch (e) {
       console.log(e)
-      alert('書き込み中にエラーが発生しました');
+      Dialog.toast('書き込み中にエラーが発生しました');
     } finally {
       setLoading(prev => ({ ...prev, write: false }));
     }
