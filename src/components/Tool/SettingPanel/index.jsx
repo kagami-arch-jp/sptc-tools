@@ -91,7 +91,7 @@ function SettingPanel(props) {
              <span>{settings.contextLength} k</span>
            </div>
            <input
-             type="range" min="8" max="128" step="1"
+             type="range" min="8" max="128" step="4"
              value={settings.contextLength}
              onChange={(e) => updateSetting('contextLength', parseInt(e.target.value))}
            />

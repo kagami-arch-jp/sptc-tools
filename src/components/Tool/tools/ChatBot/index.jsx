@@ -14,6 +14,7 @@ import chatStore from '@/store/chatStore';
 import './index.scss';
 import {useChat} from '@/hooks/useChat'
 import {openById} from '@/store/modalButton'
+import SizeObserver from '@/components/SizeObserver'
 
 const ChatBot = () => {
   const currentSessionId = chatStore.currentSessionId.useValue();

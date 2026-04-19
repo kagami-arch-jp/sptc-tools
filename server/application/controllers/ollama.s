@@ -204,7 +204,9 @@ class ollamaController extends apiController{
       },
       {
         role: 'user',
-        content: FileHelper.readTextFile(__DOC_DIR__+'/chatBot/basic.md'),
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/basic.md.s', {
+          lang: this.systemSetting.lang,
+        }),
       },
       {
         role: 'user',

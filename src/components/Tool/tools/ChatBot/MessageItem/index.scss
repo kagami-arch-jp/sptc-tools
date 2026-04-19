@@ -23,11 +23,12 @@
   .message-bubble {
     max-width: 80%;
     padding: 10px 14px;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.4;
     word-wrap: break-word;
     .message-area .markdown-content{
       margin: 0;
+      font-size: 16px;
     }
   }
 }

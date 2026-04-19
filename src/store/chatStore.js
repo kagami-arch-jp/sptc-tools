@@ -11,9 +11,7 @@ import {getSubSettingStore, isReady} from './settingStore'
 export const chatSettingStore=getSubSettingStore('ChatBot')
 
 // セッション情報の管理
-const sessions = createStoreSharedState('chatBot.sessions', [
-  { id: 'default-session', title: '新しいチャット', messages: [] }
-]);
+const sessions = createStoreSharedState('chatBot.sessions', []);
 
 const userImage = createStoreSharedState('chatBot.userImage', {
   counter: 0,

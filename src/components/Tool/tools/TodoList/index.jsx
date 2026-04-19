@@ -104,8 +104,12 @@ const TodoList = () => {
                 key={task.id}
                 task={task}
                 onComplete={completeTask}
-                onTriggerConfetti={() => {
-                  confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                onTriggerConfetti={async () => {
+                  for(let i=0; i<6; i++) {
+                    confetti({ particleCount: 35, spread: 65, zIndex: 1000, origin: { y: 0.6, x:-.1 }, angle: 25+i*15 })
+                    confetti({ particleCount: 35, spread: 65, zIndex: 1000, origin: { y: 0.6, x:1.1 }, angle: 155-i*15 })
+                    await new Promise(r=>setTimeout(r, 100))
+                  }
                 }}
               />
             ))}

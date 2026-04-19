@@ -3,11 +3,11 @@ import { getMouseDelta } from '@/utils/domUtils';
 
 /**
  * リサイズロジックを管理するHook
- * 
+ *
  * @param {Function} onResize - リサイズ中のサイズ更新コールバック
  * @returns {Function} リサイズ開始関数
  */
-export const useResizable = (onResize) => {
+export const useResizable = (onResize, onResizeEnd) => {
   const startResize = useCallback((e, initialSize) => {
     e.stopPropagation();
     const startX = e.clientX;
@@ -23,6 +23,7 @@ export const useResizable = (onResize) => {
     const handleMouseUp = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      onResizeEnd()
     };
 
     document.addEventListener('mousemove', handleMouseMove);

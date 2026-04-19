@@ -64,6 +64,43 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
     bringToFront(id);
   };
 
+  const [isOwner, setIsOwner]=React.useState(false)
+
+  const resetHandler=React.useEffectEvent(()=>{
+    const MIN_WIDTH=160, MIN_HEIGHT=80
+    let width=size.width, height=size.height
+    if(size.width>innerWidth-20 || size.height>innerHeight-20) {
+      width=innerWidth-position.x-20
+      height=innerHeight-position.y-20
+      setSize({width, height})
+    }
+    if(size.width<MIN_WIDTH || size.height<MIN_HEIGHT) {
+      width=MIN_WIDTH
+      height=MIN_HEIGHT
+      setSize({width, height})
+    }
+    if(position.x<10 || position.x>innerWidth-width-10 ||
+      position.y<10 || position.y>innerHeight-height-10
+    ) {
+      setPosition(prev=>({
+        x: Math.min(innerWidth-width-10, Math.max(10, prev.x)),
+        y: Math.min(innerHeight-height-10, Math.max(10, prev.y)),
+      }))
+    }
+  })
+
+  React.useEffect(()=>{
+    window.addEventListener('resize', resetHandler)
+    return ()=>{
+      window.removeEventListener('resize', resetHandler)
+    }
+  }, [])
+
+  const updateBodyOverflow=React.useEffectEvent(()=>{
+    document.body.style.overflow=isOwner? 'hidden': 'auto'
+  })
+  React.useEffect(updateBodyOverflow, [isOwner])
+
   // ドラッグロジック
   const { startDrag } = useDraggable(
     (newx, newy) => {
@@ -72,26 +109,27 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
         y: newy
       }));
     },
-    () => {
-      setPosition(prev=>({
-        x: Math.min(innerWidth-size.width-10, Math.max(10, prev.x)),
-        y: Math.min(innerHeight-size.height-10, Math.max(10, prev.y)),
-      }))
-    }
+    resetHandler
   );
 
   // リサイズロジック
-  const { startResize } = useResizable((newWidth, newHeight) => {
-    setSize({
-      width: Math.min(innerWidth-position.x-10, Math.max(200, newWidth)),
-      height: Math.min(innerHeight-position.y-10, Math.max(150, newHeight))
-    });
-  });
+  const { startResize } = useResizable(
+    (newWidth, newHeight) => {
+      setSize({
+        width: newWidth,
+        height: newHeight,
+      });
+    },
+    resetHandler
+  );
 
   // 外部からisOpenが変わった時の制御
   useEffect(() => {
     if (isOpen) {
       handleWindowFocus();
+      updateBodyOverflow();
+    }else{
+      document.body.style.overflow='auto'
     }
   }, [isOpen, id]);
 
@@ -102,6 +140,7 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
         `mini-win-container`,
         isOpen ? 'opened': 'closed',
         isDarkMode && 'dark-mode',
+        isOwner && 'owner-win',
       )}
       style={isOpen || isBrowser? {
         left: position.x,
@@ -115,14 +154,7 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
       {isOpen || isBrowser? <><div
         className="mini-win-titlebar"
         onDoubleClick={e=>{
-          setSize({
-            width: innerWidth-20,
-            height: innerHeight-20,
-          })
-          setPosition({
-            x: 10,
-            y: 10,
-          })
+          setIsOwner(!isOwner)
         }}
         onMouseDown={(e) => {
           handleWindowFocus(id)

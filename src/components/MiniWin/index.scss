@@ -11,6 +11,13 @@
   user-select: none;
   transition: transform .3s ease, opacity .2s ease;
 
+  &.owner-win{
+    left: 0!important;
+    top: 0!important;
+    width: 100%!important;
+    height: 100%!important;
+  }
+
   &.opened {
     opacity: 1;
     transform: scale(1);

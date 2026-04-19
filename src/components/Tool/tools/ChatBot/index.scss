@@ -4,16 +4,18 @@
   height: 100%;
   overflow: hidden;
   background-color: #fff;
+  flex-direction: column;
 
   *{
     user-select: text!important;
   }
 
   .sidebar {
-    width: 260px;
+    width: 100%;
+    flex-direction: row;
     border-right: 1px solid #ddd;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     background-color: #f8f8f8;
 
     .sidebar-header {
@@ -40,6 +42,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow: hidden;
 
     .chat-header {
       padding: 12px 20px;
