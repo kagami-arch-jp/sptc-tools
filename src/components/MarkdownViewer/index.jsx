@@ -18,6 +18,12 @@ import { copyToClipboard } from '@/utils/base';
 import CodeBlock from './CodeBlock';
 import './index.scss';
 
+function fix(content) {
+  return content.replace(/(.)\*\*(.+?)\*\*\s{0,1}/g, (_, b, txt)=>{
+    return `${b===' '? b: (b+' ')}**${txt}** `
+  })
+}
+
 const MarkdownViewer = ({ className, content, copyAll = false, copyCode = false }) => {
   const isDarkMode = darkMode.useValue();
   const [copied, setCopied] = useState(false);
@@ -65,7 +71,7 @@ const MarkdownViewer = ({ className, content, copyAll = false, copyCode = false 
             }
           }}
         >
-          {content}
+          {fix(content)}
         </ReactMarkdown>
       </div>
     </div>
