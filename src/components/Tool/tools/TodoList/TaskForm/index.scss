@@ -26,6 +26,8 @@
     transition: border-color 0.2s;
     width: 100%;
     box-sizing: border-box;
+    field-sizing: content;
+    max-height: 10lh;
 
     &:focus {
       border-capacity: 1px;

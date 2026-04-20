@@ -13,7 +13,7 @@ const TaskForm = ({ text, setText, color, setColor, onAdd, colors }) => {
   return (
     <div className="task-form">
       <div className="input-group">
-        <input
+        <textarea
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}

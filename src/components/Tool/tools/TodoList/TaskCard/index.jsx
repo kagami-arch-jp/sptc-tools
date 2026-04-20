@@ -68,12 +68,12 @@ const TaskCard = ({ task, onComplete, onTriggerConfetti }) => {
         setIsEditing(true);
       }}>
         {isEditing ? (
-          <input
+          <textarea
             className="edit-input"
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
             onBlur={handleSaveEdit}
-            onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
+            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSaveEdit()}
             autoFocus
           />
         ) : (
