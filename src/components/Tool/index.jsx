@@ -23,7 +23,7 @@ import ImageGenerator from './tools/ImageGenerator'
 import Writer from './tools/Writer'
 import Reader from './tools/Reader'
 import TodoList from './tools/TodoList'
-import Reviewer from './tools/Reviewer'
+
 import ChatBot from './tools/ChatBot'
 import {chatSettingStore} from '@/store/chatStore'
 
@@ -64,15 +64,8 @@ const TOOLS_DATA = [
     Component: <TodoList />,
   },
   {
-    id: 6,
-    name: 'Answer',
-    description: 'ドキュメントについて質問を回答する',
-    image: *IMG('./imgs/reviewer.png'),
-    Component: <Reviewer />,
-  },
-  {
     id: 7,
-    name: 'ChatBot',
+    name: 'Mr.ChatBot',
     description: '普通な会話練習',
     image: *IMG('./imgs/chatBot.png'),
     Component: <ChatBot />,
