@@ -16,6 +16,7 @@ const sessions = createStoreSharedState('chatBot.sessions', []);
 const userImage = createStoreSharedState('chatBot.userImage', {
   counter: 0,
   profile: '',
+  stacks: [],
 })
 
 // 現在選択されているセッションID
@@ -23,6 +24,14 @@ const currentSessionId = createStoreSharedState('chatBot.currentSessionId', 'def
 
 function newId() {
   return (Date.now()+Math.random()).toString(36)
+}
+
+async function tryCallModal(func, msgs) {
+  let str=''
+  await func(msgs, txt=>{
+    str+=txt
+  })
+  return str
 }
 
 const chatStore = {
@@ -46,6 +55,13 @@ const chatStore = {
 
   // セッション削除
   deleteSession: (id) => {
+    const {summariedMessages}=chatStore.getSessionById(id)
+    if(summariedMessages.length>1) {
+      userImage.setValue(prev=>{
+        prev.stacks=[...(prev.stacks || []), summariedMessages]
+        return {...prev}
+      })
+    }
     sessions.setValue(prev => prev.filter(s => s.id !== id));
     if (currentSessionId.getValue() === id) {
       // 削除されたセッションが現在選択中なら、最初のセッションか新規へ
@@ -122,9 +138,11 @@ const chatStore = {
         updateMessageById(s.messages)
         const _msg=updateMessageById(s.summariedMessages)
         if(!_msg.loading) {
-          chatStore.checkSummaryMessage(sessionId).catch(e=>{
-            console.log('failed to summarize', e)
-          })
+          chatStore.checkSummaryMessage(sessionId).
+            then(()=>chatStore.checkUserImage(sessionId)).
+            catch(e=>{
+              console.log('failed to summarize', e)
+            })
         }
         return { ...s, messages: [...s.messages] };
       }
@@ -144,49 +162,64 @@ const chatStore = {
     })
   },
 
-  checkSummaryMessage: async (sessionId, maxOriginalLen=5, maxSummarizedLen=5, updateUserImageCount=5)=> {
+  checkSummaryMessage: async (sessionId, maxOriginalLen=5, maxSummarizedLen=5)=> {
     const {summariedMessages}=chatStore.getSessionById(sessionId)
     const summarized=summariedMessages.filter(x=>x.summarized)
     const original=summariedMessages.filter(x=>!x.summarized)
-    let cutted=null
-    if(original.length>maxOriginalLen) {
-      cutted=original.splice(0, maxOriginalLen)
-    }else if(summarized.length>maxSummarizedLen) {
-      cutted=summarized.splice(0, maxSummarizedLen)
-    }
-    if(cutted) {
-      let str=''
-      await summaryMessage(cutted, txt=>{
-        str+=txt
-      })
+
+    function updateSummary(sum=[], ori=[]) {
       chatStore.updateSessionById(sessionId, session=>{
         session.summariedMessages=[
+          ...sum,
           ...summarized,
-          {role: 'system', content: str, summarized: true},
+          ...ori,
           ...original
-        ]
+        ].filter(Boolean)
         return session
       })
     }
 
+    let cutted=null
+    if(original.length>maxOriginalLen) {
+      cutted=original.splice(0, maxOriginalLen)
+      const str=await tryCallModal(summaryMessage, cutted)
+      updateSummary([], str?
+        [{role: 'system', content: `<Summary>\n${str}\n</Summary>`, summarized: true}]:
+        cutted
+      )
+    }else if(summarized.length>maxSummarizedLen) {
+      cutted=summarized.splice(0, maxSummarizedLen)
+      const str=await tryCallModal(summaryMessage, cutted)
+      updateSummary(str?
+        [{role: 'system', content: `<Summary>\n${str}\n</Summary>`, summarized: true}]:
+        cutted
+      )
+    }
+  },
+  checkUserImage: async (sessionId, updateUserImageCount=5)=>{
     userImage.setValue(prev=>{
-      const {summariedMessages}=chatStore.getSessionById(sessionId)
-      if(summariedMessages.length<3) return prev
-      prev.counter=(prev.counter+1)%updateUserImageCount
-      if(!prev.counter) {
-        let profile=''
-        updateUserImage([
-          ...summariedMessages,
-          {role: 'system', content: userImage.getValue().profile},
-        ].filter(c=>c.content), txt=>{
-          profile+=txt
-        }).then(()=>{
-          userImage.setValue(prev=>({...prev, profile: `<UserImage>\n${profile}\n</UserImage>`}))
-        })
-      }
-      return prev
+      return {...prev, counter: (prev.counter+1)%updateUserImageCount}
     })
+    const {counter, stacks}=userImage.getValue()
+    const [summarizedMessages, force]=(()=>{
+      const {summariedMessages}=chatStore.getSessionById(sessionId)
+      if(summariedMessages.length>3) return [summariedMessages, false]
+      if(stacks.length>0) return [stacks[0], true]
+    })() || []
+    if(!summarizedMessages) return;
+    if(counter && !force) return;
 
+    const profile=await tryCallModal(updateUserImage, [
+      ...summarizedMessages,
+      {role: 'system', content: userImage.getValue().profile},
+    ].filter(c=>c.content))
+
+    if(profile) {
+      userImage.setValue(prev=>{
+        prev.stacks=prev.stacks.filter(v=>v!==summarizedMessages)
+        return {...prev, profile: `<UserImage>\n${profile}\n</UserImage>`}
+      })
+    }
   },
 
   // セッション切り替え

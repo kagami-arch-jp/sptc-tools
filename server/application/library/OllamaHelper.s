@@ -69,7 +69,7 @@ class OllamaHelper{
       onData: (err, isEnd, part) => {
         if (err) {
           console.log({ err: err.message });
-          echo('Error: '+err.message)
+          // echo('Error: '+err.message)
         } else if (part) {
           const { content, thinking } = part.message;
           if(thinking) {
