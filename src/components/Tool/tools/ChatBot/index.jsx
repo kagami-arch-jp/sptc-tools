@@ -59,11 +59,8 @@ const ChatBot = () => {
                   editCurrentTitle?
                     <input ref={titleRef} className='session-title-edit' value={currentSession.title} onBlur={()=>{
                       setEditCurrentTitle(false)
-                    }} onKeyDown={e=>{
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        setEditCurrentTitle(false)
-                      }
+                    }} onBlur={e=>{
+                      setEditCurrentTitle(false)
                     }} onChange={e=>{
                       chatStore.updateSessionTitle(currentSessionId, e.target.value)
                     }} />:
