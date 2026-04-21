@@ -26,7 +26,7 @@
 | `src/components/**/子组件/` | 组件内部的子模块，同样使用 `index.jsx`/`index.scss` | 子组件文件夹同样采用 PascalCase |
 | `src/model/` | 业务模型或数据处理函数 | 文件名小写+`js`（如 `todoModel.js`） |
 | `src/store/` | 状态管理（如 `settingStore.js`、`todoStore.js`） | 文件名小写+`js`，默认导出 store 实例 |
-| `src/hooks/` | 公共hooks（如 `useAccount.js`） | 文件名小写+`js`，导出跨组件共用的hook |
+| `src/hooks/` | 公共hooks（如 `useAccount.js`） | 文件名小写+`js`，导出**跨组件**共用的hook |
 | `src/utils/` | 工具函数库 | 文件名小写+`js`（如 `debounce.js`） |
 | `src/*.jsx`、`src/*.scss` | 页面根组件或全局样式 | 文件名保持小写，使用 `App.jsx`、`App.scss` 等 |
 
@@ -61,14 +61,7 @@
   - 点击取消，将页面状态还原
 - 样式风格，如没有明确说明，请使用**苹果Human Interface Guidelines**
 - 所有组件必须提供**暗黑模式**，暗黑模式需要直接通过切换最外层元素的classname来实现
-  **暗黑模式，通过全局状态值darkMode来控制，此值默认已存在**，使用方式：
-  ```
-  import {darkMode} from "@/store/darkMode"
-
-  function App(){
-    const isDarkMode=darkMode.useValue()
-  }
-  ```
+  暗黑模式展示通过props入参实现，**请确保组件的props保留isDarkMode的参数**
 - 如果需要调用新的接口，**无需提供服务端代码，在前端方法中打印调用时的入参，然后返回mock数据**
   - 如果用户未指定接口名字和入参名，请根据需求**自拟接口名字和入参名字**
 - 组件入口文件`index.jsx`必须在顶部留下注释，jsDoc风格，包含这个组件的已完成的功能列表，创建时间，调用方式，作者
