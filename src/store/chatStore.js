@@ -7,6 +7,7 @@
 import { createStoreSharedState } from './storage';
 import { summaryMessage, sendMessage, updateUserImage } from '@/api/chatApi';
 import {getSubSettingStore, isReady} from './settingStore'
+import createSharedState from 'react-cross-component-state';
 
 export const chatSettingStore=getSubSettingStore('ChatBot')
 
@@ -17,6 +18,10 @@ const userImage = createStoreSharedState('chatBot.userImage', {
   counter: 0,
   profile: '',
   stacks: [],
+})
+
+export const botState = createSharedState({
+  isLoading: false,
 })
 
 // 現在選択されているセッションID
@@ -75,7 +80,7 @@ const chatStore = {
     sessions.setValue(prev => prev.map(s => s.id === id ? { ...s, title } : s));
   },
 
-  sendMessage: async content => {
+  _sendMessage: async content => {
     const sessionId = chatStore.currentSessionId.getValue();
 
     const session = chatStore.getSessionById(sessionId);
@@ -106,6 +111,13 @@ const chatStore = {
       loading: false,
     })
 
+  },
+  sendMessage: async content=>{
+    botState.setValue({isLoading: true})
+    try{
+      await chatStore._sendMessage(content)
+    }catch(e) {}
+    botState.setValue({isLoading: false})
   },
 
   // メッセージ追加
@@ -162,7 +174,7 @@ const chatStore = {
     })
   },
 
-  checkSummaryMessage: async (sessionId, maxOriginalLen=5, maxSummarizedLen=5)=> {
+  checkSummaryMessage: async (sessionId, maxOriginalLen=3, maxSummarizedLen=3)=> {
     const {summariedMessages}=chatStore.getSessionById(sessionId)
     const summarized=summariedMessages.filter(x=>x.summarized)
     const original=summariedMessages.filter(x=>!x.summarized)
@@ -196,7 +208,7 @@ const chatStore = {
       )
     }
   },
-  checkUserImage: async (sessionId, updateUserImageCount=5)=>{
+  checkUserImage: async (sessionId, updateUserImageCount=3)=>{
     userImage.setValue(prev=>{
       return {...prev, counter: (prev.counter+1)%updateUserImageCount}
     })

@@ -5,6 +5,11 @@ const fs=require('fs')
 
 const __FE_DOC__=__DOC_DIR__+'/codeAgent/frontend-react'
 
+function fmtTime() {
+  const t=new Date
+  return `${t.getFullYear()}/${t.getMonth()}/${t.getDate()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()} ${'日月火水木金土'[t.getDay()]}曜日`
+}
+
 class ollamaController extends apiController{
 
   _initOllama() {
@@ -69,7 +74,7 @@ class ollamaController extends apiController{
     msgs.push(
       {
         role: 'user',
-        content: 'Now is '+(new Date).toUTCString(),
+        content: 'Now is '+fmtTime(),
       },
       {
         role: 'user',
@@ -181,18 +186,6 @@ class ollamaController extends apiController{
 
   }
 
-  async answerTheContentAction() {
-    const {documentContent, question}=this.postData
-
-    if(!documentContent || !question) return;
-
-    await this._callOllamaEcho(
-      {md: __DOC_DIR__+'/answer/basic.md'},
-      {txt: `<Content>\n${documentContent}\n</Content>`},
-      {txt: `<Question>\n${question}\n</Question>`},
-    )
-  }
-
   async chatAction() {
     const {history}=this.postData
     if(!history) return;
@@ -200,7 +193,7 @@ class ollamaController extends apiController{
     const msgs=[
       {
         role: 'user',
-        content: 'Now is '+(new Date('2024-12-8')).toUTCString(),
+        content: 'Now is '+fmtTime(),
       },
       {
         role: 'user',
@@ -236,7 +229,9 @@ class ollamaController extends apiController{
     const msgs=[
       {
         role: 'user',
-        content: FileHelper.readTextFile(__DOC_DIR__+'/chatBot/userImage.md'),
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/userImage.md.s', {
+          lang: this.systemSetting.lang,
+        }),
       },
       ...history
     ]

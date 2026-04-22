@@ -43,7 +43,11 @@ class apiController{
 	}
   finish(err, ret) {
 
-		if(this.isStream) return;
+		if(this.isStream) {
+			// if(err) echo(err?.message || err)
+			// else echo('\n\ndone.')
+			return;
+		}
 
     const res={
       success: !err,
