@@ -7,7 +7,7 @@ const __FE_DOC__=__DOC_DIR__+'/codeAgent/frontend-react'
 
 function fmtTime() {
   const t=new Date
-  return `${t.getFullYear()}/${t.getMonth()}/${t.getDate()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()} ${'日月火水木金土'[t.getDay()]}曜日`
+  return `${t.getFullYear()}/${t.getMonth()+1}/${t.getDate()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()} ${'日月火水木金土'[t.getDay()]}曜日`
 }
 
 class ollamaController extends apiController{
@@ -157,14 +157,6 @@ class ollamaController extends apiController{
       width: size,
       height: size,
       steps,
-    }, (progress, image)=>{
-      if(progress) {
-        echo(JSON.stringify({progress})+'\n')
-        flush()
-      }else if(image) {
-        echo(JSON.stringify({progress: 100, image})+'\n')
-        flush()
-      }
     })
   }
 
@@ -206,8 +198,8 @@ class ollamaController extends apiController{
         content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
       },
       ...history
-    ]
-    return await helper.startStreamEcho(msgs.filter(x=>x.content))
+    ].filter(x=>x.content)
+    return await helper.startStreamEcho(msgs)
   }
   async chatSummaryAction() {
     const {history}=this.postData
@@ -219,8 +211,8 @@ class ollamaController extends apiController{
         content: FileHelper.readTextFile(__DOC_DIR__+'/chatBot/summary.md'),
       },
       ...history
-    ]
-    return await helper.startStreamEcho(msgs.filter(x=>x.content))
+    ].filter(x=>x.content)
+    return await helper.startStreamEcho(msgs)
   }
   async chatUserImageAction() {
     const {history}=this.postData
@@ -234,8 +226,8 @@ class ollamaController extends apiController{
         }),
       },
       ...history
-    ]
-    return await helper.startStreamEcho(msgs.filter(x=>x.content))
+    ].filter(x=>x.content)
+    return await helper.startStreamEcho(msgs)
   }
 
 

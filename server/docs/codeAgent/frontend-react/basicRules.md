@@ -52,7 +52,9 @@
 - **禁止引用假设存在的文件**
 - 代码文件头部的注释，必须有 author，description，created。
 - 常量（如 `STORAGE_KEY`）使用全大写加下划线。
-- 函数、变量采用 **camelCase**；组件采用 **PascalCase**。
+- JS的函数、变量采用 **camelCase**；组件采用 **PascalCase**。
+- 不要滥用封装，**如非可复用场景，不要封装函数**
+- 可复用的js方法，必须写到通用方法里，然后从通用方法里引用
 - css的类名等命名，统一使用**小写字母**与**中横线**组合，例如 **.user-face**，禁止出现下划线
 - **css禁止使用rem单位**
 - css布局请使用flexible

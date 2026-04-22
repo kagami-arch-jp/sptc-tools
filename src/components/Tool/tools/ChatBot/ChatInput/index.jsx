@@ -5,20 +5,18 @@
  */
 
 import React, { useState } from 'react';
-import chatStore, {botState} from '@/store/chatStore';
+import chatStore from '@/store/chatStore';
 import './index.scss';
 
 const ChatInput = ({ sessionId }) => {
   const [text, setText] = useState('');
-  const {isLoading}=botState.useValue()
+  const isLoading=chatStore.useSessionById(sessionId)?.isLoading
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!text.trim() || isLoading) return;
     const content = text.trim();
     setText('');
-    try{
-      await chatStore.sendMessage(content)
-    }catch(e) {}
+    chatStore.sendMessage(content)
   };
 
   const handleKeyDown = (e) => {

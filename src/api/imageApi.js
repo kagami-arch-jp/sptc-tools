@@ -1,4 +1,4 @@
-import { fetchStream, resolveFragment } from '@/utils/fetch';
+import { fetchStream } from '@/utils/fetch';
 
 import settingStore, {getCommonParams} from '@/store/settingStore';
 
@@ -12,8 +12,7 @@ export async function generateImage(params, onProgress) {
   await fetchStream('/ollama/generateImage', {
     ...params,
     ...getCommonParams(true)
-  }, resolveFragment(fragment=>{
-    const p=JSON.parse(fragment)
+  }, p=>{
     onProgress(p.progress, p.image)
-  }))
+  })
 }

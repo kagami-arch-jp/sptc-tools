@@ -73,7 +73,7 @@ export default function CodeAgent() {
     clear()
     historyStore.addHistory(inputtext)
     try {
-      await analyzeRequirement(inputtext, (txt, d)=>{
+      await analyzeRequirement(inputtext, ({content: txt})=>{
         setResult(x=>x+txt)
       });
     } catch (e) {
@@ -89,7 +89,7 @@ export default function CodeAgent() {
     clear()
     historyStore.addHistory(inputtext)
     try {
-      await generateCode(inputtext, (txt, d)=>{
+      await generateCode(inputtext, ({content: txt})=>{
         setResult(x=>x+txt)
       });
       setResult(result=>{

@@ -17,13 +17,11 @@ import {openById} from '@/store/modalButton'
 import SizeObserver from '@/components/SizeObserver'
 
 const ChatBot = () => {
-  const currentSessionId = chatStore.currentSessionId.useValue();
-  const sessions = chatStore.sessions.useValue();
-  const currentSession = sessions.find(s => s.id === currentSessionId);
+  const {sessions, currentSessionId} = chatStore.useValue()
+  const currentSession=chatStore.useSessionById(currentSessionId)
 
   const [editCurrentTitle, setEditCurrentTitle]=React.useState(false)
   const titleRef=React.useRef(null)
-
   React.useEffect(()=>{
     if(editCurrentTitle) {
       titleRef.current?.focus()

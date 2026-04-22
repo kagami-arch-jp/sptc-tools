@@ -34,12 +34,12 @@ export default function Writer() {
       txt,
       role: ruleRef.current.value.trim(),
       queryType,
-    }, t=>{
+    }, ({content})=>{
       setSuggestion(prevState=>{
         if(prevState.timestamp>timestamp) return prevState
         return {
           ...prevState,
-          res: prevState.res+t,
+          res: prevState.res+content,
         }
       })
     })

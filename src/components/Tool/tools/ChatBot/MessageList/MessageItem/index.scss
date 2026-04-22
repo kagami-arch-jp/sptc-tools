@@ -2,6 +2,14 @@
   display: flex;
   width: 100%;
 
+  &.speaking{
+    .message-bubble{
+      border: 1px solid #f99;
+      box-shadow: 0 0 10px #f99!important;
+      transform: translateY(-3px)!important;
+    }
+  }
+
   &.user {
     justify-content: flex-end;
     .message-bubble {
@@ -26,6 +34,12 @@
     font-size: 16px;
     line-height: 1.4;
     word-wrap: break-word;
+    cursor: pointer;
+    transition: .3s ease;
+    &:hover{
+      box-shadow: 0 0 10px #ddd;
+      transform: translateY(-3px);
+    }
     .message-area .markdown-content{
       margin: 0;
       font-size: 16px;

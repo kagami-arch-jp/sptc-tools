@@ -10,15 +10,14 @@ import './index.scss';
 import Dialog from '@/components/Dialog'
 
 const SessionList = () => {
-  const sessions = chatStore.sessions.useValue();
-  const currentId = chatStore.currentSessionId.useValue();
+  const {sessions, currentSessionId} = chatStore.useValue();
 
   return (
     <div className="chat-session-list">
       {sessions.map(session => (
         <div
           key={session.id}
-          className={`chat-session-item ${currentId === session.id ? 'active' : ''}`}
+          className={`chat-session-item ${currentSessionId === session.id ? 'active' : ''}`}
           onClick={() => chatStore.setCurrentSession(session.id)}
         >
           <span className="session-name">{session.title}</span>

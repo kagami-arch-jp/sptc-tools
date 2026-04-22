@@ -54,13 +54,16 @@ class OllamaHelper{
     delete Application.OLLAMA_CLIENTS[this.key]
   }
   async startStreamEcho(msg) {
-    let res='', think=true
+    // let res='', think=true
+    let hasError=false
+    let think=true
     await this.callApi('chat', {
       query: {
         stream: true,
         model: this.model,
         messages: msg,
         think: this.think,
+        keep_alive: "2h",
         options: {
           temperature: this.temperature,
           num_ctx: this.contextLength,
@@ -69,6 +72,8 @@ class OllamaHelper{
       onData: (err, isEnd, part) => {
         if (err) {
           console.log({ err: err.message });
+          echo(JSON.stringify({err: err.message})+'\n')
+          hasError=true
           // echo('Error: '+err.message)
         } else if (part) {
           const { content, thinking } = part.message;
@@ -79,18 +84,23 @@ class OllamaHelper{
               think=false
               console.log('\n')
             }
-            echo(content)
+            // echo(content)
+            echo(JSON.stringify({content})+'\n')
             flush()
             process.stdout.write(content)
-            res+=content
+            // res+=content
           }
         }
       },
     })
+    if(!hasError) {
+      echo(JSON.stringify({done: true})+'\n')
+    }
 
-    return res
+    // return res
   }
-  async startGenerateImage(option, onData) {
+  async startGenerateImage(option) {
+    let hasError=false
     await this.callApi('generate', {
       query: {
         stream: true,
@@ -103,13 +113,25 @@ class OllamaHelper{
       onData: (err, isEnd, part) => {
         if (err) {
           console.log({ err: err.message });
-          echo('Error: '+err.message)
+          // echo('Error: '+err.message)
+          echo(JSON.stringify({err: err.message})+'\n')
+          hasError=true
         } else if (part) {
           console.log(part)
           const {total, completed, image}=part
-          onData(Math.round(completed/total*100 || 0), image)
+          // onData(Math.round(completed/total*100 || 0), image)
+          const progress=Math.round(completed/total*100 || 0)
+          if(!image) {
+            echo(JSON.stringify({progress})+'\n')
+          }else{
+            echo(JSON.stringify({progress: 100, image})+'\n')
+          }
+          flush()
         }
       },
     })
+    if(!hasError) {
+      echo(JSON.stringify({done: true})+'\n')
+    }
   }
 }

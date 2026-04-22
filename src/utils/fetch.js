@@ -58,7 +58,14 @@ export async function fetchStream(action, data, onData) {
 
     const reader = response.body.getReader()
     const dec=new TextDecoder()
-    for(let head='', skip=false, all='';;) {
+    let isSuccessDone=false
+    const ctx={}
+    const resolver=resolveFragment(fragment=>{
+      const p=JSON.parse(fragment)
+      if(p.done===true) isSuccessDone=true
+      else onData(p, ctx)
+    })
+    for(let head='', skip=false;;) {
       const {done, value}=await reader.read()
       if(value) {
         const txt=dec.decode(value)
@@ -66,17 +73,17 @@ export async function fetchStream(action, data, onData) {
           head+=txt
           if(head.length>=4096) {
             const x=head.substr(4096)
-            all+=x
-            onData(x, all)
+            resolver(x)
             skip=true
           }
         }else{
-          all+=txt
-          onData(txt, all)
+          resolver(txt)
         }
       }
       if(done) break
     }
+    if(!isSuccessDone) throw new Error('failed to load the end of stream')
+    return ctx
   }catch(e) {
     throw e
   }finally{
@@ -93,7 +100,7 @@ export async function fetchStream(action, data, onData) {
  e('2csdc\n')
  e('3cds\n')
  */
-export function resolveFragment(fn) {
+function resolveFragment(fn) {
   let stack=''
   return txt=>{
     stack+=txt
