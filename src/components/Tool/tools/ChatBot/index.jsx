@@ -68,12 +68,8 @@ const ChatBot = () => {
                 }
               </div>
             </header>
-            <div className="chat-content">
-              <MessageList sessionId={currentSession.id} />
-            </div>
-            <div className="chat-input-area">
-              <ChatInput sessionId={currentSession.id} />
-            </div>
+            <MessageList sessionId={currentSession.id} />
+            <ChatInput sessionId={currentSession.id} />
           </>
         ) : (
           <div className="empty-state">セッションを選択してください</div>

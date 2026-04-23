@@ -9,7 +9,7 @@
  * 作成日: 2026-04-13
  */
 import React, { useState } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+//import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import duotoneLight from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-light';
 import duotoneForest from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-forest';
 

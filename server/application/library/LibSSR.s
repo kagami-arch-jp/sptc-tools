@@ -41,6 +41,8 @@ class LibSSR{
       WebSocket: NOOP,
       setInterval: NOOP,
       setTimeout: NOOP,
+			clearTimeout: NOOP,
+			clearInterval: NOOP,
       self,
 
 			queueMicrotask,

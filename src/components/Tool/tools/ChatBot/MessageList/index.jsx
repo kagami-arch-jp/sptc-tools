@@ -15,7 +15,7 @@ const MessageList = ({ sessionId }) => {
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.parentNode.scrollTop = scrollRef.current.parentNode.scrollHeight;
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [session]);
 

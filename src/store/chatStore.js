@@ -18,6 +18,18 @@ function newId() {
 const chatStore=createStoreSharedState('chatBot-v2', {
   sessions: [],
   currentSessionId: '',
+}, ()=>{
+  window.AA=chatStore
+  chatStore.setValue(prev=>({
+    ...prev,
+    sessions: [...prev.sessions.map(session=>{
+      session.isLoading=false
+      session.messages.map(msg=>{
+        msg.isLoading=false
+      })
+      return {...session}
+    })]
+  }))
 });
 
 export default chatStore
@@ -90,6 +102,7 @@ chatStore.sendMessage=async (content)=>{
   const sessionId=chatStore.getValue().currentSessionId
   const session=chatStore.getSessionById(sessionId)
   if (!session || !content.trim()) return;
+  let msgId=undefined
 
   try{
 
@@ -104,9 +117,8 @@ chatStore.sendMessage=async (content)=>{
       {role: 'system', content: userImage.getValue().profile},
       ...session.zipped.map(m => ({ role: m.role, content: m.content }))
     ].filter(c=>c.content)
-    if(!isStartMessage) history.push(userMsg)
 
-    const msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true })
+    msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true })
     chatStore.updateSessionById(sessionId, {isLoading: true})
     await sendMessage(history, ({content: txt, err}, ctx)=>{
       if(!txt) return;
@@ -122,10 +134,17 @@ chatStore.sendMessage=async (content)=>{
     chatStore.updateSessionById(sessionId, {isLoading: false})
 
     await chatStore.zipMessages(sessionId)
-    await chatStore.updateUserImage()
+    await chatStore.checkUserImage(sessionId)
 
   }catch(e) {
     console.log('send message error', e)
+  }finally{
+    chatStore.updateMessage(sessionId, msgId, {
+      isLoading: false,
+    })
+    chatStore.updateSessionById(sessionId, {
+      isLoading: false,
+    })
   }
 }
 
@@ -173,39 +192,22 @@ chatStore.updateSessionById=(sessionId, nextSession)=>{
 }
 
 chatStore.zipMessages=async (sessionId, option)=> {
-  const {zipped}=chatStore.getSessionById(sessionId)
-  const sum=zipped.filter(x=>x.isSummary)
-  const raw=zipped.filter(x=>!x.isSummary)
-  const {
-    MIN_RAW_LEN=4,
-    ZIP_COUNT=5,
-  }=option
-  let zip=null, isRaw=undefined
-  if(raw.length-MIN_RAW_LEN>=ZIP_COUNT) {
-    zip=raw.splice(0, ZIP_COUNT)
-    isRaw=true
-  }else if(sum.length>=ZIP_COUNT) {
-    zip=sum.splice(0, ZIP_COUNT)
-    isRaw=false
-  }
-
-  if(!zip) return;
+  const {zipped}=chatStore.getSessionById(sessionId) || {}
+  if(!zipped) return;
+  const {MIN_RAW_LEN=2, ZIP_COUNT=5}=option || {}
+  if(zipped.length < MIN_RAW_LEN+ZIP_COUNT) return;
+  const zip=zipped.slice(0, ZIP_COUNT)
+  const keep=zipped.slice(ZIP_COUNT)
   const {str: summary}=await summaryMessage(zip, ({content: txt, err}, ctx)=>{
     ctx.str=ctx.str || ''
     ctx.str+=txt || ''
   })
-  chatStore.setValue(prev=>({
-    ...prev,
-    sessions: prev.sessions.map(session=>{
-      if(session.id!==sessionId) return session
-      return [
-        !isRaw && {role: 'system', content: `<Summary>\n${summary}\n</Summary>`, isSummary: true},
-        ...sum,
-        isRaw && {role: 'system', content: `<Summary>\n${summary}\n</Summary>`, isSummary: true},
-        ...raw
-      ].filter(Boolean)
-    }),
-  }))
+  chatStore.updateSessionById(sessionId, session=>{
+    session.zipped=[
+      {role: 'system', content: `<Summary>\n${summary}\n</Summary>`},
+      ...keep
+    ].filter(Boolean)
+  })
 }
 
 chatStore.deleteMessage=(sessionId, msgId)=>{
@@ -241,7 +243,7 @@ chatStore.checkUserImage=async (sessionId, updateUserImageCount=3)=>{
       stacks.unshift(zipped)
     }
   }else{
-    const {zipped}=chatStore.getSessionById(sessionId)
+    const {zipped}=chatStore.getSessionById(sessionId) || {}
     if(zipped.length<3) return;
     try{
       const newProfile=await _generate(zipped)
