@@ -19,7 +19,6 @@ const chatStore=createStoreSharedState('chatBot-v2', {
   sessions: [],
   currentSessionId: '',
 }, ()=>{
-  window.AA=chatStore
   chatStore.setValue(prev=>({
     ...prev,
     sessions: [...prev.sessions.map(session=>{
@@ -229,7 +228,9 @@ chatStore.checkUserImage=async (sessionId, updateUserImageCount=3)=>{
       ctx.newProfile=ctx.newProfile || ''
       ctx.newProfile+=txt || ''
     })
-    return newProfile
+    const _newProfile=newProfile.match(/<UserImage>\s*([\s\S]+?)\s*<\/UserImage>|$/)[1] || ''
+    if(!_newProfile) throw new Error('failed to update userImage')
+    return `<UserImage>\n${_newProfile}\n</UserImage>`
   }
   if(stacks.length) {
     const zipped=stacks.shift()
@@ -237,7 +238,7 @@ chatStore.checkUserImage=async (sessionId, updateUserImageCount=3)=>{
       const newProfile=await _generate(zipped)
       userImage.setValue(prev=>{
         prev.stacks=prev.stacks.filter(v=>v!==zipped)
-        return {...prev, profile: `<UserImage>\n${newProfile}\n</UserImage>`}
+        return {...prev, profile: newProfile}
       })
     }catch(e) {
       stacks.unshift(zipped)
@@ -248,7 +249,7 @@ chatStore.checkUserImage=async (sessionId, updateUserImageCount=3)=>{
     try{
       const newProfile=await _generate(zipped)
       userImage.setValue(prev=>{
-        return {...prev, profile: `<UserImage>\n${newProfile}\n</UserImage>`}
+        return {...prev, profile: newProfile}
       })
     }catch(e) {}
   }

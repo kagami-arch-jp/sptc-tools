@@ -14,6 +14,7 @@ const MessageList = ({ sessionId }) => {
   const session = chatStore.useSessionById(sessionId)
 
   useEffect(() => {
+    if (!session.isLoading) return;
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -21,13 +22,11 @@ const MessageList = ({ sessionId }) => {
 
   if (!session) return null;
 
-  return (
-    <div className="message-list" ref={scrollRef}>
-      {session.messages.map((msg, idx) => (
-        <MessageItem key={idx} message={msg} sessionId={sessionId} />
-      ))}
-    </div>
-  );
+  return <div className="message-list" ref={scrollRef}>
+    {session.messages.map((msg, idx) => (
+      <MessageItem key={idx} message={msg} sessionId={sessionId} />
+    ))}
+  </div>
 };
 
 export default MessageList;
