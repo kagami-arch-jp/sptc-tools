@@ -91,6 +91,8 @@ const common = (isServer)=>({
         exclude: /node_modules/,
       },
       {
+        test: /\.(jsx?)$/,
+        exclude: /node_modules/,
         loader: 'sptc/dist/webpack.loader.js',
         options: {
           file: path.resolve(__dirname, 'sptc.inject.js'),

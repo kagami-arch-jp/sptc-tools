@@ -215,7 +215,7 @@ chatStore.deleteMessage=(sessionId, msgId)=>{
   })
 }
 
-chatStore.checkUserImage=async (sessionId, updateUserImageCount=3)=>{
+chatStore.checkUserImage=async (sessionId, updateUserImageCount=2)=>{
   userImage.setValue(prev=>{
     return {...prev, counter: (prev.counter+1)%updateUserImageCount}
   })
@@ -243,7 +243,7 @@ chatStore.checkUserImage=async (sessionId, updateUserImageCount=3)=>{
     }catch(e) {
       stacks.unshift(zipped)
     }
-  }else{
+  }else if(counter===0) {
     const {zipped}=chatStore.getSessionById(sessionId) || {}
     if(zipped.length<3) return;
     try{

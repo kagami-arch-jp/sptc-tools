@@ -13,12 +13,21 @@ const MessageList = ({ sessionId }) => {
   const scrollRef = useRef(null)
   const session = chatStore.useSessionById(sessionId)
 
-  useEffect(() => {
-    if (!session.isLoading) return;
+  function scrollToBottom() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
+  }
+
+  useEffect(() => {
+    if (!session.isLoading) return;
+    scrollToBottom()
   }, [session]);
+
+  useEffect(() => {
+    if (scrollRef.current?.scrollTop>0) return;
+    scrollToBottom()
+  }, [session.id]);
 
   if (!session) return null;
 

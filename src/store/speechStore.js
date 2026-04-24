@@ -13,12 +13,19 @@ function support() {
   return window.speechSynthesis && true
 }
 
+function fix(txt) {
+  return txt
+    .replace(/AI/gi, 'A I')
+    .replace(/[←→]/g, ' ')
+    .replace(/[〇△]/g, 'まる')
+}
+
 speechStore.speak=async (lang, text, id)=>{
   if(!support()) return;
   speechStore.setValue({isSpeaking: true, id})
   const current=await new Promise(resolve=>{
     const synth = window.speechSynthesis;
-    const utter = new SpeechSynthesisUtterance(text);
+    const utter = new SpeechSynthesisUtterance(fix(text));
     utter.lang = lang || 'ja-JP'
     utter.voice=window.speechSynthesis.getVoices().filter(x=>x.lang=='ja-JP' && x.name.match(/o-ren|google/i))[0]
     speaker.current=synth
