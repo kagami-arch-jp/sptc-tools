@@ -24,6 +24,35 @@
     }
   }
 
+  .voice-btn {
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: none;
+    background-color: #f5f5f7;
+    color: #666;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #e5e5ea;
+    }
+
+    &.recording {
+      background-color: #ff3b30;
+      color: white;
+      animation: pulse 1s infinite;
+    }
+  }
+
   .send-btn {
     padding: 8px 16px;
     border-radius: 20px;
@@ -46,6 +75,28 @@
 
     &.loading {
       background-color: #ccc;
+    }
+  }
+}
+
+.dark-mode {
+  .chat-input-container {
+    background: #1c1c1e;
+    border-top-color: #38383a;
+
+    .chat-textarea {
+      border-color: #38383a;
+      color: #fff;
+      background: #2c2c2e;
+    }
+
+    .voice-btn {
+      background-color: #2c2c2e;
+      color: #8e8e93;
+
+      &:hover:not(:disabled) {
+        background-color: #38383a;
+      }
     }
   }
 }

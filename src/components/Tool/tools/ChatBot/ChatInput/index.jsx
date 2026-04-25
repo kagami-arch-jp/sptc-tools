@@ -1,16 +1,84 @@
 /**
  * @file ChatInput Component
- * @description テキスト入力と送信ボタン
+ * @description テキスト入力と送信ボタン、音声入力
  * @create 2026-04-18
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import chatStore from '@/store/chatStore';
+import { chatSettingStore } from '@/store/chatStore';
 import './index.scss';
+
+const languageMap = {
+  '日本語': 'ja-JP',
+  'English': 'en-US',
+  '中文': 'zh-CN',
+};
 
 const ChatInput = ({ sessionId }) => {
   const [text, setText] = useState('');
-  const isLoading=chatStore.useSessionById(sessionId)?.isLoading
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef(null);
+  const isLoading = chatStore.useSessionById(sessionId)?.isLoading;
+  const languageSetting = chatSettingStore.useValue()?.language || '日本語';
+  const recognitionLanguage = languageMap[languageSetting] || 'ja-JP';
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = recognitionLanguage;
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          transcript += event.results[i][0].transcript;
+        }
+      }
+      if (transcript) {
+        setText(prev => prev + transcript);
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setIsRecording(false);
+    };
+
+    recognition.onend = () => {
+      // setIsRecording(false);
+    };
+
+    recognitionRef.current = recognition;
+  }, [recognitionLanguage]);
+
+  useEffect(() => {
+    if (recognitionRef.current && recognitionRef.current.lang !== recognitionLanguage) {
+      recognitionRef.current.lang = recognitionLanguage;
+    }
+  }, [recognitionLanguage]);
+
+  const handleStartRecording = () => {
+    if (!recognitionRef.current || isLoading) return;
+    try {
+      recognitionRef.current.start();
+      setIsRecording(true);
+    } catch (e) {
+      console.error('Failed to start recognition:', e);
+    }
+  };
+
+  const handleStopRecording = () => {
+    if (!recognitionRef.current) return;
+    recognitionRef.current.stop();
+    setIsRecording(false);
+  };
 
   const handleSend = () => {
     if (!text.trim() || isLoading) return;
@@ -28,6 +96,14 @@ const ChatInput = ({ sessionId }) => {
 
   return (
     <div className="chat-input-container">
+      <button
+        className={`voice-btn ${isRecording ? 'recording' : ''}`}
+        onClick={isRecording ? handleStopRecording : handleStartRecording}
+        disabled={isLoading}
+        title={isRecording ? '音声入力を終了' : '音声入力'}
+      >
+        {isRecording ? '■' : '🎤'}
+      </button>
       <textarea
         className="chat-textarea"
         value={text}
