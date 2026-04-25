@@ -7,13 +7,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import chatStore from '@/store/chatStore';
 import { chatSettingStore } from '@/store/chatStore';
+import {languageMap} from '@/store/settingStore'
 import './index.scss';
-
-const languageMap = {
-  '日本語': 'ja-JP',
-  'English': 'en-US',
-  '中文': 'zh-CN',
-};
 
 const ChatInput = ({ sessionId }) => {
   const [text, setText] = useState('');
@@ -31,16 +26,9 @@ const ChatInput = ({ sessionId }) => {
     const recognition = new SpeechRecognition();
     recognition.lang = recognitionLanguage;
     recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
 
     recognition.onresult = (event) => {
-      let transcript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          transcript += event.results[i][0].transcript;
-        }
-      }
+      let transcript = event.results[event.results.length - 1][0].transcript
       if (transcript) {
         setText(prev => prev + transcript);
       }

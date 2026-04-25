@@ -13,18 +13,16 @@ import chatStore from '@/store/chatStore'
 import {cls} from '@/utils/css'
 import './index.scss';
 
-import speechStore from '@/store/speechStore'
+import * as Speaker from '@/utils/speech'
 
 const MessageItem = ({ message, sessionId }) => {
   const isUser = message.role === 'user';
-
-  const {isSpeaking, id}=speechStore.useValue()
 
   return (
     <div className={cls(
       `message-item`,
       isUser ? 'user' : 'assistant',
-      isSpeaking && id===message.id && 'speaking',
+      message.isSpeaking && 'speaking',
       !message.isLoading && 'ready',
     )}>
       <div className="message-bubble">
@@ -32,15 +30,11 @@ const MessageItem = ({ message, sessionId }) => {
           <Spinner />
         ) : <div className='btn-area'>
           <Button size="small" status="normal" onClick={()=>{
-            if(isSpeaking) {
-              speechStore.stop()
-            }else{
-              speechStore.speak('ja-JP', message.content, message.id)
-            }
+            chatStore.tiggerMessageSpeak(sessionId, message)
           }}
           {...{
-            children: isSpeaking? '停止': '再生',
-            color: isSpeaking? "warning": "primary",
+            children: message.isSpeaking? '停止': '再生',
+            color: message.isSpeaking? "warning": "primary",
           }}
           />
           <Button size="small" color="danger" status="normal" onClick={()=>{

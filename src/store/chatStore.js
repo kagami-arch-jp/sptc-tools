@@ -6,8 +6,9 @@
 
 import { createStoreSharedState } from './storage';
 import { summaryMessage, sendMessage, updateUserImage } from '@/api/chatApi';
-import {getSubSettingStore, isReady} from './settingStore'
+import {getSubSettingStore, isReady, languageMap} from './settingStore'
 import createSharedState from 'react-cross-component-state';
+import * as speech from '@/utils/speech'
 
 export const chatSettingStore=getSubSettingStore('ChatBot')
 
@@ -25,6 +26,7 @@ const chatStore=createStoreSharedState('chatBot-v2', {
       session.isLoading=false
       session.messages.map(msg=>{
         msg.isLoading=false
+        msg.isSpeaking=false
       })
       return {...session}
     })]
@@ -52,7 +54,7 @@ chatStore.createSession=()=>{
     ...prev,
     currentSessionId: id,
     sessions: [
-      { id, title: '雑談-'+(new Date).toISOString().split('T')[0], messages: [], zipped: [], isLoading: false},
+      { id, title: '雑談-'+(new Date).toISOString().split('T')[0], messages: [], zipped: [], isLoading: false, isSpeaking: false},
       ...prev.sessions
     ]
   }))
@@ -117,14 +119,25 @@ chatStore.sendMessage=async (content)=>{
       ...session.zipped.map(m => ({ role: m.role, content: m.content }))
     ].filter(c=>c.content)
 
-    msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true })
+    msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true, isSpeaking: true })
     chatStore.updateSessionById(sessionId, {isLoading: true})
+
+    const Speaker=speech.getSpeaker()
+    let _final=null
     await sendMessage(history, ({content: txt, err}, ctx)=>{
       if(!txt) return;
       ctx.msg=ctx.msg || ''
       ctx.msg+=txt
       chatStore.updateMessage(sessionId, msgId, {
         content: ctx.msg,
+      })
+      const languageSetting = chatSettingStore.getValue()?.language || '日本語';
+      const lang = languageMap[languageSetting] || 'ja-JP';
+      _final=Speaker.speakStream(ctx.msg, lang)
+    })
+    Promise.resolve(_final).then(()=>{
+      chatStore.updateMessage(sessionId, msgId, {
+        isSpeaking: false,
       })
     })
     chatStore.updateMessage(sessionId, msgId, {
@@ -143,6 +156,23 @@ chatStore.sendMessage=async (content)=>{
     })
     chatStore.updateSessionById(sessionId, {
       isLoading: false,
+    })
+  }
+}
+
+chatStore.tiggerMessageSpeak=async (sessionId, message)=>{
+  if(message.isSpeaking) {
+    speech.stop()
+    chatStore.updateMessage(sessionId, message.id, {
+      isSpeaking: false
+    })
+  }else{
+    chatStore.updateMessage(sessionId, message.id, {
+      isSpeaking: true
+    })
+    await speech.getSpeaker().speak(message.content)
+    chatStore.updateMessage(sessionId, message.id, {
+      isSpeaking: false
     })
   }
 }

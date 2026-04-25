@@ -16,6 +16,12 @@ const getInitialValue=()=>({
   fontSizeMode: 'regular',
 })
 
+export const languageMap = {
+  '日本語': 'ja-JP',
+  'English': 'en-US',
+  '中文': 'zh-CN',
+};
+
 const settingStore=createStoreSharedState('app_settings', getInitialValue());
 
 export default settingStore
