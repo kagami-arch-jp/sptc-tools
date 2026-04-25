@@ -24,3 +24,7 @@ npm run serve   # Serve production build (requires ENV=PROD)
 ## State
 
 - Uses `react-cross-component-state` (not Redux/Zustand)
+
+## Docs
+
+- `docs/ios-design-guide.md` - iOS Human Interface Guidelines design system

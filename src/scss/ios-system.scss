@@ -1,0 +1,856 @@
+/* ==========================================================================
+   iOS Design System - Global Styles
+   基于 Apple Human Interface Guidelines
+   
+   目录:
+   1. CSS 变量 (Custom Properties)
+   2. 重置 (Reset)
+   3. 排版 (Typography)
+   4. 布局 (Layout)
+   5. 动画 (Animations)
+   6. 工具类 (Utilities)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. CSS 变量 (Custom Properties)
+   ========================================================================== */
+
+:root {
+  /* -------------------------------------------------------------
+     1.1 系统主色 (Primary Colors)
+     ------------------------------------------------------------- */
+  --ios-blue: #007aff;
+  --ios-green: #34c759;
+  --ios-orange: #ff9500;
+  --ios-red: #ff3b30;
+  --ios-gray: #8e8e93;
+
+  /* -------------------------------------------------------------
+     1.2 背景色 (Background Colors) - 亮色模式
+     ------------------------------------------------------------- */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f2f2f7;
+  --bg-tertiary: #f5f5f7;
+  --bg-overlay: rgba(0, 0, 0, 0.3);
+  --bg-toast: rgba(0, 0, 0, 0.75);
+
+  /* -------------------------------------------------------------
+     1.3 背景色 (Background Colors) - 暗色模式
+     ------------------------------------------------------------- */
+  --bg-dark-primary: #000000;
+  --bg-dark-secondary: #1c1c1e;
+  --bg-dark-tertiary: #2c2c2e;
+  --bg-dark-overlay: rgba(255, 255, 255, 0.1);
+
+  /* -------------------------------------------------------------
+     1.4 边框色 (Border Colors)
+     ------------------------------------------------------------- */
+  --border-light: #d1d1d6;
+  --border-dark: #38383a;
+
+  /* -------------------------------------------------------------
+     1.5 文字色 (Text Colors) - 亮色模式
+     ------------------------------------------------------------- */
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-placeholder: #8e8e93;
+
+  /* -------------------------------------------------------------
+     1.6 文字色 (Text Colors) - 暗色模式
+     ------------------------------------------------------------- */
+  --text-dark-primary: #ffffff;
+  --text-dark-secondary: #aaaaaa;
+  --text-dark-placeholder: #aeaeb2;
+
+  /* -------------------------------------------------------------
+     1.7 间距 (Spacing) - 8px 网格系统
+     ------------------------------------------------------------- */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 30px;
+  --spacing-4xl: 40px;
+
+  /* -------------------------------------------------------------
+     1.8 圆角 (Border Radius)
+     ------------------------------------------------------------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-pill: 20px;
+  --radius-circle: 50%;
+
+  /* -------------------------------------------------------------
+     1.9 字号 (Font Sizes)
+     ------------------------------------------------------------- */
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 16px;
+  --font-size-xl: 17px;
+  --font-size-2xl: 18px;
+  --font-size-3xl: 20px;
+  --font-size-4xl: 28px;
+
+  /* -------------------------------------------------------------
+     1.10 字重 (Font Weights)
+     ------------------------------------------------------------- */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* -------------------------------------------------------------
+     1.11 阴影 (Shadows)
+     ------------------------------------------------------------- */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-modal: -5px 0 15px rgba(0, 0, 0, 0.1);
+
+  /* -------------------------------------------------------------
+     1.12 过渡 (Transitions)
+     ------------------------------------------------------------- */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* -------------------------------------------------------------
+     1.13 层级 (Z-Index)
+     ------------------------------------------------------------- */
+  --z-overlay: 1000;
+  --z-modal: 9999;
+  --z-toast: 10000;
+}
+
+/* ==========================================================================
+   2. 重置 (Reset)
+   ========================================================================== */
+
+/* 2.1 基础重置 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2.2 HTML 重置 */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 2.3 Body 重置 */
+body {
+  line-height: 1.4;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 2.4 链接重置 */
+a {
+  color: var(--ios-blue);
+  text-decoration: none;
+}
+
+/* 2.5 按钮重置 */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* 2.6 输入框重置 */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* 2.7 列表重置 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 2.8 图片重置 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ==========================================================================
+   3. 排版 (Typography)
+   ========================================================================== */
+
+/* 3.1 字体栈 */
+.font-system {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* 3.2 字号类 */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-md { font-size: var(--font-size-md); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+.text-4xl { font-size: var(--font-size-4xl); }
+
+/* 3.3 字重类 */
+.font-regular { font-weight: var(--font-weight-regular); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* 3.4 文字色类 */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-placeholder { color: var(--text-placeholder); }
+.text-white { color: #ffffff; }
+.text-blue { color: var(--ios-blue); }
+.text-green { color: var(--ios-green); }
+.text-orange { color: var(--ios-orange); }
+.text-red { color: var(--ios-red); }
+.text-gray { color: var(--ios-gray); }
+
+/* ==========================================================================
+   4. 布局 (Layout)
+   ========================================================================== */
+
+/* 4.1 弹性盒 */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.justify-around { justify-content: space-around; }
+.flex-1 { flex: 1; }
+.flex-auto { flex: auto; }
+
+/* 4.2 网格 */
+.grid { display: grid; }
+
+/* 4.3 区块 */
+.block { display: block; }
+.inline { display: inline; }
+.inline-flex { display: inline-flex; }
+.inline-block { display: inline-block; }
+
+/* 4.4 隐藏 */
+.hidden { display: none; }
+.invisible { visibility: hidden; }
+
+/* ==========================================================================
+   5. 间距 (Spacing)
+   ========================================================================== */
+
+/* 5.1 水平垂直间距 (Shorthand) */
+.m-0 { margin: 0; }
+.p-0 { padding: 0; }
+
+/* 5.2 水平间距 */
+.m-auto { margin: auto; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+/* 5.3 外边距 - 各方向 */
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+.mt-2xl { margin-top: var(--spacing-2xl); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+.mb-2xl { margin-bottom: var(--spacing-2xl); }
+
+.ml-sm { margin-left: var(--spacing-sm); }
+.ml-md { margin-left: var(--spacing-md); }
+.ml-lg { margin-left: var(--spacing-lg); }
+
+.mr-sm { margin-right: var(--spacing-sm); }
+.mr-md { margin-right: var(--spacing-md); }
+.mr-lg { margin-right: var(--spacing-lg); }
+
+.mx-sm { margin-left: var(--spacing-sm); margin-right: var(--spacing-sm); }
+.mx-md { margin-left: var(--spacing-md); margin-right: var(--spacing-md); }
+.mx-lg { margin-left: var(--spacing-lg); margin-right: var(--spacing-lg); }
+
+.my-sm { margin-top: var(--spacing-sm); margin-bottom: var(--spacing-sm); }
+.my-md { margin-top: var(--spacing-md); margin-bottom: var(--spacing-md); }
+.my-lg { margin-top: var(--spacing-lg); margin-bottom: var(--spacing-lg); }
+
+/* 5.4 内边距 - 各方向 */
+.pt-sm { padding-top: var(--spacing-sm); }
+.pt-md { padding-top: var(--spacing-md); }
+.pt-lg { padding-top: var(--spacing-lg); }
+.pt-xl { padding-top: var(--spacing-xl); }
+
+.pb-sm { padding-bottom: var(--spacing-sm); }
+.pb-md { padding-bottom: var(--spacing-md); }
+.pb-lg { padding-bottom: var(--spacing-lg); }
+.pb-xl { padding-bottom: var(--spacing-xl); }
+
+.pl-sm { padding-left: var(--spacing-sm); }
+.pl-md { padding-left: var(--spacing-md); }
+.pl-lg { padding-left: var(--spacing-lg); }
+
+.pr-sm { padding-right: var(--spacing-sm); }
+.pr-md { padding-right: var(--spacing-md); }
+.pr-lg { padding-right: var(--spacing-lg); }
+
+.px-sm { padding-left: var(--spacing-sm); padding-right: var(--spacing-sm); }
+.px-md { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
+.px-lg { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
+.px-xl { padding-left: var(--spacing-xl); padding-right: var(--spacing-xl); }
+
+.py-sm { padding-top: var(--spacing-sm); padding-bottom: var(--spacing-sm); }
+.py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
+.py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
+.py-xl { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
+
+/* ==========================================================================
+   6. 尺寸 (Sizing)
+   ========================================================================== */
+
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.w-fit { width: fit-content; }
+.h-full { height: 100%; }
+.h-auto { height: auto; }
+.min-h-full { min-height: 100%; }
+.min-h-screen { min-height: 100vh; }
+
+/* ==========================================================================
+   7. 圆角 (Border Radius)
+   ========================================================================== */
+
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-pill { border-radius: var(--radius-pill); }
+.rounded-circle { border-radius: var(--radius-circle); }
+.rounded-none { border-radius: 0; }
+
+/* ==========================================================================
+   8. 边框 (Border)
+   ========================================================================== */
+
+.border { border: 1px solid var(--border-light); }
+.border-t { border-top: 1px solid var(--border-light); }
+.border-b { border-bottom: 1px solid var(--border-light); }
+.border-l { border-left: 1px solid var(--border-light); }
+.border-r { border-right: 1px solid var(--border-light); }
+.border-none { border: none; }
+
+/* ==========================================================================
+   9. 背景 (Background)
+   ========================================================================== */
+
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+.bg-transparent { background-color: transparent; }
+.bg-white { background-color: #ffffff; }
+.bg-black { background-color: #000000; }
+.bg-blue { background-color: var(--ios-blue); }
+.bg-green { background-color: var(--ios-green); }
+.bg-orange { background-color: var(--ios-orange); }
+.bg-red { background-color: var(--ios-red); }
+.bg-gray { background-color: var(--ios-gray); }
+
+/* ==========================================================================
+   10. 阴影 (Shadow)
+   ========================================================================== */
+
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-modal { box-shadow: var(--shadow-modal); }
+.shadow-none { box-shadow: none; }
+
+/* ==========================================================================
+   11. 定位 (Position)
+   ========================================================================== */
+
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+
+/* 11.1 位置属性 */
+.top-0 { top: 0; }
+.right-0 { right: 0; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }
+
+/* ==========================================================================
+   12. 溢出 (Overflow)
+   ========================================================================== */
+
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+.overflow-scroll { overflow: scroll; }
+.overflow-x-auto { overflow-x: auto; }
+.overflow-y-auto { overflow-y: auto; }
+
+/* ==========================================================================
+   13. 动画 (Animations)
+   ========================================================================== */
+
+.transition-fast { transition: all var(--transition-fast); }
+.transition-normal { transition: all var(--transition-normal); }
+.transition-none { transition: none; }
+
+/* 13.1 淡入动画 */
+@keyframes ios-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: ios-fade-in var(--transition-normal) ease-out;
+}
+
+/* 13.2 缩放动画 - 弹窗 */
+@keyframes ios-scale-up {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-up {
+  animation: ios-scale-up var(--transition-normal) ease;
+}
+
+/* 13.3 淡入动画 */
+@keyframes ios-fade-in-simple {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-simple {
+  animation: ios-fade-in-simple var(--transition-normal) ease;
+}
+
+/* 13.4 滑入动画 - Toast */
+@keyframes ios-slide-down {
+  from {
+    transform: translate(-50%, -20px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: ios-slide-down var(--transition-normal) ease;
+}
+
+/* 13.5 旋转动画 - Spinner */
+@keyframes ios-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: ios-spin 1s linear infinite;
+}
+
+/* 13.6 浮动动画 */
+@keyframes ios-floating {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-floating {
+  animation: ios-floating 3s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   14. 工具类 (Utilities)
+   ========================================================================== */
+
+/* 14.1 文字对齐 */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* 14.2 文字装饰 */
+.underline { text-decoration: underline; }
+.line-through { text-decoration: line-through; }
+.no-underline { text-decoration: none; }
+
+/* 14.3 字母间距 */
+.tracking-tight { letter-spacing: -0.5px; }
+.tracking-normal { letter-spacing: 0; }
+.tracking-wide { letter-spacing: 0.5px; }
+
+/* 14.4 行高 */
+.leading-tight { line-height: 1.2; }
+.leading-normal { line-height: 1.4; }
+.leading-relaxed { line-height: 1.6; }
+
+/* 14.5 空白处理 */
+.whitespace-normal { white-space: normal; }
+.whitespace-nowrap { white-space: nowrap; }
+.whitespace-pre { white-space: pre; }
+.whitespace-pre-wrap { white-space: pre-wrap; }
+
+/* 14.6 单词处理 */
+.break-normal { word-wrap: normal; word-break: normal; }
+.break-words { word-wrap: break-word; }
+.break-all { word-break: break-all; }
+
+/* 14.7 鼠标 */
+.cursor-pointer { cursor: pointer; }
+.cursor-default { cursor: default; }
+.cursor-not-allowed { cursor: not-allowed; }
+.cursor-grab { cursor: grab; }
+.cursor-grabbing { cursor: grabbing; }
+
+/* 14.8 用户选择 */
+.select-none { user-select: none; }
+.select-text { user-select: text; }
+.select-all { user-select: all; }
+
+/* 14.9 指针事件 */
+.pointer-events-none { pointer-events: none; }
+.pointer-events-auto { pointer-events: auto; }
+
+/* 14.10 透明度 */
+.opacity-0 { opacity: 0; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.opacity-100 { opacity: 1; }
+
+/* 14.11 可见性 */
+.visible { visibility: visible; }
+.invisible { visibility: hidden; }
+
+/* 14.12 溢出文本 */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 14.13 弹性盒特殊 */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   15. 暗色模式 (Dark Mode)
+   ========================================================================== */
+
+/* 15.1 暗色模式作用域 */
+.dark-mode {
+  /* 背景色 */
+  --bg-primary: var(--bg-dark-primary);
+  --bg-secondary: var(--bg-dark-secondary);
+  --bg-tertiary: var(--bg-dark-tertiary);
+  --bg-overlay: var(--bg-dark-overlay);
+
+  /* 边框 */
+  --border-light: var(--border-dark);
+
+  /* 文字色 */
+  --text-primary: var(--text-dark-primary);
+  --text-secondary: var(--text-dark-secondary);
+  --text-placeholder: var(--text-dark-placeholder);
+
+  /* 背景覆盖层 */
+  background-color: var(--bg-dark-primary);
+  color: var(--text-dark-primary);
+}
+
+/* 15.2 暗色模式 - Hover 背景适配 */
+.dark-mode .hover-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 15.3 暗色模式 - ���钮���景适配 */
+.dark-mode .btn-default {
+  background-color: var(--ios-gray);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   16. iOS 组件样式 (iOS Component Styles)
+   ========================================================================== */
+
+/* 16.1 按钮基类 */
+.ios-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  white-space: nowrap;
+  gap: var(--spacing-sm);
+}
+
+.ios-btn:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.ios-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ios-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 16.2 按钮尺寸 */
+.ios-btn-lg {
+  padding: 12px 24px;
+  font-size: var(--font-size-2xl);
+}
+
+.ios-btn-md {
+  padding: 8px 16px;
+  font-size: var(--font-size-lg);
+}
+
+.ios-btn-sm {
+  padding: 4px 12px;
+  font-size: var(--font-size-base);
+}
+
+/* 16.3 按钮变体 */
+.ios-btn-primary {
+  background-color: var(--ios-blue);
+  color: #ffffff;
+}
+
+.ios-btn-default {
+  background-color: var(--ios-gray);
+  color: #ffffff;
+}
+
+.ios-btn-success {
+  background-color: var(--ios-green);
+  color: #ffffff;
+}
+
+.ios-btn-warning {
+  background-color: var(--ios-orange);
+  color: #ffffff;
+}
+
+.ios-btn-danger {
+  background-color: var(--ios-red);
+  color: #ffffff;
+}
+
+/* 16.4 输入框 */
+.ios-input {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  overflow: hidden;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  width: 100%;
+}
+
+.ios-input:hover {
+  border-color: var(--ios-blue);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.ios-input:focus {
+  border-color: var(--ios-blue);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.ios-input input,
+.ios-input textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  resize: vertical;
+  font-size: var(--font-size-md);
+  background: transparent;
+  outline: none;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* 16.5 卡片 */
+.ios-card {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 16.6 分组 (Setting Group) */
+.ios-group {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.ios-group-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.ios-group-row:last-child {
+  margin-bottom: 0;
+}
+
+/* 16.7 加载动画 - Spinner */
+.ios-spinner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--ios-gray);
+  font-size: var(--font-size-base);
+}
+
+.ios-spinner-circle {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #d2d2d7;
+  border-top: 2px solid var(--ios-blue);
+  border-radius: 50%;
+  animation: ios-spin 1s linear infinite;
+}
+
+/* ==========================================================================
+   17. 无障碍 (Accessibility)
+   ========================================================================== */
+
+/* 17.1 触摸目标最小尺寸 */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* 17.2 聚焦样式 */
+:focus-visible {
+  outline: 2px solid var(--ios-blue);
+  outline-offset: 2px;
+}
+
+/* 17.3 屏幕阅读器专用 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ==========================================================================
+   18. 响应式 (Responsive Breakpoints)
+   ========================================================================== */
+
+/* 18.1 移动优先断点 */
+
+/* 小屏设备 (≥ 576px) */
+@media (min-width: 576px) {
+  :root {
+    --font-size-base: 14px;
+  }
+}
+
+/* 中屏设备 (≥ 768px) */
+@media (min-width: 768px) {
+  :root {
+    --font-size-base: 16px;
+  }
+}
+
+/* 大屏设备 (≥ 992px) */
+@media (min-width: 992px) {
+  :root {
+    --font-size-base: 16px;
+  }
+}
+
+/* 超大屏设备 (≥ 1200px) */
+@media (min-width: 1200px) {
+  :root {
+    --font-size-base: 16px;
+  }
+}

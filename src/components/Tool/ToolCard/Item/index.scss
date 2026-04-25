@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   perspective: 1000px; // 3D効果のための奥行き設定
-  padding: 20px;
+  margin: 20px;
   width: 200px;
   height: 200px;
   &:hover .item-card{

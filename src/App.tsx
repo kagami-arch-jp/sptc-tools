@@ -1,5 +1,6 @@
 import React from 'react'
 import './App.scss'
+import './scss/ios-system.scss'
 
 // @ts-ignore
 import {initialStoreValues, updateValues} from '@/store/storage'
