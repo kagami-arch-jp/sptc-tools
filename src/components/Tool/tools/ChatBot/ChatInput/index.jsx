@@ -40,7 +40,7 @@ const ChatInput = ({ sessionId }) => {
     };
 
     recognition.onend = () => {
-      // setIsRecording(false);
+      setIsRecording(false);
     };
 
     recognitionRef.current = recognition;

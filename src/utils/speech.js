@@ -11,6 +11,8 @@ function fix(txt) {
     .replace(/AI/gi, 'A I')
     .replace(/UI/gi, 'U I')
     .replace(/[←→]/g, ' ')
+    .replace(/\*\*/g, ' ')
+    .replace(/\n\s*\[-*]\s/g, '\n ')
     .replace(/[〇△]/g, 'まる')
 }
 
