@@ -39,38 +39,7 @@ class ollamaController extends apiController{
 
   async _callOllamaEcho(...any) {
     const helper=this._initOllama()
-    const appDir=path.resolve('.')
-    const msgs=[
-      {
-        role: 'user',
-        content: `<Tree>\n${FileHelper.walkDir(appDir+'/src', (fn, isDir)=>{
-          return fn.match(/\.(scss|jsx?)$/) || isDir
-        }).map(x=>'src/'+x).join('\n')}\n</Tree>`,
-      }
-    ]
-    for(const {md, txt} of any) {
-      const text=md? FileHelper.readTextFile(md): txt
-      const files=[]
-      const mdStr=text.replace(/<external-files>([\s\S]+?)<\/external-files>/g, (_, requires)=>{
-        requires.replace(/<file>(.+?)<\/file>/g, (_, name)=>{
-          const originalName=name.trim()
-          const fullname=__DEV_WWW_DIR__+'/'+originalName
-          if(FileHelper.existsFile(fullname)) {
-            const code=FileHelper.readTextFile(fullname)
-            const codeWithLineNum=code.split('\n').map((x, i)=>`/* LINE ${i+1} */ ${x}`).join('\n')
-            files.push(`<code-file path="${originalName}">\n${codeWithLineNum}\n</code-file>`)
-          }
-        })
-        return ''
-      })
-      msgs.push({
-        role: 'user',
-        content: mdStr,
-      })
-      for(let file of files) {
-        msgs.push({role: 'user', content: file})
-      }
-    }
+    const msgs=[]
     msgs.push(
       {
         role: 'user',
@@ -82,56 +51,6 @@ class ollamaController extends apiController{
       },
     )
     return await helper.startStreamEcho(msgs.filter(x=>x.content))
-  }
-
-  async generateAnalysisAction() {
-    await this._callOllamaEcho(
-      {md: __FE_DOC__+'/basicRules.md'},
-      {md: __FE_DOC__+'/1-rewritePRD.md'},
-      {txt: this.postData.requirement},
-    )
-  }
-
-  async generateCodeAction() {
-    await this._callOllamaEcho(
-      {md: __FE_DOC__+'/basicRules.md'},
-      {md: __FE_DOC__+'/2-generateCode.md'},
-      {txt: this.postData.requirement},
-    )
-  }
-
-  getWorkdirAction() {
-    return path.resolve('.')
-  }
-
-  writeToFileAction() {
-    const appDir=path.resolve('.')
-    const x=this.postData.codeFiles
-    const writes=[]
-    for(const fn in x) {
-      const dir=path.normalize(appDir+'/'+fn+'/..')
-      try{
-        fs.mkdirSync(dir, {recursive: true})
-      }catch(e){}
-
-      const fullname=appDir+'/'+fn
-      if(x[fn][0].create || !FileHelper.existsFile(fullname)) {
-        fs.writeFileSync(fullname, x[fn][0].code)
-      }else{
-        const source=FileHelper.readTextFile(fullname)
-        const lines=source.split('\n')
-        for(let item of x[fn]) {
-          const {code, startLine, endLine}=item
-          lines[startLine-1]=code
-          for(let i=startLine; i<endLine; i++) {
-            lines[i]=null
-          }
-        }
-        fs.writeFileSync(fullname, lines.filter(x=>x!==null).join('\n'))
-      }
-      writes.push(fullname)
-    }
-    return `Wrote files: \n${writes.join('\n')}`
   }
 
   async listModelsAction() {

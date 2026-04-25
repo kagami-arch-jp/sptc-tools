@@ -18,7 +18,6 @@ import './index.scss';
 
 import {getSubSettingStore} from '@/store/settingStore'
 
-import CodeAgent from './tools/CodeAgent'
 import ImageGenerator from './tools/ImageGenerator'
 import Writer from './tools/Writer'
 import Reader from './tools/Reader'
@@ -28,13 +27,6 @@ import ChatBot from './tools/ChatBot'
 import {chatSettingStore} from '@/store/chatStore'
 
 const TOOLS_DATA = [
-  {
-    id: 1,
-    name: 'Code Agent',
-    description: 'PRDからコードに実装',
-    image: *IMG('./imgs/codeAgent.png'),
-    Component: <CodeAgent />,
-  },
   {
     id: 2,
     name: 'Image Generator',
