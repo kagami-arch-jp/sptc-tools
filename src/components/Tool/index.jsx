@@ -20,7 +20,6 @@ import {getSubSettingStore} from '@/store/settingStore'
 
 import ImageGenerator from './tools/ImageGenerator'
 import Writer from './tools/Writer'
-import Reader from './tools/Reader'
 import TodoList from './tools/TodoList'
 
 import ChatBot from './tools/ChatBot'
@@ -40,13 +39,6 @@ const TOOLS_DATA = [
     description: '執筆アシスタント',
     image: *IMG('./imgs/writer.png'),
     Component: <Writer />,
-  },
-  {
-    id: 4,
-    name: 'Reader',
-    description: '日本語を繰り返して読む',
-    image: *IMG('./imgs/reader.png'),
-    Component: <Reader />,
   },
   {
     id: 5,
