@@ -98,7 +98,7 @@ class ollamaController extends apiController{
   }
 
   async chatAction() {
-    const {history}=this.postData
+    const {history, who='mennsetsu'}=this.postData
     if(!history) return;
     const helper=this._initOllama()
     const msgs=[
@@ -106,9 +106,15 @@ class ollamaController extends apiController{
         role: 'user',
         content: 'Now is '+fmtTime(),
       },
-      {
+      who==='chat' && {
         role: 'user',
-        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/basic.md.s', {
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/0-chat.md.s', {
+          lang: this.systemSetting.lang,
+        }),
+      },
+      who==='mennsetsu' && {
+        role: 'user',
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/0-mennsetsu.md.s', {
           lang: this.systemSetting.lang,
         }),
       },
@@ -117,7 +123,7 @@ class ollamaController extends apiController{
         content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
       },
       ...history
-    ].filter(x=>x.content)
+    ].filter(x=>x?.content)
     return await helper.startStreamEcho(msgs)
   }
   async chatSummaryAction() {

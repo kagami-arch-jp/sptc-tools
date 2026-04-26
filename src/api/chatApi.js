@@ -8,8 +8,8 @@ import { fetchStream } from '@/utils/fetch';
 import {getCommonParams} from '@/store/settingStore'
 import {chatSettingStore} from '@/store/chatStore'
 
-export async function sendMessage(history, onData) {
-  return fetchStream('/ollama/chat', {history, ...getCommonParams(false, chatSettingStore)}, onData)
+export async function sendMessage(history, onData, who) {
+  return fetchStream('/ollama/chat', {history, who, ...getCommonParams(false, chatSettingStore)}, onData)
 }
 export async function summaryMessage(history, onData) {
   return fetchStream('/ollama/chatSummary', {history, ...getCommonParams(false, chatSettingStore)}, onData)

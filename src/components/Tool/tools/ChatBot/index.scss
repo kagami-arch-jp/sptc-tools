@@ -66,5 +66,26 @@
       height: 100%;
       color: #888;
     }
+
+    .role-selection {
+      display: flex;
+      gap: 16px;
+      padding: 20px;
+      justify-content: center;
+
+      .role-btn {
+        padding: 16px 32px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: white;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+
+        &:hover {
+          background-color: #eee;
+        }
+      }
+    }
   }
 }

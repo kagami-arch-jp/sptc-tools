@@ -48,17 +48,17 @@ chatStore.setCurrentSession=(sessionId)=>{
   }))
 }
 
-chatStore.createSession=()=>{
+chatStore.createSession=(who)=>{
   const id=newId()
+  const title=who==='mennsetsu' ? '面接官' : who==='chat' ? '口语教师' : '新規チャット'
   chatStore.setValue(prev => ({
     ...prev,
     currentSessionId: id,
     sessions: [
-      { id, title: '雑談-'+(new Date).toISOString().split('T')[0], messages: [], zipped: [], isLoading: false, isSpeaking: false},
+      { id, title: title+'-'+(new Date).toISOString().split('T')[0], messages: [], zipped: [], isLoading: false, isSpeaking: false, who},
       ...prev.sessions
     ]
   }))
-  chatStore.sendMessage('hi')
 }
 
 chatStore.isSettingReady=()=>{
@@ -99,7 +99,7 @@ chatStore.deleteSession=(id)=>{
   })
 }
 
-chatStore.sendMessage=async (content)=>{
+chatStore.sendMessage=async (content, who)=>{
   const sessionId=chatStore.getValue().currentSessionId
   const session=chatStore.getSessionById(sessionId)
   if (!session || !content.trim()) return;
@@ -108,6 +108,7 @@ chatStore.sendMessage=async (content)=>{
   try{
 
     const isStartMessage=session.messages.length==0
+    const whoToSend=who || session.who
 
     const userMsg = { role: 'user', content };
     if(!isStartMessage) {
@@ -134,7 +135,7 @@ chatStore.sendMessage=async (content)=>{
       const languageSetting = chatSettingStore.getValue()?.language || '日本語';
       const lang = languageMap[languageSetting] || 'ja-JP';
       _final=Speaker.speakStream(ctx.msg, lang)
-    })
+    }, whoToSend)
     Promise.resolve(_final).then(()=>{
       chatStore.updateMessage(sessionId, msgId, {
         isSpeaking: false,

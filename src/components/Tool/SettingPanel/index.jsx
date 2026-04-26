@@ -6,7 +6,6 @@
 import React from 'react';
 import './index.scss';
 import ModelSelect from './ModelSelect';
-import FontSizeSelect from './FontSizeSelect';
 import settingStore from '@/store/settingStore';
 import { darkMode } from '@/store/darkMode';
 import { fetchModels } from '@/api/settings';
@@ -97,10 +96,6 @@ function SettingPanel(props) {
            />
          </div>
        </section>
-
-        <section className="setting-group">
-          <FontSizeSelect />
-        </section>
 
         <section className="setting-group">
           <ModelSelect

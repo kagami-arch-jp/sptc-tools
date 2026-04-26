@@ -15,6 +15,7 @@ const ChatInput = ({ sessionId }) => {
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef(null);
   const isLoading = chatStore.useSessionById(sessionId)?.isLoading;
+  const who = chatStore.useSessionById(sessionId)?.who;
   const languageSetting = chatSettingStore.useValue()?.language || '日本語';
   const recognitionLanguage = languageMap[languageSetting] || 'ja-JP';
 
@@ -72,7 +73,8 @@ const ChatInput = ({ sessionId }) => {
     if (!text.trim() || isLoading) return;
     const content = text.trim();
     setText('');
-    chatStore.sendMessage(content)
+    handleStopRecording()
+    chatStore.sendMessage(content, who)
   };
 
   const handleKeyDown = (e) => {

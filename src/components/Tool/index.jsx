@@ -12,7 +12,7 @@ import { darkMode } from '@/store/darkMode';
 import ToolCard from './ToolCard';
 
 // 既存のコンポーネントを想定
-import ModalButton from '@/components/ModalButton';
+import { ModalButton } from '@/components/Modal';
 import SettingPanel from './SettingPanel';
 import './index.scss';
 
@@ -46,6 +46,8 @@ const TOOLS_DATA = [
     description: 'これからやるべきことを',
     image: *IMG('./imgs/todoList.png'),
     Component: <TodoList />,
+    settingKey: 'todoListSettings',
+    config: [],
   },
   {
     id: 7,

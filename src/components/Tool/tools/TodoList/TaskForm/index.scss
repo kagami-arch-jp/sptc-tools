@@ -21,7 +21,7 @@
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 16px;
     outline: none;
     transition: border-color 0.2s;
     width: 100%;
@@ -37,7 +37,7 @@
 
   .color-palette {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
@@ -61,7 +61,7 @@
 
   .add-btn {
     cursor: pointer;
-    padding: 0.8rem;
+    padding: 12px;
     background: #007aff;
     color: white;
     border: none;

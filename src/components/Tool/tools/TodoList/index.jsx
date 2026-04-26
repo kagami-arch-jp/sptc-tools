@@ -24,7 +24,7 @@ import Dialog from '@/components/Dialog';
 import { todoStore, addTask, updateTask, completeTask, reorderTasks } from '@/store/todoStore';
 import { useTimer } from '@/hooks/useTimer';
 import { isWithinRange, formatDate } from '@/utils/dateUtils';
-import ModalButton from '@/components/ModalButton'
+import { ModalButton } from '@/components/Modal'
 import SizeObserver from '@/components/SizeObserver'
 import {cls} from '@/utils/css'
 

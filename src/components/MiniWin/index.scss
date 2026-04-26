@@ -63,6 +63,14 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
+    .modal-button {
+      width: 28px;
+      height: 28px;
+      font-size: 24px;
+      .dark-mode & {
+        color: #fff;
+      }
+    }
     .close-button {
       width: 28px;
       height: 28px;

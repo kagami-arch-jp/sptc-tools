@@ -25,7 +25,12 @@ import { useDraggable } from '@/hooks/useDraggable';
 import { useResizable } from '@/hooks/useResizable';
 import { getElementRect } from '@/utils/domUtils';
 import ResizeHandle from './ResizeHandle';
-import { darkMode } from '@/store/darkMode';
+// import { darkMode } from '@/store/darkMode';
+
+import {useGlobalSetting} from '@/store/globalSettingStore'
+
+import { ModalButton } from '@/components/Modal';
+import SettingPanelCommon from '@/components/SettingPanelCommon';
 import './index.scss';
 
 /**
@@ -38,10 +43,10 @@ import './index.scss';
  * @param {Object} props.initialSize - 初期サイズ {width, height}
  * @param {React.ReactNode} props.children - コンテンツエリアの内容
  */
-const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btns, children }) => {
+const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btns, config, settingKey, children }) => {
   const [position, setPosition] = useState(initialPosition);
   const [size, setSize] = useState(initialSize);
-  const isDarkMode = darkMode.useValue();
+  const isDarkMode = useGlobalSetting('darkMode')
 
   const windowRef = useRef(null);
   const contentRef = useRef(null);
@@ -164,6 +169,11 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
         <span className="title-text">{title}</span>
         <div className='btn-area'>
           {btns}
+          {config && settingKey && (
+            <ModalButton id={`${id}-settings`} text="⚙">
+              <SettingPanelCommon settingKey={settingKey} config={config} />
+            </ModalButton>
+          )}
           <div className="close-button" onClick={onClose}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>

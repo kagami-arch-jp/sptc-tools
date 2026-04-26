@@ -49,6 +49,8 @@ const ToolCard = ({ tool }) => {
         tool.SettingBtn,
       ].filter(Boolean)}
       children={tool.Component}
+      settingKey={tool.settingKey}
+      config={tool.config}
     />
   </>
 };

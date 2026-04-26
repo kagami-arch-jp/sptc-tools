@@ -28,18 +28,27 @@ const ChatBot = () => {
     }
   }, [editCurrentTitle])
 
+  const handleNewSession = () => {
+    if(!chatStore.isSettingReady()) {
+      Dialog.toast({message: 'please select models before using..'})
+      openById('chatBot-settingPanel')
+      return
+    }
+    chatStore.createSession()
+  }
+
+  const handleRoleSelect = (who) => {
+    chatStore.createSession(who)
+    chatStore.sendMessage('hi', who)
+  }
+
+  const showRoleButtons = currentSession && currentSession.messages.length === 0
+
   return (
     <div className="chat-bot-container">
       <aside className="sidebar">
         <div className="sidebar-header">
-          <button className="new-session-btn" onClick={()=>{
-            if(!chatStore.isSettingReady()) {
-              Dialog.toast({message: 'please select models before using..'})
-              openById('chatBot-settingPanel')
-              return
-            }
-            chatStore.createSession()
-          }}>
+          <button className="new-session-btn" onClick={handleNewSession}>
             + 新規チャット
           </button>
         </div>
@@ -69,7 +78,14 @@ const ChatBot = () => {
               </div>
             </header>
             <MessageList sessionId={currentSession.id} />
-            <ChatInput sessionId={currentSession.id} />
+            {showRoleButtons ? (
+              <div className="role-selection">
+                <button className="role-btn" onClick={() => handleRoleSelect('chat')}>口语教师</button>
+                <button className="role-btn" onClick={() => handleRoleSelect('mennsetsu')}>面接官</button>
+              </div>
+            ) : (
+              <ChatInput sessionId={currentSession.id} />
+            )}
           </>
         ) : (
           <div className="empty-state">セッションを選択してください</div>
