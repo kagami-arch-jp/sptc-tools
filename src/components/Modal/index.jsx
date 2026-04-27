@@ -10,7 +10,11 @@ import {registerId} from '@/store/modalButton'
 
 function Modal({ isOpen, onClose, children }) {
   return (
-    <div className={`modal-container ${isOpen ? 'open' : ''}`}>
+    <div className={`modal-container ${isOpen ? 'open' : ''}`} onMouseDown={e=>{
+      e.stopPropagation()
+    }} onDoubleClick={e=>{
+      e.stopPropagation()
+    }}>
       <div className="modal-overlay" onClick={onClose} />
       <div className="modal-content">
         {children}
