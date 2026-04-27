@@ -13,12 +13,12 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import duotoneLight from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-light';
 import duotoneForest from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-forest';
 
-import { darkMode } from '@/store/darkMode';
+import { useDarkMode } from '@/store/globalSettingStore';
 import { copyToClipboard } from '@/utils/base';
 import './index.scss';
 
 const CodeBlock = ({ language, value, copyCode }) => {
-  const isDarkMode = darkMode.useValue();
+  const isDarkMode = useDarkMode();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {

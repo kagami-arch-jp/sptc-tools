@@ -13,7 +13,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { darkMode } from '@/store/darkMode';
+import { useDarkMode } from '@/store/globalSettingStore';
 import { copyToClipboard } from '@/utils/base';
 import CodeBlock from './CodeBlock';
 import './index.scss';
@@ -25,7 +25,7 @@ function fix(content) {
 }
 
 const MarkdownViewer = ({ className, content, copyAll = false, copyCode = false }) => {
-  const isDarkMode = darkMode.useValue();
+  const isDarkMode = useDarkMode();
   const [copied, setCopied] = useState(false);
 
   const handleCopyAll = async () => {
