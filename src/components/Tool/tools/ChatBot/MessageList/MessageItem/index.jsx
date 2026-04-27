@@ -18,6 +18,14 @@ import * as Speaker from '@/utils/speech'
 const MessageItem = ({ message, sessionId }) => {
   const isUser = message.role === 'user';
 
+  React.useEffect(()=>{
+    return ()=>{
+      if(message.isSpeaking) {
+        chatStore.tiggerMessageSpeak(sessionId, message)
+      }
+    }
+  }, [])
+
   return (
     <div className={cls(
       `message-item`,

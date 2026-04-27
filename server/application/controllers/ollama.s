@@ -106,18 +106,14 @@ class ollamaController extends apiController{
         role: 'user',
         content: 'Now is '+fmtTime(),
       },
-      who==='chat' && {
+
+      {
         role: 'user',
-        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/0-chat.md.s', {
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/0-'+who.match(/[a-z\d]+|$/)[0]+'.md.s', {
           lang: this.systemSetting.lang,
         }),
       },
-      who==='mennsetsu' && {
-        role: 'user',
-        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/0-mennsetsu.md.s', {
-          lang: this.systemSetting.lang,
-        }),
-      },
+
       {
         role: 'user',
         content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
@@ -133,7 +129,9 @@ class ollamaController extends apiController{
     const msgs=[
       {
         role: 'user',
-        content: FileHelper.readTextFile(__DOC_DIR__+'/chatBot/summary.md'),
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/summary.md.s', {
+          lang: this.systemSetting.lang,
+        }),
       },
       ...history
     ].filter(x=>x.content)

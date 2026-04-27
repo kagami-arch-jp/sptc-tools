@@ -31,7 +31,14 @@ const MessageList = ({ sessionId }) => {
 
   if (!session) return null;
 
+  const showEmptyState = session.messages.length === 0;
+
   return <div className="message-list" ref={scrollRef}>
+    {showEmptyState && (
+      <div className="empty-state">
+        <p>メッセージを入力してください</p>
+      </div>
+    )}
     {session.messages.map((msg, idx) => (
       <MessageItem key={idx} message={msg} sessionId={sessionId} />
     ))}

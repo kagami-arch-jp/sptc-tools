@@ -13,7 +13,7 @@
   &.user {
     justify-content: flex-end;
     .message-bubble {
-      background-color: #cde2f9;
+      background-color: #0a84ff;
       color: white;
       border-radius: 18px 18px 2px 18px;
     }
@@ -55,6 +55,23 @@
     .message-area .markdown-content{
       margin: 0;
       font-size: 16px;
+    }
+  }
+}
+
+.chat-bot-container.dark-mode {
+  .message-item {
+    &.user {
+      .message-bubble {
+        background-color: #0a84ff;
+      }
+    }
+
+    &.assistant {
+      .message-bubble {
+        background-color: #2c2c2e;
+        color: #eee;
+      }
     }
   }
 }

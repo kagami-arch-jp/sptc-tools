@@ -79,7 +79,7 @@
   }
 }
 
-.dark-mode {
+.chat-bot-container.dark-mode {
   .chat-input-container {
     background: #1c1c1e;
     border-top-color: #38383a;
@@ -97,6 +97,10 @@
       &:hover:not(:disabled) {
         background-color: #38383a;
       }
+    }
+
+    .send-btn {
+      background-color: #0a84ff;
     }
   }
 }

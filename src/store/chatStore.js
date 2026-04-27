@@ -86,6 +86,11 @@ export const config=[
       {name: 'assistant', value: 'assistant'},
     ],
   },
+  {
+    key: 'autoSpeak',
+    type: 'checkbox',
+    info: '自動朗読を有効にする',
+  },
 ]
 
 export const chatSettingStore=getCommonSettingStore(settingKey)
@@ -126,12 +131,42 @@ chatStore.setCurrentSession=(sessionId)=>{
   }))
 }
 
-function getInitTitle(who) {
-  const prefix=({
-    'mennsetsu': '面接官',
-    'chat': '口语教师',
-  })[who] || '新規チャット'
-  return prefix+'-'+(new Date).toISOString().split('T')[0]
+export const roleBtnList = {
+  mennsetsu: {
+    text: '面接官',
+    description: '模擬面接练习。会話を监听し、質問します。履歴を保持して継続的な対話が可能。',
+    autoSendHi: true,
+    sendWithHistory: true,
+    updateUserImage: true,
+  },
+  chat: {
+    text: '会話練習',
+    description: '日常的な会話練習。用户の表現をチェックし、より自然な日本語に修正します。',
+    autoSendHi: true,
+    sendWithHistory: true,
+    updateUserImage: true,
+  },
+  normal: {
+    text: '普通会話ツール',
+    description: '一般的なチャットボット。AI アシスタントとして何でも質問できます。',
+    autoSendHi: false,
+    sendWithHistory: true,
+    updateUserImage: false,
+  },
+  translate: {
+    text: '日本語に翻訳',
+    description: '選択したテキストを日本語に翻訳します。履歴不要みで即座に翻訳。',
+    autoSendHi: false,
+    sendWithHistory: false,
+    updateUserImage: false,
+  },
+  grammer: {
+    text: '文法指摘',
+    description: '文章の文法をチェックし 誤用などを指摘・修正します。',
+    autoSendHi: false,
+    sendWithHistory: true,
+    updateUserImage: false,
+  },
 }
 
 chatStore.createSession=()=>{
@@ -153,12 +188,21 @@ chatStore.isSettingReady=()=>{
   ) || v.localModals || false
 }
 
+function getInitTitle(who) {
+  const config = roleBtnList[who]
+  const prefix = config?.text || '新規チャット'
+  return prefix + '-' + (new Date).toISOString().split('T')[0]
+}
+
 chatStore.startSessionByRole=(id, who)=>{
+  const config = roleBtnList[who]
   chatStore.updateSessionById(id, session=>{
     session.who=who
     session.title=getInitTitle(who)
   })
-  chatStore.sendMessage('hi')
+  if (config?.autoSendHi) {
+    chatStore.sendMessage('hi')
+  }
 }
 
 chatStore.updateSessionTitle=(id, title)=>{
@@ -195,31 +239,47 @@ chatStore.deleteSession=(id)=>{
   })
 }
 
-chatStore.sendMessage=async (content)=>{
+chatStore.sendMessage=async content=>{
   const sessionId=chatStore.getValue().currentSessionId
   const session=chatStore.getSessionById(sessionId)
+
   if (!session || !content.trim()) return;
   let msgId=undefined
 
   try{
 
-    const isStartMessage=session.messages.length==0
+    const isStartMessage=session.messages.length==0 && roleBtnList[session.who].autoSendHi
     const whoToSend=session.who
+    const roleConfig = roleBtnList[whoToSend]
 
     const userMsg = { role: 'user', content };
     if(!isStartMessage) {
       chatStore.addMessage(sessionId, userMsg);
     }
 
-    const history=[
-      {role: 'system', content: userImage.getValue().profile},
-      ...session.zipped.map(m => ({ role: m.role, content: m.content }))
-    ].filter(c=>c.content)
+    let history
+    if (roleConfig?.sendWithHistory) {
+      history=[
+        {role: 'system', content: userImage.getValue().profile},
+        ...session.zipped.map(m => ({ role: m.role, content: m.content }))
+      ].filter(c=>c.content)
+    } else {
+      history=[
+        {role: 'system', content: userImage.getValue().profile},
+        userMsg,
+      ].filter(c=>c.content)
+    }
 
-    msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true, isSpeaking: true })
+    history=history.map(c=>({
+      role: c.role,
+      content: `<Text>${c.content}</Text>`,
+    }))
+
+    msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true, isSpeaking: false })
     chatStore.updateSessionById(sessionId, {isLoading: true})
 
     const Speaker=speech.getSpeaker()
+    const shouldAutoSpeak = chatSettingStore.getValue().autoSpeak
     let _final=null
     await sendMessage(history, ({content, err}, ctx)=>{
       const txt=content || `Error: ${err}`
@@ -229,8 +289,10 @@ chatStore.sendMessage=async (content)=>{
       chatStore.updateMessage(sessionId, msgId, {
         content: ctx.msg,
       })
-      const lang = getLanguage()
-      _final=Speaker.speakStream(ctx.msg, lang)
+      if (shouldAutoSpeak) {
+        const lang = getLanguage()
+        _final=Speaker.speakStream(ctx.msg, lang)
+      }
     }, whoToSend)
     Promise.resolve(_final).then(()=>{
       chatStore.updateMessage(sessionId, msgId, {
@@ -242,8 +304,12 @@ chatStore.sendMessage=async (content)=>{
     })
     chatStore.updateSessionById(sessionId, {isLoading: false})
 
-    await chatStore.zipMessages(sessionId)
-    await chatStore.checkUserImage(sessionId)
+    if (roleConfig?.sendWithHistory) {
+      await chatStore.zipMessages(sessionId)
+    }
+    if (roleConfig?.updateUserImage) {
+      await chatStore.checkUserImage(sessionId)
+    }
 
   }catch(e) {
     console.log('send message error', e)
@@ -276,16 +342,10 @@ chatStore.tiggerMessageSpeak=async (sessionId, message)=>{
 
 chatStore.addMessage=(sessionId, message) => {
   message.id=newId()
-  chatStore.setValue(prev => ({
-    ...prev,
-    sessions: [...prev.sessions.map(session=>{
-      if(session.id===sessionId) {
-        session.messages.push(message)
-        session.zipped.push(message)
-      }
-      return session
-    })]
-  }))
+  chatStore.updateSessionById(sessionId, session=>{
+    session.messages.push(message)
+    session.zipped.push(message)
+  })
   return message.id
 }
 
@@ -296,13 +356,12 @@ function updateMessageById(messages, msgId, msg) {
     messages[i]={...messages[i]}
     return [...messages]
   }
+  return messages
 }
 chatStore.updateMessage=(sessionId, msgId, msg) => {
   chatStore.updateSessionById(sessionId, session=>{
-    if(session.id===sessionId) {
-      session.messages=updateMessageById(session.messages, msgId, msg)
-      session.zipped=updateMessageById(session.zipped, msgId, msg)
-    }
+    session.messages=updateMessageById(session.messages, msgId, msg)
+    session.zipped=updateMessageById(session.zipped, msgId, msg)
   })
 }
 
@@ -339,6 +398,7 @@ chatStore.zipMessages=async (sessionId, option)=> {
 chatStore.deleteMessage=(sessionId, msgId)=>{
   chatStore.updateSessionById(sessionId, session=>{
     session.messages=session.messages.filter(msg=>msg.id!==msgId)
+    session.zipped=session.zipped.filter(msg=>msg.id!==msgId)
   })
 }
 
