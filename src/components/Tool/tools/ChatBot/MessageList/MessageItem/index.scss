@@ -13,8 +13,9 @@
   &.user {
     justify-content: flex-end;
     .message-bubble {
-      background-color: #0a84ff;
-      color: white;
+      background-color: #fff;
+      box-shadow: 0 0 10px #ccc;
+      color: #000;
       border-radius: 18px 18px 2px 18px;
     }
   }
@@ -63,7 +64,8 @@
   .message-item {
     &.user {
       .message-bubble {
-        background-color: #0a84ff;
+        background-color: #2c2c2e;
+        color: #eee;
       }
     }
 

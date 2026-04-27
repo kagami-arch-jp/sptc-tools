@@ -272,7 +272,7 @@ chatStore.sendMessage=async content=>{
 
     history=history.map(c=>({
       role: c.role,
-      content: `<Text>${c.content}</Text>`,
+      content: c.role==='user'? `<Text>${c.content}</Text>`: c.content,
     }))
 
     msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true, isSpeaking: false })
