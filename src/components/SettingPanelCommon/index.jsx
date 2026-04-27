@@ -7,7 +7,7 @@
 import React from 'react';
 import './index.scss';
 import { getCommonSettingStore, getCommonSettingValue } from '@/store/commonSettingStore';
-import { globalSettingStore, getFontSizePx, LANGUAGE_OPTIONS, FONT_SIZE_OPTIONS } from '@/store/globalSettingStore';
+import { globalSettingStore, LANGUAGE_OPTIONS, FONT_SIZE_CONFIG } from '@/store/globalSettingStore';
 
 function GlobalSettings() {
   const [settings, setSettings] = globalSettingStore.use();
@@ -32,18 +32,19 @@ function GlobalSettings() {
             ))}
           </select>
         </div>
-        <div className="input-row">
-          <label>字号</label>
-          <select
+        <div className="slider-row">
+          <div className="label-val">
+            <label>字号</label>
+            <span>{settings.fontSize}px</span>
+          </div>
+          <input
+            type="range"
+            min={FONT_SIZE_CONFIG.min}
+            max={FONT_SIZE_CONFIG.max}
+            step={FONT_SIZE_CONFIG.step}
             value={settings.fontSize}
-            onChange={(e) => updateValue('fontSize', e.target.value)}
-          >
-            {FONT_SIZE_OPTIONS.map((opt) => (
-              <option key={opt.name} value={opt.name}>
-                {opt.value}
-              </option>
-            ))}
-          </select>
+            onChange={(e) => updateValue('fontSize', parseInt(e.target.value))}
+          />
         </div>
         <div className="checkbox-row">
           <label>

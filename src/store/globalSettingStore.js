@@ -2,9 +2,19 @@ import { createStoreSharedState } from '@/store/storage';
 
 export const globalSettingStore = createStoreSharedState('global_settings', {
   language: 'zh-CN',
-  fontSize: 'medium',
+  fontSize: 16,
   darkMode: false,
 });
+
+export const FONT_SIZE_CONFIG = {
+  key: 'fontSize',
+  type: 'range',
+  info: '字号',
+  min: 12,
+  max: 24,
+  step: 1,
+  show: value => `${value}px`,
+}
 
 export const LANGUAGE_OPTIONS = [
   { name: 'zh-CN', value: '中文' },
@@ -40,5 +50,5 @@ export function useLanguage() {
 }
 
 export function useFontSize() {
-  return getFontSizePx(useGlobalSetting('fontSize'))
+  return useGlobalSetting('fontSize') || 16
 }
