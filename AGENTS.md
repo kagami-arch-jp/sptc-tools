@@ -27,6 +27,12 @@ npm run serve   # Serve production build (requires ENV=PROD)
 
 - Uses `react-cross-component-state` (not Redux/Zustand)
 
+## ダークモード対応
+
+- コンポーネントで `useDarkMode()` from `@/store/globalSettingStore` を使用
+- `dark-mode` クラスを親要素に追加して样式を切り替え
+- 既存の SCSS に `.dark-mode` スタイルを追加する形式（例: `.chat-bot-container.dark-mode`）
+
 ## Docs
 
 - `docs/ios-design-guide.md` - iOS Human Interface Guidelines design system
