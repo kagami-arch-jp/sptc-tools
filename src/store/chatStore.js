@@ -6,11 +6,89 @@
 
 import { createStoreSharedState } from './storage';
 import { summaryMessage, sendMessage, updateUserImage } from '@/api/chatApi';
-import {getSubSettingStore, isReady, languageMap} from './settingStore'
+
 import createSharedState from 'react-cross-component-state';
 import * as speech from '@/utils/speech'
+import {fetchModels} from '@/api/settings'
 
-export const chatSettingStore=getSubSettingStore('ChatBot')
+import {getCommonSettingStore} from '@/store/commonSettingStore'
+import {getLanguage} from '@/store/globalSettingStore'
+
+export const settingKey='ChatBot-SettingsV1'
+export const config=[
+  {
+    key: 'useApiKey',
+    type: 'checkbox',
+    info: 'オンライモードを有効にする',
+    children: [
+      {
+        key: 'apiKey',
+        type: 'password',
+        info: 'API Key',
+      }
+    ]
+  },
+  {
+    key: 'onlineModals',
+    type: 'select',
+    info: 'テキストモデル(online)',
+    selection: async (state, oldValue)=>{
+      if(oldValue?.key===state.apiKey && oldValue?.data?.length) return oldValue
+      const modals=await fetchModels(state.useApiKey && state.apiKey || '/')
+      return {
+        key: state.apiKey,
+        data: modals.map(({name})=>({name, value: name})),
+      }
+    },
+    hide: state=>{
+      return !(state.useApiKey && state.apiKey)
+    },
+  },
+  {
+    key: 'localModals',
+    type: 'select',
+    info: 'テキストモデル(local)',
+    selection: async (state, oldValue)=>{
+      if(oldValue?.data?.length) return oldValue
+      const modals=await fetchModels()
+      return {
+        key: state.apiKey,
+        data: modals.map(({name})=>({name, value: name})),
+      }
+    },
+    hide: state=>{
+      return state.useApiKey && state.apiKey
+    },
+  },
+  {
+    key: 'contextLength',
+    type: 'range',
+    show: value=>`${value/1024}k`,
+    info: 'Context length',
+    min: 8192,
+    max: 131072,
+    step: 4096,
+  },
+  {
+    key: 'temperature',
+    type: 'range',
+    info: 'Temperature',
+    min: 0,
+    max: 2,
+    step: 0.1,
+  },
+  {
+    key: 'tone',
+    type: 'select',
+    info: '応答トーン',
+    selection: [
+      {name: 'human', value: 'human'},
+      {name: 'assistant', value: 'assistant'},
+    ],
+  },
+]
+
+export const chatSettingStore=getCommonSettingStore(settingKey)
 
 function newId() {
   return (Date.now()+Math.random()).toString(36)
@@ -48,21 +126,39 @@ chatStore.setCurrentSession=(sessionId)=>{
   }))
 }
 
-chatStore.createSession=(who)=>{
+function getInitTitle(who) {
+  const prefix=({
+    'mennsetsu': '面接官',
+    'chat': '口语教师',
+  })[who] || '新規チャット'
+  return prefix+'-'+(new Date).toISOString().split('T')[0]
+}
+
+chatStore.createSession=()=>{
   const id=newId()
-  const title=who==='mennsetsu' ? '面接官' : who==='chat' ? '口语教师' : '新規チャット'
   chatStore.setValue(prev => ({
     ...prev,
     currentSessionId: id,
     sessions: [
-      { id, title: title+'-'+(new Date).toISOString().split('T')[0], messages: [], zipped: [], isLoading: false, isSpeaking: false, who},
+      { id, title: '新規チャット', messages: [], zipped: [], isLoading: false, isSpeaking: false, who: ''},
       ...prev.sessions
     ]
   }))
 }
 
 chatStore.isSettingReady=()=>{
-  return isReady(chatSettingStore)
+  const v=chatSettingStore.getValue()
+  return (
+    v.useApiKey && v.apiKey && v.onlineModals
+  ) || v.localModals || false
+}
+
+chatStore.startSessionByRole=(id, who)=>{
+  chatStore.updateSessionById(id, session=>{
+    session.who=who
+    session.title=getInitTitle(who)
+  })
+  chatStore.sendMessage('hi')
 }
 
 chatStore.updateSessionTitle=(id, title)=>{
@@ -99,7 +195,7 @@ chatStore.deleteSession=(id)=>{
   })
 }
 
-chatStore.sendMessage=async (content, who)=>{
+chatStore.sendMessage=async (content)=>{
   const sessionId=chatStore.getValue().currentSessionId
   const session=chatStore.getSessionById(sessionId)
   if (!session || !content.trim()) return;
@@ -108,7 +204,7 @@ chatStore.sendMessage=async (content, who)=>{
   try{
 
     const isStartMessage=session.messages.length==0
-    const whoToSend=who || session.who
+    const whoToSend=session.who
 
     const userMsg = { role: 'user', content };
     if(!isStartMessage) {
@@ -125,15 +221,15 @@ chatStore.sendMessage=async (content, who)=>{
 
     const Speaker=speech.getSpeaker()
     let _final=null
-    await sendMessage(history, ({content: txt, err}, ctx)=>{
+    await sendMessage(history, ({content, err}, ctx)=>{
+      const txt=content || `Error: ${err}`
       if(!txt) return;
       ctx.msg=ctx.msg || ''
       ctx.msg+=txt
       chatStore.updateMessage(sessionId, msgId, {
         content: ctx.msg,
       })
-      const languageSetting = chatSettingStore.getValue()?.language || '日本語';
-      const lang = languageMap[languageSetting] || 'ja-JP';
+      const lang = getLanguage()
       _final=Speaker.speakStream(ctx.msg, lang)
     }, whoToSend)
     Promise.resolve(_final).then(()=>{

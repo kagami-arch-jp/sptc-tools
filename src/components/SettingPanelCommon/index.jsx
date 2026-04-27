@@ -60,12 +60,34 @@ function GlobalSettings() {
   )
 }
 
-function SelectInput({ config, value, onChange }) {
+function SelectInput({ store, config, value, onChange }) {
+  const {selection}=config
+  const [options, setOptions]=React.useState([])
+  const [settings, setSettings] = store.use();
+  React.useEffect(()=>{
+    let ignore=false
+    if(typeof selection==='function') {
+      (async ()=>{
+        const optionsKey=config.key+'-options'
+        const oldValue=settings[optionsKey]
+        const newValue=await selection(settings, oldValue)
+        if(!ignore && options!==newValue.data) {
+          setSettings(prev=>({...prev, [optionsKey]: newValue}))
+          setOptions(newValue.data)
+        }
+      })()
+    }else if(Array.isArray(selection)) {
+      setOptions(selection)
+    }
+    return ()=>{
+      ignore=true
+    }
+  }, [settings])
   return (
     <div className="input-row">
       <label>{config.info}</label>
       <select value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
-        {config.selection?.map((opt) => (
+        {options.map((opt) => (
           <option key={opt.name} value={opt.name}>
             {opt.value}
           </option>
@@ -103,7 +125,7 @@ function RangeInput({ config, value, onChange }) {
         max={config.max}
         step={config.step}
         value={value ?? config.min}
-        onChange={(e) => onChange(parseInt(e.target.value))}
+        onChange={(e) => onChange(e.target.value)}
       />
     </div>
   );
@@ -126,7 +148,7 @@ function CheckboxInput({ config, value, onChange }) {
 
 function SettingItem({ config, store, parentPath }) {
   const [settings, setSettings] = store.use();
-  const key = parentPath ? `${parentPath}.${config.key}` : config.key;
+  const key = config.key;
   const value = settings?.[key];
 
   const updateValue = (newValue) => {
@@ -137,7 +159,7 @@ function SettingItem({ config, store, parentPath }) {
     switch (config.type) {
       case 'select':
         return (
-          <SelectInput config={config} value={value} onChange={updateValue} />
+          <SelectInput store={store} config={config} value={value} onChange={updateValue} />
         );
       case 'password':
         return (
@@ -157,6 +179,8 @@ function SettingItem({ config, store, parentPath }) {
   };
 
   const shouldShowChildren = config.type !== 'checkbox' || value === true;
+
+  if(config?.hide?.(settings)) return null
 
   return (
     <div className="setting-item">
@@ -194,13 +218,6 @@ function SettingPanelCommon(props) {
       </div>
     </div>
   );
-}
-
-export function useCommonSetting(settingKey, key) {
-  const store = getCommonSettingStore(settingKey);
-  const settings = store.useValue();
-  const fullKey = key;
-  return settings?.[fullKey];
 }
 
 export default SettingPanelCommon;

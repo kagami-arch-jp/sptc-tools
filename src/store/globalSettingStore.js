@@ -31,6 +31,14 @@ export function useDarkMode() {
   return useGlobalSetting('darkMode')
 }
 
+export function getLanguage() {
+  return globalSettingStore.getValue().language
+}
+
+export function useLanguage() {
+  return globalSettingStore.useValue().language
+}
+
 export function useFontSize() {
   return getFontSizePx(useGlobalSetting('fontSize'))
 }

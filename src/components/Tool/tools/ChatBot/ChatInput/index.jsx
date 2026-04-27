@@ -6,8 +6,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import chatStore from '@/store/chatStore';
-import { chatSettingStore } from '@/store/chatStore';
-import {languageMap} from '@/store/settingStore'
+
+import { useLanguage } from '@/store/globalSettingStore'
 import './index.scss';
 
 const ChatInput = ({ sessionId }) => {
@@ -15,9 +15,7 @@ const ChatInput = ({ sessionId }) => {
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef(null);
   const isLoading = chatStore.useSessionById(sessionId)?.isLoading;
-  const who = chatStore.useSessionById(sessionId)?.who;
-  const languageSetting = chatSettingStore.useValue()?.language || '日本語';
-  const recognitionLanguage = languageMap[languageSetting] || 'ja-JP';
+  const recognitionLanguage = useLanguage()
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -74,7 +72,7 @@ const ChatInput = ({ sessionId }) => {
     const content = text.trim();
     setText('');
     handleStopRecording()
-    chatStore.sendMessage(content, who)
+    chatStore.sendMessage(content)
   };
 
   const handleKeyDown = (e) => {

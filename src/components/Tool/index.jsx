@@ -8,25 +8,22 @@
  */
 
 import React from 'react';
-import { darkMode } from '@/store/darkMode';
+import {useDarkMode} from '@/store/globalSettingStore'
 import ToolCard from './ToolCard';
 
-// 既存のコンポーネントを想定
-import { ModalButton } from '@/components/Modal';
-import SettingPanel from './SettingPanel';
 import './index.scss';
 
-import {getSubSettingStore} from '@/store/settingStore'
+//import ImageGenerator from './tools/ImageGenerator'
+//import Writer from './tools/Writer'
 
-import ImageGenerator from './tools/ImageGenerator'
-import Writer from './tools/Writer'
 import TodoList from './tools/TodoList'
+import {config as todoConfig, settingKey as todoSettingKey} from '@/store/todoStore'
 
 import ChatBot from './tools/ChatBot'
-import {chatSettingStore} from '@/store/chatStore'
+import {config as chatConfig, settingKey as chatSettingKey} from '@/store/chatStore'
 
 const TOOLS_DATA = [
-  {
+  /*{
     id: 2,
     name: 'Image Generator',
     description: 'テキストから写真を生成',
@@ -39,15 +36,15 @@ const TOOLS_DATA = [
     description: '執筆アシスタント',
     image: *IMG('./imgs/writer.png'),
     Component: <Writer />,
-  },
+  },*/
   {
     id: 5,
     name: 'TodoList',
     description: 'これからやるべきことを',
     image: *IMG('./imgs/todoList.png'),
     Component: <TodoList />,
-    settingKey: 'todoListSettings',
-    config: [],
+    settingKey: todoSettingKey,
+    config: todoConfig,
   },
   {
     id: 7,
@@ -55,24 +52,19 @@ const TOOLS_DATA = [
     description: '普通な会話練習',
     image: *IMG('./imgs/chatBot.png'),
     Component: <ChatBot />,
-    SettingBtn: <ModalButton id='chatBot-settingPanel' text='⚙️'>
-      <SettingPanel store={chatSettingStore} />
-    </ModalButton>,
+
+    settingKey: chatSettingKey,
+    config: chatConfig,
   }
 ];
 
 const Tool = () => {
 
-  const isDarkMode = darkMode.useValue();
+  const isDarkMode = useDarkMode();
   return (
     <div className={`tool-page-container ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="tool-header">
         <h1 className="tool-title">AI Portal</h1>
-        <div className="tool-header-actions">
-          <ModalButton id='setting-panel' className='setting-button' text='⚙️'>
-            <SettingPanel />
-          </ModalButton>
-        </div>
       </header>
 
       <main className="tool-main-content">

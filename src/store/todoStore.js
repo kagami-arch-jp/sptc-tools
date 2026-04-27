@@ -10,6 +10,9 @@ import createSharedState from 'react-cross-component-state';
 // タスクの型定義（モック）
 // id: string, text: string, color: string, completedAt?: Date, createdAt: Date
 
+export const settingKey='todoStore-setting'
+export const config=[]
+
 export const todoStore = createStoreSharedState('todoStore', {
   tasks: [],        // 現在のタスク一覧
   isConfettiActive: false // 花火エフェクトの制御

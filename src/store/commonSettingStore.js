@@ -14,3 +14,10 @@ export function getCommonSettingValue(settingKey, key) {
   if (!store) return undefined;
   return store.getValue()?.[key];
 }
+
+export function useCommonSetting(settingKey, key) {
+  const store = getCommonSettingStore(settingKey);
+  const settings = store.useValue();
+  const fullKey = key;
+  return settings?.[fullKey];
+}

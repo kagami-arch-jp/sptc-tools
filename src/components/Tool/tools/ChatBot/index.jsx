@@ -10,11 +10,9 @@ import SessionList from './SessionList';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
 import Dialog from '@/components/Dialog';
-import chatStore from '@/store/chatStore';
+import chatStore, {settingKey} from '@/store/chatStore';
 import './index.scss';
-
-import {openById} from '@/store/modalButton'
-import SizeObserver from '@/components/SizeObserver'
+import { openById } from '@/store/modalButton';
 
 const ChatBot = () => {
   const {sessions, currentSessionId} = chatStore.useValue()
@@ -31,15 +29,14 @@ const ChatBot = () => {
   const handleNewSession = () => {
     if(!chatStore.isSettingReady()) {
       Dialog.toast({message: 'please select models before using..'})
-      openById('chatBot-settingPanel')
+      openById(settingKey+'-modal')
       return
     }
     chatStore.createSession()
   }
 
   const handleRoleSelect = (who) => {
-    chatStore.createSession(who)
-    chatStore.sendMessage('hi', who)
+    chatStore.startSessionByRole(currentSessionId, who)
   }
 
   const showRoleButtons = currentSession && currentSession.messages.length === 0
@@ -77,15 +74,15 @@ const ChatBot = () => {
                 }
               </div>
             </header>
-            <MessageList sessionId={currentSession.id} />
             {showRoleButtons ? (
               <div className="role-selection">
                 <button className="role-btn" onClick={() => handleRoleSelect('chat')}>口语教师</button>
                 <button className="role-btn" onClick={() => handleRoleSelect('mennsetsu')}>面接官</button>
               </div>
-            ) : (
+            ) : <>
+              <MessageList sessionId={currentSession.id} />
               <ChatInput sessionId={currentSession.id} />
-            )}
+            </>}
           </>
         ) : (
           <div className="empty-state">セッションを選択してください</div>

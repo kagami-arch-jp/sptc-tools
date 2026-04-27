@@ -25,10 +25,14 @@ const SessionList = () => {
             className="delete-btn"
             onClick={(e) => {
               e.stopPropagation();
-              Dialog.confirm({
-                message: '削除しますか',
-                onConfirm: ()=>chatStore.deleteSession(session.id),
-              })
+              if(session.messages?.length>0) {
+                Dialog.confirm({
+                  message: '削除しますか',
+                  onConfirm: ()=>chatStore.deleteSession(session.id),
+                })
+              }else{
+                chatStore.deleteSession(session.id)
+              }
             }}
           >
             ×

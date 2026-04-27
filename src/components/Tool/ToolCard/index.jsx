@@ -11,10 +11,6 @@ import React from 'react';
 import MiniWin from '@/components/MiniWin'
 import Item from './Item'
 
-import Dialog from '@/components/Dialog'
-import {isReady} from '@/store/settingStore'
-import {openById} from '@/store/modalButton'
-
 /**
  * @param {Object} props
  * @param {Object} props.tool - ツールの情報オブジェクト
@@ -30,11 +26,6 @@ const ToolCard = ({ tool }) => {
       title={tool.name}
       description={tool.description}
       onClick={()=>{
-        if(!isReady()) {
-          Dialog.toast({message: 'please select models before using..'})
-          openById('setting-panel')
-          return
-        }
         setIsOpen(true)
       }}
     />

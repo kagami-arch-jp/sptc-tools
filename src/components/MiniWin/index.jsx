@@ -25,7 +25,6 @@ import { useDraggable } from '@/hooks/useDraggable';
 import { useResizable } from '@/hooks/useResizable';
 import { getElementRect } from '@/utils/domUtils';
 import ResizeHandle from './ResizeHandle';
-// import { darkMode } from '@/store/darkMode';
 
 import {useGlobalSetting} from '@/store/globalSettingStore'
 
@@ -170,7 +169,7 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
         <div className='btn-area'>
           {btns}
           {config && settingKey && (
-            <ModalButton id={`${id}-settings`} text="⚙">
+            <ModalButton id={`${settingKey}-modal`} text="⚙">
               <SettingPanelCommon settingKey={settingKey} config={config} />
             </ModalButton>
           )}
