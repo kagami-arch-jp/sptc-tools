@@ -23,6 +23,7 @@ class ollamaController extends apiController{
     }=this.postData
     this.systemSetting={
       humanTone: tone==='human',
+      tsuxtsukomiTone: tone==='tsuxtsukomi',
       lang: language,
     }
     this.setAsStreamResponse()

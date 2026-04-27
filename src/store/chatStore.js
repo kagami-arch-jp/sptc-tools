@@ -84,6 +84,7 @@ export const config=[
     selection: [
       {name: 'human', value: 'human'},
       {name: 'assistant', value: 'assistant'},
+      {name: 'tsuxtsukomi', value: 'ツッコミ'},
     ],
   },
   {
@@ -138,6 +139,7 @@ export const roleBtnList = {
     autoSendHi: true,
     sendWithHistory: true,
     updateUserImage: true,
+    sendUserImage: true,
   },
   chat: {
     text: '会話練習',
@@ -145,6 +147,7 @@ export const roleBtnList = {
     autoSendHi: true,
     sendWithHistory: true,
     updateUserImage: true,
+    sendUserImage: true,
   },
   normal: {
     text: '普通会話ツール',
@@ -152,6 +155,7 @@ export const roleBtnList = {
     autoSendHi: false,
     sendWithHistory: true,
     updateUserImage: false,
+    sendUserImage: true,
   },
   translate: {
     text: '日本語に翻訳',
@@ -159,6 +163,7 @@ export const roleBtnList = {
     autoSendHi: false,
     sendWithHistory: false,
     updateUserImage: false,
+    sendUserImage: false,
   },
   grammer: {
     text: '文法指摘',
@@ -166,6 +171,7 @@ export const roleBtnList = {
     autoSendHi: false,
     sendWithHistory: true,
     updateUserImage: false,
+    sendUserImage: false,
   },
 }
 
@@ -248,9 +254,9 @@ chatStore.sendMessage=async content=>{
 
   try{
 
-    const isStartMessage=session.messages.length==0 && roleBtnList[session.who].autoSendHi
     const whoToSend=session.who
     const roleConfig = roleBtnList[whoToSend]
+    const isStartMessage=session.messages.length==0 && roleConfig.autoSendHi
 
     const userMsg = { role: 'user', content };
     if(!isStartMessage) {
@@ -260,14 +266,14 @@ chatStore.sendMessage=async content=>{
     let history
     if (roleConfig?.sendWithHistory) {
       history=[
-        {role: 'system', content: userImage.getValue().profile},
+        roleConfig?.sendUserImage && {role: 'system', content: userImage.getValue().profile},
         ...session.zipped.map(m => ({ role: m.role, content: m.content }))
-      ].filter(c=>c.content)
+      ].filter(c=>c?.content)
     } else {
       history=[
-        {role: 'system', content: userImage.getValue().profile},
+        roleConfig?.sendUserImage && {role: 'system', content: userImage.getValue().profile},
         userMsg,
-      ].filter(c=>c.content)
+      ].filter(c=>c?.content)
     }
 
     history=history.map(c=>({
@@ -288,6 +294,7 @@ chatStore.sendMessage=async content=>{
       ctx.msg+=txt
       chatStore.updateMessage(sessionId, msgId, {
         content: ctx.msg,
+        isSpeaking: shouldAutoSpeak,
       })
       if (shouldAutoSpeak) {
         const lang = getLanguage()
