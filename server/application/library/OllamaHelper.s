@@ -63,7 +63,7 @@ class OllamaHelper{
         model: this.model,
         messages: msg,
         think: this.think,
-        keep_alive: "2h",
+        keep_alive: "15m",
         options: {
           temperature: this.temperature,
           num_ctx: this.contextLength,

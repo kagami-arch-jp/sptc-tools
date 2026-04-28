@@ -1,11 +1,12 @@
 /**
  * @file Dialog Component
- * @description 命令式调用的弹窗组件，支持 Confirm 和 Toast 模式。
- * @version 1.0.0
+ * @description 命令式调用的弹窗组件，支持 Confirm、Toast 和 Prompt 模式。
+ * @version 1.1.0
  * @create 2026-04-16
  * @usage
  * Dialog.confirm({ message: '确定删除吗？', onConfirm: () => {}, onCancel: () => {} });
  * Dialog.toast({ message: '保存成功', duration: 2 });
+ * Dialog.prompt({ message: '请输入标题', defaultValue: '默认', onConfirm: (value) => {} });
  */
 
 import React from 'react';
@@ -55,6 +56,25 @@ const Dialog = {
       type: 'toast',
       message,
       duration,
+    });
+  },
+
+  /**
+   * 输入框模式
+   * @param {Object} options
+   * @param {string} options.message - 提示内容
+   * @param {string} [options.defaultValue=''] - 默认值
+   * @param {Function} [options.onConfirm] - 确认回调，接收输入值
+   * @param {Function} [options.onCancel] - 取消回调
+   */
+  prompt: ({ message, defaultValue='', onConfirm, onCancel }) => {
+    init()
+    dialogStore.setValue({
+      type: 'prompt',
+      message,
+      defaultValue,
+      onConfirm,
+      onCancel,
     });
   },
 

@@ -13,6 +13,8 @@ $color-text-light: #000000;
 $color-text-dark: #ffffff;
 $color-confirm: #007aff;
 $color-cancel: #8e8e93;
+$color-input-bg-light: #f2f2f7;
+$color-input-bg-dark: #1c1c1e;
 $transition-speed: 0.3s;
 
 .dialog-overlay {
@@ -26,7 +28,8 @@ $transition-speed: 0.3s;
   @include flex-center;
   animation: fadeIn $transition-speed ease;
 
-  .dialog-confirm {
+  .dialog-confirm,
+  .dialog-prompt {
     background-color: $color-bg-light;
     padding: 20px;
     border-radius: 14px;
@@ -40,6 +43,23 @@ $transition-speed: 0.3s;
       color: $color-text-light;
       text-align: center;
       word-break: break-word;
+    }
+
+    .dialog-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #e5e5ea;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: $color-input-bg-light;
+      color: $color-text-light;
+      box-sizing: border-box;
+      outline: none;
+
+      &:focus {
+        border-color: $color-confirm;
+      }
     }
 
     .dialog-actions {
@@ -95,10 +115,19 @@ $transition-speed: 0.3s;
 
 // 暗黑模式支持
 :global(.dark-mode) {
-  .dialog-confirm {
+  .dialog-confirm,
+  .dialog-prompt {
     background-color: $color-bg-dark;
     .dialog-content {
       color: $color-text-dark;
+    }
+    .dialog-input {
+      background-color: $color-input-bg-dark;
+      color: $color-text-dark;
+      border-color: #3a3a3c;
+      &:focus {
+        border-color: $color-confirm;
+      }
     }
     .btn-cancel {
       color: $color-confirm;

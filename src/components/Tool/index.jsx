@@ -14,7 +14,9 @@ import ToolCard from './ToolCard';
 import './index.scss';
 
 //import ImageGenerator from './tools/ImageGenerator'
-//import Writer from './tools/Writer'
+
+import Writer from './tools/Writer'
+import {config as writerConfig, settingKey as writerSettingKey} from '@/store/writerStore'
 
 import TodoList from './tools/TodoList'
 import {config as todoConfig, settingKey as todoSettingKey} from '@/store/todoStore'
@@ -29,14 +31,16 @@ const TOOLS_DATA = [
     description: 'テキストから写真を生成',
     image: *IMG('./imgs/imageGenerator.png'),
     Component: <ImageGenerator />,
-  },
+  },*/
   {
     id: 3,
     name: 'Writer',
     description: '執筆アシスタント',
     image: *IMG('./imgs/writer.png'),
     Component: <Writer />,
-  },*/
+    settingKey: writerSettingKey,
+    config: writerConfig,
+  },
   {
     id: 5,
     name: 'TodoList',
@@ -63,9 +67,6 @@ const Tool = () => {
   const isDarkMode = useDarkMode();
   return (
     <div className={`tool-page-container ${isDarkMode ? 'dark-mode' : ''}`}>
-      <header className="tool-header">
-        <h1 className="tool-title">AI Portal</h1>
-      </header>
 
       <main className="tool-main-content">
 

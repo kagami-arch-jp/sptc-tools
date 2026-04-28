@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import dialogStore from '@/store/dialogStore';
 import './index.scss';
 
@@ -9,6 +9,7 @@ import './index.scss';
 function DialogRenderer() {
   const [dialog, setDialog] = dialogStore.use();
   const timerRef = useRef(null);
+  const [inputValue, setInputValue] = useState('');
 
   // 清理定时器
   const clearTimer = () => {
@@ -28,6 +29,10 @@ function DialogRenderer() {
       }, (dialog.duration || 3) * 1000);
     }
 
+    if (dialog.type === 'prompt') {
+      setInputValue(dialog.defaultValue || '');
+    }
+
     return () => clearTimer();
   }, [dialog]);
 
@@ -36,7 +41,7 @@ function DialogRenderer() {
   const handleAction = (actionType) => {
     try {
       if (actionType === 'confirm') {
-        if (dialog.onConfirm) dialog.onConfirm();
+        if (dialog.onConfirm) dialog.onConfirm(dialog.type === 'prompt' ? inputValue : undefined);
       } else {
         if (dialog.onCancel) dialog.onCancel();
       }
@@ -48,8 +53,14 @@ function DialogRenderer() {
   };
 
   const handleOverlayClick = () => {
-    if (dialog.type === 'confirm' && dialog.onCancel) {
+    if ((dialog.type === 'confirm' || dialog.type === 'prompt') && dialog.onCancel) {
       handleAction('cancel');
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleAction('confirm');
     }
   };
 
@@ -60,7 +71,32 @@ function DialogRenderer() {
           <div className="dialog-content">{dialog.message}</div>
           <div className="dialog-actions">
             <button className="btn-cancel" onClick={() => handleAction('cancel')}>
-              キャンセル
+               キャンセル
+            </button>
+            <button className="btn-confirm" onClick={() => handleAction('confirm')}>
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (dialog.type === 'prompt') {
+    return (
+      <div className="dialog-overlay" onClick={handleOverlayClick}>
+        <div className="dialog-prompt" onClick={(e) => e.stopPropagation()}>
+          <div className="dialog-content">{dialog.message}</div>
+          <input
+            className="dialog-input"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoFocus
+          />
+          <div className="dialog-actions">
+            <button className="btn-cancel" onClick={() => handleAction('cancel')}>
+               キャンセル
             </button>
             <button className="btn-confirm" onClick={() => handleAction('confirm')}>
               OK

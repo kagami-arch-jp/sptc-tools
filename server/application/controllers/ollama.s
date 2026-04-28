@@ -19,7 +19,7 @@ class ollamaController extends apiController{
       temperature=0,
       contextLength=8192,
       language='English',
-      tone='human',
+      tone='',
     }=this.postData
     this.systemSetting={
       humanTone: tone==='human',
@@ -50,6 +50,7 @@ class ollamaController extends apiController{
         role: 'user',
         content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/system/global.md.s', this.systemSetting)
       },
+      ...any
     )
     return await helper.startStreamEcho(msgs.filter(x=>x.content))
   }
@@ -86,16 +87,15 @@ class ollamaController extends apiController{
 
     if(!txt) return;
 
-    await this._callOllamaEcho(
-      {txt: role},
-      {md: ({
+    await this._callOllamaEcho(...[
+      role,
+      FileHelper.readTextFile(({
         after: __DOC_DIR__+'/writer/After.md',
         rewrite: __DOC_DIR__+'/writer/Rewrite.md',
         expand: __DOC_DIR__+'/writer/Expand.md',
-      })[queryType]},
-      {txt},
-    )
-
+      })[queryType]),
+      txt,
+    ].map(x=>({role: 'user', content: x})))
   }
 
   async chatAction() {

@@ -36,6 +36,8 @@ export function setCursorPosition(textarea, pos) {
 }
 
 export function removeDuplicateString(base, text, maxChar=50) {
+  base=base.trim()
+  text=text.trim()
   const bl=base.length
   for(let i=maxChar; i-->1; ) {
     if(base.substr(bl-i)===text.substr(0, i)) {
