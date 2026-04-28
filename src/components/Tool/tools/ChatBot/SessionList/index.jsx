@@ -11,12 +11,23 @@ import Dialog from '@/components/Dialog'
 
 const SessionList = () => {
   const {sessions, currentSessionId} = chatStore.useValue();
+  const btns=React.useRef({})
+  const currentSession=chatStore.useSessionById(currentSessionId)
+
+  React.useEffect(()=>{
+    btns.current[currentSessionId]?.scrollIntoView({
+      behavior: 'smooth',
+    })
+  }, [currentSessionId, currentSession])
 
   return (
     <div className="chat-session-list">
       {sessions.map(session => (
         <div
           key={session.id}
+          ref={div=>{
+            btns.current[session.id]=div
+          }}
           className={`chat-session-item ${currentSessionId === session.id ? 'active' : ''}`}
           onClick={() => chatStore.setCurrentSession(session.id)}
         >

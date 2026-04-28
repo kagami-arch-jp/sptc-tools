@@ -138,40 +138,35 @@ export const roleBtnList = {
     description: '模擬面接练习。会話を监听し、質問します。履歴を保持して継続的な対話が可能。',
     autoSendHi: true,
     sendWithHistory: true,
-    updateUserImage: true,
-    sendUserImage: true,
+    enableUserImage: true,
   },
   chat: {
     text: '会話練習',
     description: '日常的な会話練習。用户の表現をチェックし、より自然な日本語に修正します。',
     autoSendHi: true,
     sendWithHistory: true,
-    updateUserImage: true,
-    sendUserImage: true,
+    enableUserImage: true,
   },
   normal: {
     text: '普通会話ツール',
     description: '一般的なチャットボット。AI アシスタントとして何でも質問できます。',
     autoSendHi: false,
     sendWithHistory: true,
-    updateUserImage: false,
-    sendUserImage: true,
+    enableUserImage: true,
   },
   translate: {
     text: '日本語に翻訳',
     description: '選択したテキストを日本語に翻訳します。履歴不要みで即座に翻訳。',
     autoSendHi: false,
     sendWithHistory: false,
-    updateUserImage: false,
-    sendUserImage: false,
+    enableUserImage: false,
   },
   grammer: {
     text: '文法指摘',
     description: '文章の文法をチェックし 誤用などを指摘・修正します。',
     autoSendHi: false,
     sendWithHistory: true,
-    updateUserImage: false,
-    sendUserImage: false,
+    enableUserImage: false,
   },
 }
 
@@ -226,8 +221,8 @@ chatStore.useSessionById=(sessionId)=>{
 }
 
 chatStore.deleteSession=(id)=>{
-  const {zipped}=chatStore.getSessionById(id)
-  if(zipped.length>1) {
+  const {zipped, who}=chatStore.getSessionById(id)
+  if(roleBtnList[who]?.enableUserImage && zipped.length>1) {
     userImage.setValue(prev=>{
       prev.stacks=[...(prev.stacks || []), zipped]
       return {...prev}
@@ -314,7 +309,7 @@ chatStore.sendMessage=async content=>{
     if (roleConfig?.sendWithHistory) {
       await chatStore.zipMessages(sessionId)
     }
-    if (roleConfig?.updateUserImage) {
+    if (roleConfig?.enableUserImage) {
       await chatStore.checkUserImage(sessionId)
     }
 
