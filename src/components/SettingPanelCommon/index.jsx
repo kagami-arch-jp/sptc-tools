@@ -147,6 +147,21 @@ function CheckboxInput({ config, value, onChange }) {
   );
 }
 
+function TextAreaInput({ config, value, onChange }) {
+  return (
+    <div className="textarea-row">
+      <label>{config.info}</label>
+      <textarea
+        className="textarea-input"
+        value={value ?? ''}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={config.placeholder || ''}
+        rows={config.rows || 4}
+      />
+    </div>
+  );
+}
+
 function SettingItem({ config, store, parentPath }) {
   const [settings, setSettings] = store.use();
   const key = config.key;
@@ -173,6 +188,10 @@ function SettingItem({ config, store, parentPath }) {
       case 'checkbox':
         return (
           <CheckboxInput config={config} value={value} onChange={updateValue} />
+        );
+      case 'textarea':
+        return (
+          <TextAreaInput config={config} value={value} onChange={updateValue} />
         );
       default:
         return null;
@@ -203,7 +222,7 @@ function SettingItem({ config, store, parentPath }) {
 }
 
 function SettingPanelCommon(props) {
-  const { settingKey, config, title='設定' } = props;
+  const { settingKey, config, title='設定', showGlobalSettings = true } = props;
   const store = getCommonSettingStore(settingKey);
   const globalSettings = globalSettingStore.useValue();
   const isDark = globalSettings?.darkMode;
@@ -211,7 +230,7 @@ function SettingPanelCommon(props) {
   return (
     <div className={`setting-panel-common ${isDark ? 'dark-mode' : ''}`}>
       {title && <h2 className="panel-title">{title}</h2>}
-      <GlobalSettings />
+      {showGlobalSettings && <GlobalSettings />}
       <div className="panel-body">
         {config.map((item) => (
           <SettingItem key={item.key} config={item} store={store} parentPath="" />

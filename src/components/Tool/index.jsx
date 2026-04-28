@@ -13,7 +13,8 @@ import ToolCard from './ToolCard';
 
 import './index.scss';
 
-//import ImageGenerator from './tools/ImageGenerator'
+import ImageGenerator from './tools/ImageGenerator'
+import {config as imageGeneratorConfig, settingKey as imageGeneratorSettingKey} from '@/store/imageGenerationStore'
 
 import Writer from './tools/Writer'
 import {config as writerConfig, settingKey as writerSettingKey} from '@/store/writerStore'
@@ -25,13 +26,15 @@ import ChatBot from './tools/ChatBot'
 import {config as chatConfig, settingKey as chatSettingKey} from '@/store/chatStore'
 
 const TOOLS_DATA = [
-  /*{
+  {
     id: 2,
     name: 'Image Generator',
     description: 'テキストから写真を生成',
     image: *IMG('./imgs/imageGenerator.png'),
     Component: <ImageGenerator />,
-  },*/
+    settingKey: imageGeneratorSettingKey,
+    config: imageGeneratorConfig,
+  },
   {
     id: 3,
     name: 'Writer',

@@ -88,12 +88,33 @@
     }
   }
 
+  .textarea-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+    label {
+      font-size: 13px;
+      color: #888;
+    }
+    .textarea-input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 15px;
+      outline: none;
+      resize: vertical;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+  }
+
   .setting-children {
     padding-left: 20px;
     margin-top: 8px;
   }
 
-  &.dark-mode {
+    &.dark-mode {
     .panel-title {
       color: #fff;
     }
@@ -114,6 +135,17 @@
         color: #fff;
       }
       select {
+        background-color: #2c2c2e;
+        border-color: #3a3a3c;
+        color: #fff;
+      }
+    }
+
+    .textarea-row {
+      label {
+        color: #aaa;
+      }
+      .textarea-input {
         background-color: #2c2c2e;
         border-color: #3a3a3c;
         color: #fff;

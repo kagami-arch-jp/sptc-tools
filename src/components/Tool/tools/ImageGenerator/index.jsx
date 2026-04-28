@@ -9,28 +9,30 @@
  * @usage <ImageGenerator />
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { generateImage } from '@/api/imageApi';
 import {
   imageGenerationStore,
-  promptStore,
-  sizeStore,
-  stepsStore,
+  imageGenerationSettingStore,
+  panelSettingKey,
+  panelConfig,
 } from '@/store/imageGenerationStore'
+import SettingPanelCommon from '@/components/SettingPanelCommon';
 import ProgressDisplay from './ProgressDisplay';
 import ImagePreview from './ImagePreview';
 import './index.scss';
 import SizeObserver from '@/components/SizeObserver'
+import Dialog from '@/components/Dialog'
 
 function ImageGenerator() {
-  const [prompt, setPrompt] = promptStore.use()
-  const [size, setSize] = sizeStore.use()
-  const [steps, setSteps] = stepsStore.use()
+  const [settings, setSettings] = imageGenerationSettingStore.use();
   const [store, setStore] = imageGenerationStore.use();
 
+  const { prompt, size, steps } = settings;
+
   const handleGenerate = useCallback(async () => {
-    if (!prompt.trim()) {
-      alert('プロンプトを入力してください');
+    if (!prompt || !prompt.trim()) {
+      Dialog.toast({ message: 'プロンプトを入力してください' });
       return;
     }
 
@@ -60,51 +62,12 @@ function ImageGenerator() {
       return ''
     }} className="image-generator-container">
       <div className="generator-card">
-        <div className="input-group textarea-area">
-          <label className="input-label">プロンプト</label>
-          <textarea
-            className="prompt-textarea"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="生成したい画像の内容を詳しく入力してください..."
-            disabled={store.status === 'loading'}
-          />
-        </div>
-
-        <div className="parameter-group">
-          <div className="slider-item">
-            <div className="slider-header">
-              <span className="slider-label">画像サイズ</span>
-              <span className="slider-value">{size}px</span>
-            </div>
-            <input
-              type="range"
-              min="64"
-              max="1024"
-              step="64"
-              value={size}
-              onChange={(e) => setSize(parseInt(e.target.value))}
-              className="custom-slider"
-              disabled={store.status === 'loading'}
-            />
-          </div>
-
-          <div className="slider-item">
-            <div className="slider-header">
-              <span className="slider-label">ステップ数</span>
-              <span className="slider-value">{steps}</span>
-            </div>
-            <input
-              type="range"
-              min="1"
-              max="25"
-              value={steps}
-              onChange={(e) => setSteps(parseInt(e.target.value))}
-              className="custom-slider"
-              disabled={store.status === 'loading'}
-            />
-          </div>
-        </div>
+        <SettingPanelCommon
+          showGlobalSettings={false}
+          settingKey={panelSettingKey}
+          config={panelConfig}
+          title="画像生成設定"
+        />
 
         <div className="action-group">
           {store.status === 'loading' ? (

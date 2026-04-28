@@ -1,7 +1,5 @@
 import { fetchStream } from '@/utils/fetch';
 
-import settingStore, {getCommonParams} from '@/store/settingStore';
-
 /**
  * 画像生成をシミュレートするジェネレーター関数
  * @param {object} params - 生成パラメータ (prompt, size, steps)
@@ -11,7 +9,6 @@ import settingStore, {getCommonParams} from '@/store/settingStore';
 export async function generateImage(params, onProgress) {
   await fetchStream('/ollama/generateImage', {
     ...params,
-    ...getCommonParams(true)
   }, p=>{
     onProgress(p.progress, p.image)
   })
