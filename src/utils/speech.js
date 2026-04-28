@@ -3,7 +3,10 @@ const speaking={
 }
 
 export function support() {
-  return window.speechSynthesis && true
+  try{
+    return window.speechSynthesis && true
+  }catch(e) {}
+  return false
 }
 
 function fix(txt) {

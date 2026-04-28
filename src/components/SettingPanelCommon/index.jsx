@@ -89,7 +89,7 @@ function SelectInput({ store, config, value, onChange }) {
     }else if(Array.isArray(selection)) {
       setOptions(selection)
     }
-  }, [selection, settings])
+  }, [selection])
   return (
     <div className="input-row">
       <label>{config.info}</label>

@@ -258,20 +258,14 @@ chatStore.sendMessage=async content=>{
       chatStore.addMessage(sessionId, userMsg);
     }
 
-    let history
+    let history=[
+      roleConfig?.enableUserImage && {role: 'system', content: userImage.getValue().profile},
+    ]
     if (roleConfig?.sendWithHistory) {
-      history=[
-        roleConfig?.sendUserImage && {role: 'system', content: userImage.getValue().profile},
-        ...session.zipped.map(m => ({ role: m.role, content: m.content }))
-      ].filter(c=>c?.content)
-    } else {
-      history=[
-        roleConfig?.sendUserImage && {role: 'system', content: userImage.getValue().profile},
-        userMsg,
-      ].filter(c=>c?.content)
+      history=history.concat(session.zipped.map(m => ({ role: m.role, content: m.content })))
     }
 
-    history=history.map(c=>({
+    history=history.filter(x=>x?.content).map(c=>({
       role: c.role,
       content: c.role==='user'? `<Text>${c.content}</Text>`: c.content,
     }))
@@ -280,7 +274,7 @@ chatStore.sendMessage=async content=>{
     chatStore.updateSessionById(sessionId, {isLoading: true})
 
     const Speaker=speech.getSpeaker()
-    const shouldAutoSpeak = chatSettingStore.getValue().autoSpeak
+    const shouldAutoSpeak = Speaker && chatSettingStore.getValue().autoSpeak
     let _final=null
     await sendMessage(history, ({content, err}, ctx)=>{
       const txt=content || `Error: ${err}`

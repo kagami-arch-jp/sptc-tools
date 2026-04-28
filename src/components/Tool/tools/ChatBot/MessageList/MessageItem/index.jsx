@@ -13,8 +13,6 @@ import chatStore from '@/store/chatStore'
 import {cls} from '@/utils/css'
 import './index.scss';
 
-import * as Speaker from '@/utils/speech'
-
 const MessageItem = ({ message, sessionId }) => {
   const isUser = message.role === 'user';
 
