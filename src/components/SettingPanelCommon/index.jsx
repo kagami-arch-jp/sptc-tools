@@ -6,6 +6,7 @@
  */
 import React from 'react';
 import './index.scss';
+import Spinner from '@/components/Spinner';
 import { getCommonSettingStore, getCommonSettingValue } from '@/store/commonSettingStore';
 import { globalSettingStore, LANGUAGE_OPTIONS, FONT_SIZE_CONFIG } from '@/store/globalSettingStore';
 
@@ -64,36 +65,52 @@ function GlobalSettings() {
 function SelectInput({ store, config, value, onChange }) {
   const {selection}=config
   const [options, setOptions]=React.useState([])
+  const [loading, setLoading]=React.useState(false)
   const [settings, setSettings] = store.use();
+  const loadOptions=async force=>{
+    setLoading(true)
+    try {
+      const optionsKey=config.key+'-options'
+      const oldValue=force? null: settings[optionsKey]
+      const newValue=await selection(settings, oldValue)
+      if(options!==newValue.data) {
+        setSettings(prev=>({...prev, [optionsKey]: newValue}))
+        setOptions(newValue.data)
+      }
+    } catch (error) {
+      console.error('オプションの読み込みに失敗しました:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
   React.useEffect(()=>{
-    let ignore=false
     if(typeof selection==='function') {
-      (async ()=>{
-        const optionsKey=config.key+'-options'
-        const oldValue=settings[optionsKey]
-        const newValue=await selection(settings, oldValue)
-        if(!ignore && options!==newValue.data) {
-          setSettings(prev=>({...prev, [optionsKey]: newValue}))
-          setOptions(newValue.data)
-        }
-      })()
+      loadOptions()
     }else if(Array.isArray(selection)) {
       setOptions(selection)
     }
-    return ()=>{
-      ignore=true
-    }
-  }, [settings])
+  }, [selection, settings])
   return (
     <div className="input-row">
       <label>{config.info}</label>
-      <select value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
-        {options.map((opt) => (
-          <option key={opt.name} value={opt.name}>
-            {opt.value}
-          </option>
-        ))}
-      </select>
+      {typeof selection==='function' && loading ? (
+        <Spinner msg="読み込み中..." />
+      ) : (
+        <div className="select-with-refresh">
+          <select value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
+            {options.map((opt) => (
+              <option key={opt.name} value={opt.name}>
+                {opt.value}
+              </option>
+            ))}
+          </select>
+          {typeof selection==='function' && (
+            <button className="refresh-btn" onClick={e=>loadOptions(true)} disabled={loading}>
+              ↻
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
