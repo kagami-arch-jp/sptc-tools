@@ -9,7 +9,7 @@ import React, { useState, useRef } from 'react';
 import './index.scss';
 import { replaceRange, removeDuplicateString } from '@/utils/textSelection';
 import writerSessions, { settingKey } from '@/store/writerStore';
-import { useWriterKeyboardShortcuts } from '@/utils/keyboardUtils';
+import { useWriterKeyboardShortcuts } from '@/hooks/keyboard';
 import MarkdownViewer from '@/components/MarkdownViewer';
 import { openById } from '@/store/modalButton';
 import { useDarkMode } from '@/store/globalSettingStore';

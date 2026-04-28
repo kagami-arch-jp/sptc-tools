@@ -5,7 +5,7 @@
  */
 
 import { useEffect } from 'react';
-import { getSelectionInfo } from './textSelection';
+import { getSelectionInfo } from '@/utils/textSelection';
 
 /**
  * ライター用のキーボードショートカットを登録するフック
