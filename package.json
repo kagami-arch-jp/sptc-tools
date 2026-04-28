@@ -2,7 +2,8 @@
   "scripts": {
     "dev": "node build/webpack5 dev",
     "build": "node build/webpack5 build",
-    "serve": "cross-env ENV=PROD sptcd -d -rindex.s -wserver"
+    "serve": "cross-env ENV=PROD sptcd -d -rindex.s -wserver",
+    "publish": "npm run build && cd server && npm publish --tag latest"
   },
   "dependencies": {
     "ollama": "^0.6.3",

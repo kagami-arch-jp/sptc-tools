@@ -1,0 +1,28 @@
+{
+  "name": "sptc-tools",
+  "version": "1.0.0",
+  "description": "AI tools for development efficiency",
+  "main": "index.js",
+  "bin": {
+    "tool": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "tools",
+    "cli"
+  ],
+  "author": "treemonster1993",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kagami-arch-jp/react-ssr-demo/tree/dev/tool"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "ollama": "^0.6.3",
+    "open": "^11.0.0",
+    "sptc": "^0.1.1"
+  }
+}
