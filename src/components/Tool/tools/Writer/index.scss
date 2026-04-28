@@ -386,6 +386,9 @@
     text-align: left;
     cursor: pointer;
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 .writer__item-actions button {
