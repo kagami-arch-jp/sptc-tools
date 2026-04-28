@@ -33,6 +33,23 @@ npm run serve   # Serve production build (requires ENV=PROD)
 - `dark-mode` クラスを親要素に追加して样式を切り替え
 - 既存の SCSS に `.dark-mode` スタイルを追加する形式（例: `.chat-bot-container.dark-mode`）
 
+## Git Commit 格式
+
+コミットメッセージは以下の形式で作成する：
+
+```
+# feat
+- 機能追加の説明
+
+# fix
+- バグ修正の説明
+- 別の修正
+```
+
+- 変更タイプ別に分類（feat, fix, refactor, docs等）
+- 各タイプ内で変更内容を箇条書きで列挙
+- メッセージは日本語で記述
+
 ## Docs
 
 - `docs/ios-design-guide.md` - iOS Human Interface Guidelines design system
