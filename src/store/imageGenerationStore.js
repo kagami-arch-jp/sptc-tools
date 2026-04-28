@@ -10,7 +10,10 @@ import {getCommonSettingStore} from '@/store/commonSettingStore'
 import {fetchModels} from '@/api/settings'
 
 export const settingKey='ImageGenerator-SettingsV1'
-export const config=[
+export const config=[]
+
+export const panelSettingKey='ImageGenerator-PanelSettingsV1'
+export const panelConfig=[
   {
     key: 'useApiKey',
     type: 'checkbox',
@@ -55,10 +58,6 @@ export const config=[
       return state.useApiKey && state.apiKey
     },
   },
-]
-
-export const panelSettingKey='ImageGenerator-PanelSettingsV1'
-export const panelConfig=[
   {
     key: 'prompt',
     type: 'textarea',
@@ -85,7 +84,7 @@ export const panelConfig=[
   },
 ]
 
-export const imageGenerationSettingStore=getCommonSettingStore(settingKey)
+export const imageGenerationSettingStore=getCommonSettingStore(panelSettingKey)
 
 export const imageGenerationStore = createSharedState({
   progress: 0,

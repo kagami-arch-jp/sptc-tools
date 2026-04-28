@@ -50,7 +50,7 @@ function ImageGenerator() {
       setStore({ status: 'error', progress: 0, imageUrl: null });
       console.error('Generation error:', error);
     }
-  }, [prompt, size, steps, setStore]);
+  }, [prompt, size, steps, settings]);
 
   const handleCancel = () => {
     setStore({ ...store, status: 'idle', progress: 0, imageUrl: null });

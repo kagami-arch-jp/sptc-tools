@@ -75,9 +75,9 @@ class ollamaController extends apiController{
     }=this.postData
     await helper.startGenerateImage({
       prompt,
-      width: size,
-      height: size,
-      steps,
+      width: parseInt(size)+parseInt(size)%2,
+      height: parseInt(size)+parseInt(size)%2,
+      steps: parseInt(steps),
     })
   }
 
