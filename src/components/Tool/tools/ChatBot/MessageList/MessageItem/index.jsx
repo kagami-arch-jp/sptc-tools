@@ -4,25 +4,99 @@
  * @create 2026-04-18
  */
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import MarkdownViewer from '@/components/MarkdownViewer';
 import Spinner from '@/components/Spinner';
 import Dialog from '@/components/Dialog'
-import Button from '@/components/Button'
 import chatStore from '@/store/chatStore'
 import {cls} from '@/utils/css'
 import './index.scss';
 
 const MessageItem = ({ message, sessionId }) => {
   const isUser = message.role === 'user';
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const badgeRef = useRef(null);
 
-  React.useEffect(()=>{
+  useEffect(()=>{
     return ()=>{
       if(message.isSpeaking) {
         chatStore.tiggerMessageSpeak(sessionId, message)
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
+
+  const getMenuItems = () => {
+    const items = [];
+
+    if (message.isLoading) {
+      items.push({
+        key: 'cancel',
+        label: 'キャンセル',
+        color: 'warning',
+        action: () => {
+          chatStore.stopReceiveMessage(sessionId, message.id);
+          setMenuOpen(false);
+        },
+      });
+    }
+
+    if (!message.isLoading && message.content) {
+      items.push({
+        key: 'speak',
+        label: message.isSpeaking ? '停止' : '再生',
+        color: message.isSpeaking ? 'warning' : 'primary',
+        action: () => {
+          chatStore.tiggerMessageSpeak(sessionId, message);
+          setMenuOpen(false);
+        },
+      });
+    }
+
+    if (!isUser && !message.isLoading) {
+      items.push({
+        key: 'retry',
+        label: '再試行',
+        color: 'warning',
+        action: () => {
+          chatStore.retryMessage(sessionId, message.id);
+          setMenuOpen(false);
+        },
+      });
+    }
+
+    items.push({
+      key: 'delete',
+      label: '削除',
+      color: 'danger',
+      action: () => {
+        Dialog.confirm({
+          message: '削除しますか',
+          onConfirm: () => {
+            chatStore.deleteMessage(sessionId, message.id);
+            setMenuOpen(false);
+          },
+        });
+      },
+    });
+
+    return items;
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <div className={cls(
@@ -32,41 +106,45 @@ const MessageItem = ({ message, sessionId }) => {
       !message.isLoading && 'ready',
     )}>
       <div className="message-bubble">
-        {message.isLoading ? (
-          <div className='btn-loading'>
+        {!menuOpen && message.isLoading && (
+          <div className='loading-indicator'>
             <Spinner />
-            <Button size="small" color="warning" status="normal" onClick={()=>{
-              chatStore.stopReceiveMessage(sessionId, message.id)
-            }}>キャンセル</Button>
           </div>
-        ) : <div className='btn-area'>
-          {
-            !message.isLoading && !message.content? null: <Button size="small" status="normal" onClick={()=>{
-              chatStore.tiggerMessageSpeak(sessionId, message)
-            }}
-            {...{
-              children: message.isSpeaking? '停止': '再生',
-              color: message.isSpeaking? "warning": "primary",
-            }}
-            />
-          }
-          <Button size="small" color="danger" status="normal" onClick={()=>{
-            Dialog.confirm({
-              message: '削除しますか',
-              onConfirm: ()=>chatStore.deleteMessage(sessionId, message.id),
-            })
-          }}>削除</Button>
-        </div>}
+        )}
+        
+        <div
+          ref={badgeRef}
+          className={cls('action-badge', menuOpen && 'open')}
+          onMouseEnter={() => setMenuOpen(true)}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span className="badge-icon">⋯</span>
+        </div>
+
+        <div
+          ref={menuRef}
+          className={cls('action-menu', menuOpen && 'expanded')}
+          style={{
+            top: badgeRef.current ? badgeRef.current.offsetTop + badgeRef.current.offsetHeight : 0,
+            right: badgeRef.current ? 0 : 'auto',
+          }}
+        >
+          {menuItems.map(item => (
+            <button
+              key={item.key}
+              className={cls('menu-item', `color-${item.color}`)}
+              onClick={item.action}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
         {
           !message.isLoading && !message.content?
             <div className='message-area'>Unknown Error</div>:
             <MarkdownViewer className='message-area' content={message.content} />
         }
-        {!isUser && !message.isLoading && (
-          <Button className="retry-btn" size="small" color="warning" status="normal" onClick={()=>{
-            chatStore.retryMessage(sessionId, message.id)
-          }}>再試行</Button>
-        )}
       </div>
     </div>
   );
