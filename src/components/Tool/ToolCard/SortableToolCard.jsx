@@ -5,12 +5,8 @@ import MiniWin from '@/components/MiniWin'
 import Item from './Item'
 
 const SortableToolCard = ({ tool }) => {
-  const isAutoOpen=false // tool.id===5
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  React.useEffect(()=>{
-    if(isAutoOpen) setIsOpen(true)
-  }, [])
+  const isAutoOpen=false // tool.id===7
+  const [isOpen, setIsOpen] = React.useState(isAutoOpen);
 
   const {
     attributes,

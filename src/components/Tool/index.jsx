@@ -11,62 +11,10 @@ import React from 'react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import {useDarkMode} from '@/store/globalSettingStore'
-import toolStore, { reorderTools } from '@/store/toolStore'
+import toolStore, { reorderTools, TOOLS_DATA } from '@/store/toolStore'
 import SortableToolCard from './ToolCard/SortableToolCard';
 
 import './index.scss';
-
-import ImageGenerator from './tools/ImageGenerator'
-import {config as imageGeneratorConfig, settingKey as imageGeneratorSettingKey} from '@/store/imageGenerationStore'
-
-import Writer from './tools/Writer'
-import {config as writerConfig, settingKey as writerSettingKey} from '@/store/writerStore'
-
-import TodoList from './tools/TodoList'
-import {config as todoConfig, settingKey as todoSettingKey} from '@/store/todoStore'
-
-import ChatBot from './tools/ChatBot'
-import {config as chatConfig, settingKey as chatSettingKey} from '@/store/chatStore'
-
-const TOOLS_DATA = [
-  {
-    id: 2,
-    name: 'Image Generator',
-    description: 'テキストから写真を生成',
-    image: *IMG('./imgs/imageGenerator.png'),
-    Component: <ImageGenerator />,
-    settingKey: imageGeneratorSettingKey,
-    config: imageGeneratorConfig,
-  },
-  {
-    id: 3,
-    name: 'Writer',
-    description: '執筆アシスタント',
-    image: *IMG('./imgs/writer.png'),
-    Component: <Writer />,
-    settingKey: writerSettingKey,
-    config: writerConfig,
-  },
-  {
-    id: 5,
-    name: 'TodoList',
-    description: 'これからやるべきことを',
-    image: *IMG('./imgs/todoList.png'),
-    Component: <TodoList />,
-    settingKey: todoSettingKey,
-    config: todoConfig,
-  },
-  {
-    id: 7,
-    name: 'Mr.ChatBot',
-    description: '普通な会話練習',
-    image: *IMG('./imgs/chatBot.png'),
-    Component: <ChatBot />,
-
-    settingKey: chatSettingKey,
-    config: chatConfig,
-  }
-];
 
 const Tool = () => {
   const isDarkMode = useDarkMode();

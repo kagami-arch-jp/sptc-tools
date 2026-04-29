@@ -151,13 +151,20 @@ const MiniWin = ({ id, title, initIsOwner, isOpen, onClose, initialPosition, ini
       isDarkMode && 'dark-mode',
       isOwner && 'owner-win',
     )}
-    style={isOpen || isBrowser? {
-      left: position.x,
-      top: position.y,
-      width: size.width,
-      height: size.height,
-      zIndex: zIndex
-    }: null}
+    style={(()=>{
+      const style={
+        zIndex,
+      }
+      if(!isOwner && (isOpen || isBrowser)) {
+        Object.assign(style, {
+          left: position.x,
+          top: position.y,
+          width: size.width,
+          height: size.height,
+        })
+      }
+      return style
+    })()}
     onClick={handleWindowFocus}
   >{content}</div>
 
