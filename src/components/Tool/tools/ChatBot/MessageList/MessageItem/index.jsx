@@ -106,28 +106,26 @@ const MessageItem = ({ message, sessionId }) => {
       !message.isLoading && 'ready',
     )}>
       <div className="message-bubble">
-        {!menuOpen && message.isLoading && (
-          <div className='loading-indicator'>
-            <Spinner />
+        <div className='tool-bar'>
+          {message.isLoading? (
+            <div className='loading-indicator'>
+              <Spinner />
+            </div>
+          ): <div />}
+
+          <div
+            ref={badgeRef}
+            className={cls('action-badge', menuOpen && 'open')}
+            onMouseEnter={() => setMenuOpen(true)}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span className="badge-icon">⋯</span>
           </div>
-        )}
-        
-        <div
-          ref={badgeRef}
-          className={cls('action-badge', menuOpen && 'open')}
-          onMouseEnter={() => setMenuOpen(true)}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <span className="badge-icon">⋯</span>
         </div>
 
         <div
           ref={menuRef}
           className={cls('action-menu', menuOpen && 'expanded')}
-          style={{
-            top: badgeRef.current ? badgeRef.current.offsetTop + badgeRef.current.offsetHeight : 0,
-            right: badgeRef.current ? 0 : 'auto',
-          }}
         >
           {menuItems.map(item => (
             <button
