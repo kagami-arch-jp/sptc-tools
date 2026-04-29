@@ -1,8 +1,8 @@
-# @kagami-arch-jp/ai-tools
+# @kagami-arch-jp/sptc-tools
 
 AIを活用した4つの実用ツールを提供するCLIアプリケーションです。
 
-**Gitリポジトリ**: https://github.com/kagami-arch-jp/react-ssr-demo/tree/dev/tool
+**Gitリポジトリ**: https://github.com/kagami-arch-jp/sptc-tools
 
 ## 機能概要
 
@@ -55,7 +55,7 @@ AIを活用した執筆支援ツールです。
 
 ```bash
 # グローバルインストール
-npm install -g @kagami-arch-jp/ai-tools
+npm install -g sptc-tools
 ```
 
 ## 使い方
@@ -71,7 +71,7 @@ tool
 ローカルインストールの場合は、npxを使用します：
 
 ```bash
-npx @kagami-arch-jp/ai-tools
+npx sptc-tools
 ```
 
 実行後、開発サーバーが http://127.0.0.1:9090 で起動します。
