@@ -25,6 +25,9 @@
   .message-bubble{
     position: relative;
     .tool-bar{
+      position: sticky;
+      top: 8px;
+      float: right;
       display: flex;
       justify-content: space-between;
     }
@@ -47,9 +50,6 @@
   }
 
   .action-badge {
-    position: sticky;
-    top: 8px;
-    float: right;
     z-index: 100;
     display: inline-flex;
     align-items: center;
@@ -102,7 +102,6 @@
     &.expanded {
       opacity: 1;
       pointer-events: auto;
-      right: 45px;
     }
 
     .menu-item {
