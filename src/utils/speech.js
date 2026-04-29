@@ -19,6 +19,17 @@ function fix(txt) {
     .replace(/[〇△]/g, 'まる')
 }
 
+function loadVoice(lang, kw) {
+  return window.speechSynthesis.getVoices().filter(x=>{
+    return x.lang==lang && x.name.toLowerCase().indexOf(kw.toLowerCase())>-1
+  })[0]
+}
+
+try{
+  // preload voices on brower
+  loadVoice('', '')
+}catch(e) {}
+
 export function getSpeaker() {
   if(!support()) return;
   speaking.speaker?.cancel()
@@ -27,9 +38,7 @@ export function getSpeaker() {
   const speak=async (sentence, lang='ja-JP')=>{
     const utter = new SpeechSynthesisUtterance(fix(sentence))
     utter.lang = lang
-    utter.voice=window.speechSynthesis.getVoices().filter(x=>{
-      return x.lang==lang && x.name.match(/o-ren|google/i)
-    })[0]
+    utter.voice = loadVoice(lang, 'o-ren') || loadVoice(lang, 'google') || loadVoice(lang, '')
     if(speaking.speaker!==synth) return;
     return new Promise(resolve=>{
       utter.onend=resolve
