@@ -276,12 +276,13 @@ chatStore.sendMessage=async content=>{
 
     const Speaker=speech.getSpeaker()
     const shouldAutoSpeak = Speaker && chatSettingStore.getValue().autoSpeak
-    let _final=null
+
+    let finalSpeaker=null
 
     const abortHandler={aborted: false}
     chatStore.updateSessionById(sessionId, {abortHandler})
 
-    await sendMessage(history, ({content, err}, ctx)=>{
+    const sending=sendMessage(history, ({content, err}, ctx)=>{
       const txt=content || `Error: ${err}`
       if(!txt) return;
       ctx.msg=ctx.msg || ''
@@ -292,14 +293,18 @@ chatStore.sendMessage=async content=>{
       })
       if (shouldAutoSpeak) {
         const lang = getLanguage()
-        _final=Speaker.speakStream(ctx.msg, lang)
+        finalSpeaker=Speaker.speakStream(ctx.msg, lang)
       }
     }, whoToSend, abortHandler)
-    Promise.resolve(_final).then(()=>{
+
+    sending.catch(()=>{}).then(()=>finalSpeaker).then(()=>{
       chatStore.updateMessage(sessionId, msgId, {
         isSpeaking: false,
       })
     })
+
+    await sending
+
     chatStore.updateMessage(sessionId, msgId, {
       isLoading: false,
     })

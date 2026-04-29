@@ -47,6 +47,12 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
   const [size, setSize] = useState(initialSize);
   const isDarkMode = useGlobalSetting('darkMode')
 
+  const [showed, setShowed]=React.useState(false)
+  React.useEffect(()=>{
+    if(showed) return;
+    if(isOpen) setShowed(true)
+  }, [isOpen])
+
   const windowRef = useRef(null);
   const contentRef = useRef(null);
 
@@ -136,6 +142,8 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
       document.body.style.overflow='auto'
     }
   }, [isOpen, id]);
+
+  if(!showed) return null
 
   return (
     <div
