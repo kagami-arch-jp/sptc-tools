@@ -5,7 +5,7 @@
  */
 
 import { createStoreSharedState } from './storage';
-import { summaryMessage, sendMessage, updateUserImage } from '@/api/chatApi';
+import { summaryMessage, sendMessage, updateUserImage, reset } from '@/api/chatApi';
 
 import createSharedState from 'react-cross-component-state';
 import * as speech from '@/utils/speech'
@@ -405,6 +405,7 @@ chatStore.deleteMessage=(sessionId, msgId)=>{
 }
 
 chatStore.stopReceiveMessage=(sessionId, msgId)=>{
+  reset()
   chatStore.updateSessionById(sessionId, session=>{
     if(session?.abortHandler) {
       session.abortHandler.aborted=true

@@ -4,7 +4,7 @@
  * @create 2026-04-18
  */
 
-import { fetchStream } from '@/utils/fetch';
+import { fetch, fetchStream } from '@/utils/fetch';
 import { chatSettingStore } from '@/store/chatStore'
 import { globalSettingStore, LANGUAGE_OPTIONS } from '@/store/globalSettingStore'
 
@@ -21,6 +21,9 @@ function getCommonParams() {
   }
 }
 
+export async function reset() {
+  return fetch('/ollama/reset')
+}
 export async function sendMessage(history, onData, who, abortHandler) {
   return fetchStream('/ollama/chat', {history, who, ...getCommonParams()}, onData, abortHandler)
 }

@@ -34,20 +34,22 @@ const MessageItem = ({ message, sessionId }) => {
       <div className="message-bubble">
         {message.isLoading ? (
           <div className='btn-loading'>
+            <Spinner />
             <Button size="small" color="warning" status="normal" onClick={()=>{
               chatStore.stopReceiveMessage(sessionId, message.id)
             }}>キャンセル</Button>
-            <Spinner />
           </div>
         ) : <div className='btn-area'>
-          <Button size="small" status="normal" onClick={()=>{
-            chatStore.tiggerMessageSpeak(sessionId, message)
-          }}
-          {...{
-            children: message.isSpeaking? '停止': '再生',
-            color: message.isSpeaking? "warning": "primary",
-          }}
-          />
+          {
+            !message.isLoading && !message.content? null: <Button size="small" status="normal" onClick={()=>{
+              chatStore.tiggerMessageSpeak(sessionId, message)
+            }}
+            {...{
+              children: message.isSpeaking? '停止': '再生',
+              color: message.isSpeaking? "warning": "primary",
+            }}
+            />
+          }
           <Button size="small" color="danger" status="normal" onClick={()=>{
             Dialog.confirm({
               message: '削除しますか',
@@ -55,7 +57,11 @@ const MessageItem = ({ message, sessionId }) => {
             })
           }}>削除</Button>
         </div>}
-        <MarkdownViewer className='message-area' content={message.content} />
+        {
+          !message.isLoading && !message.content?
+            <div className='message-area'>Unknown Error</div>:
+            <MarkdownViewer className='message-area' content={message.content} />
+        }
       </div>
     </div>
   );

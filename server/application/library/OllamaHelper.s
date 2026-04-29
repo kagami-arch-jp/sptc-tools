@@ -2,6 +2,10 @@
 
 const {default: ollama, Ollama}=require('ollama');
 
+const clients=(
+  Application.OLLAMA_CLIENTS_SET=Application.OLLAMA_CLIENTS_SET || new Set
+)
+
 class OllamaHelper{
   constructor({apiKey, model, temperature, contextLength, think}) {
   	this.key=apiKey || ''
@@ -9,8 +13,14 @@ class OllamaHelper{
     this.temperature=temperature || 0
     this.contextLength=contextLength || 8192
     this.think=this.think || false
-    Application.OLLAMA_CLIENTS=Application.OLLAMA_CLIENTS || {}
   }
+
+  static destoryAllClients() {
+    for(const resolver of [...clients]) {
+      resolver.resolve()
+    }
+  }
+
   async callApi(apiMethod, { onData, query } = {}) {
     // API キーがあれば認証付きクライアント、無ければデフォルトクライアント
     const client = this.key
@@ -19,14 +29,25 @@ class OllamaHelper{
           headers: { Authorization: 'Bearer ' + this.key }
         })
       : ollama;
+    const resolver=Utils.PromiseWithResolvers()
+    resolver.promise.then(()=>{
+      clients.delete(resolver)
+      client?.abort?.()
+    })
+    clients.add(resolver)
 
     try{
-      const response = await client[apiMethod](query);
+      const response = await Promise.race([
+        client[apiMethod](query),
+        resolver.promise,
+      ])
+
+      if(!response) throw new Error('cancelled')
 
       // onData が無い場合は単なる結果オブジェクトを返す
       if (!onData) return response;
 
-      this.bind(client)
+      if(!clients.has(resolver)) throw new Error('cancelled')
 
       // ストリーミング結果をコールバックで流す
       try {
@@ -42,16 +63,7 @@ class OllamaHelper{
       onData(e, true, null);
     }
 
-    this.unbind()
-  }
-  bind(c) {
-    Application.OLLAMA_CLIENTS[this.key]=c
-  }
-  unbind(destory=true) {
-    if(destory) {
-      Application.OLLAMA_CLIENTS[this.key]?.abort?.()
-    }
-    delete Application.OLLAMA_CLIENTS[this.key]
+    resolve.resolve()
   }
   async startStreamEcho(msg) {
     // let res='', think=true

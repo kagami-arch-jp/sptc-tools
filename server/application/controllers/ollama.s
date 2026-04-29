@@ -27,6 +27,7 @@ class ollamaController extends apiController{
       lang: language,
     }
     this.setAsStreamResponse()
+    OllamaHelper.destoryAllClients()
     const helper=new OllamaHelper({
       apiKey,
       model,
@@ -34,8 +35,11 @@ class ollamaController extends apiController{
       contextLength,
       think: false,
     })
-    helper.unbind(true)
     return helper
+  }
+
+  async resetAction() {
+    OllamaHelper.destoryAllClients()
   }
 
   async _callOllamaEcho(...any) {
