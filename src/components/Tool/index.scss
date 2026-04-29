@@ -47,6 +47,45 @@
   gap: 30px;
 }
 
+// 拖动排序相关样式
+.sortable-tool-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .drag-handle {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: grab;
+    font-size: 20px;
+    color: #999;
+    z-index: 10;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      color: #666;
+    }
+  }
+
+  .dark-mode & .drag-handle {
+    color: #666;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #999;
+    }
+  }
+}
+
 // ダークモード用ヘッダー調整
 :global(.dark-mode) {
   .tool-header-actions .setting-placeholder:hover {

@@ -8,8 +8,11 @@
  */
 
 import React from 'react';
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import {useDarkMode} from '@/store/globalSettingStore'
-import ToolCard from './ToolCard';
+import toolStore, { reorderTools } from '@/store/toolStore'
+import SortableToolCard from './ToolCard/SortableToolCard';
 
 import './index.scss';
 
@@ -66,19 +69,38 @@ const TOOLS_DATA = [
 ];
 
 const Tool = () => {
-
   const isDarkMode = useDarkMode();
+  const toolOrder = toolStore.useValue().toolOrder;
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const oldIndex = toolOrder.indexOf(active.id);
+      const newIndex = toolOrder.indexOf(over.id);
+      const newOrder = arrayMove(toolOrder, oldIndex, newIndex);
+      reorderTools(newOrder);
+    }
+  };
+
+  const sortedTools = toolOrder
+    .map(id => TOOLS_DATA.find(tool => tool.id === id))
+    .filter(Boolean);
+
   return (
     <div className={`tool-page-container ${isDarkMode ? 'dark-mode' : ''}`}>
 
       <main className="tool-main-content">
 
         <section className="tools-grid-section">
-          <div className="tools-grid">
-            {TOOLS_DATA.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
-            ))}
-          </div>
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={toolOrder} strategy={horizontalListSortingStrategy}>
+              <div className="tools-grid">
+                {sortedTools.map((tool) => (
+                  <SortableToolCard key={tool.id} tool={tool} />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </section>
       </main>
     </div>
