@@ -108,6 +108,7 @@ const chatStore=createStoreSharedState('chatBot-v2', {
     ...prev,
     sessions: [...prev.sessions.map(session=>{
       session.isLoading=false
+      session.abortHandler=undefined
       session.messages.map(msg=>{
         msg.isLoading=false
         msg.isSpeaking=false
@@ -176,7 +177,7 @@ chatStore.createSession=()=>{
     ...prev,
     currentSessionId: id,
     sessions: [
-      { id, title: '新規チャット', messages: [], zipped: [], isLoading: false, isSpeaking: false, who: ''},
+      { id, title: '新規チャット', messages: [], zipped: [], isLoading: false, isSpeaking: false, who: '', abortHandler: undefined},
       ...prev.sessions
     ]
   }))
@@ -276,6 +277,10 @@ chatStore.sendMessage=async content=>{
     const Speaker=speech.getSpeaker()
     const shouldAutoSpeak = Speaker && chatSettingStore.getValue().autoSpeak
     let _final=null
+
+    const abortHandler={aborted: false}
+    chatStore.updateSessionById(sessionId, {abortHandler})
+
     await sendMessage(history, ({content, err}, ctx)=>{
       const txt=content || `Error: ${err}`
       if(!txt) return;
@@ -289,7 +294,7 @@ chatStore.sendMessage=async content=>{
         const lang = getLanguage()
         _final=Speaker.speakStream(ctx.msg, lang)
       }
-    }, whoToSend)
+    }, whoToSend, abortHandler)
     Promise.resolve(_final).then(()=>{
       chatStore.updateMessage(sessionId, msgId, {
         isSpeaking: false,
@@ -315,6 +320,7 @@ chatStore.sendMessage=async content=>{
     })
     chatStore.updateSessionById(sessionId, {
       isLoading: false,
+      abortHandler: undefined,
     })
   }
 }
@@ -345,7 +351,7 @@ chatStore.addMessage=(sessionId, message) => {
   return message.id
 }
 
-function updateMessageById(messages, msgId, msg) {
+function _updateMessageById(messages, msgId, msg) {
   for(let i=0; i<messages.length; i++) {
     if(messages[i].id!==msgId) continue
     Object.assign(messages[i], msg)
@@ -356,8 +362,8 @@ function updateMessageById(messages, msgId, msg) {
 }
 chatStore.updateMessage=(sessionId, msgId, msg) => {
   chatStore.updateSessionById(sessionId, session=>{
-    session.messages=updateMessageById(session.messages, msgId, msg)
-    session.zipped=updateMessageById(session.zipped, msgId, msg)
+    session.messages=_updateMessageById(session.messages, msgId, msg)
+    session.zipped=_updateMessageById(session.zipped, msgId, msg)
   })
 }
 
@@ -396,6 +402,16 @@ chatStore.deleteMessage=(sessionId, msgId)=>{
     session.messages=session.messages.filter(msg=>msg.id!==msgId)
     session.zipped=session.zipped.filter(msg=>msg.id!==msgId)
   })
+}
+
+chatStore.stopReceiveMessage=(sessionId, msgId)=>{
+  chatStore.updateSessionById(sessionId, session=>{
+    if(session?.abortHandler) {
+      session.abortHandler.aborted=true
+    }
+    session.isLoading=false
+  })
+  chatStore.updateMessage(sessionId, msgId, {isLoading: false})
 }
 
 chatStore.checkUserImage=async (sessionId, updateUserImageCount=2)=>{

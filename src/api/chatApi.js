@@ -21,8 +21,8 @@ function getCommonParams() {
   }
 }
 
-export async function sendMessage(history, onData, who) {
-  return fetchStream('/ollama/chat', {history, who, ...getCommonParams()}, onData)
+export async function sendMessage(history, onData, who, abortHandler) {
+  return fetchStream('/ollama/chat', {history, who, ...getCommonParams()}, onData, abortHandler)
 }
 export async function summaryMessage(history, onData) {
   return fetchStream('/ollama/chatSummary', {history, ...getCommonParams()}, onData)

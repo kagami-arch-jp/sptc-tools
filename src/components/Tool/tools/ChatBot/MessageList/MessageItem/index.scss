@@ -29,6 +29,13 @@
     }
   }
 
+  .btn-loading{
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+    display: flex;
+    gap: 5px;
+  }
   .btn-area{
     position: sticky;
     top: 10px;

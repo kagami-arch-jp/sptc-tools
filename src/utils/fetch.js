@@ -44,7 +44,7 @@ export async function fetch(action, data) {
   }
 }
 
-export async function fetchStream(action, data, onData) {
+export async function fetchStream(action, data, onData, abortHandler) {
   try{
     startDance()
     const response = await clientFetch(action, data)
@@ -67,6 +67,9 @@ export async function fetchStream(action, data, onData) {
     })
     for(let head='', skip=false;;) {
       const {done, value}=await reader.read()
+      if(abortHandler?.aborted) {
+        throw new Error('fetch stream aborted')
+      }
       if(value) {
         const txt=dec.decode(value)
         if(!skip) {

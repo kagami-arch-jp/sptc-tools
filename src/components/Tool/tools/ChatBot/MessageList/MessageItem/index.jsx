@@ -33,7 +33,12 @@ const MessageItem = ({ message, sessionId }) => {
     )}>
       <div className="message-bubble">
         {message.isLoading ? (
-          <Spinner />
+          <div className='btn-loading'>
+            <Button size="small" color="warning" status="normal" onClick={()=>{
+              chatStore.stopReceiveMessage(sessionId, message.id)
+            }}>キャンセル</Button>
+            <Spinner />
+          </div>
         ) : <div className='btn-area'>
           <Button size="small" status="normal" onClick={()=>{
             chatStore.tiggerMessageSpeak(sessionId, message)
