@@ -42,7 +42,7 @@ import './index.scss';
  * @param {Object} props.initialSize - 初期サイズ {width, height}
  * @param {React.ReactNode} props.children - コンテンツエリアの内容
  */
-const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btns, config, settingKey, children }) => {
+const MiniWin = ({ id, title, initIsOwner, isOpen, onClose, initialPosition, initialSize, btns, config, settingKey, children }) => {
   const [position, setPosition] = useState(initialPosition);
   const [size, setSize] = useState(initialSize);
   const isDarkMode = useGlobalSetting('darkMode')
@@ -74,7 +74,7 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
     bringToFront(id);
   };
 
-  const [isOwner, setIsOwner]=React.useState(false)
+  const [isOwner, setIsOwner]=React.useState(initIsOwner)
 
   const resetHandler=React.useEffectEvent(()=>{
     const MIN_WIDTH=160, MIN_HEIGHT=80
@@ -143,27 +143,27 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
     }
   }, [isOpen, id]);
 
-  if(!showed) return null
+  const wrapper=content=><div
+    ref={windowRef}
+    className={cls(
+      `mini-win-container`,
+      isOpen ? 'opened': 'closed',
+      isDarkMode && 'dark-mode',
+      isOwner && 'owner-win',
+    )}
+    style={isOpen || isBrowser? {
+      left: position.x,
+      top: position.y,
+      width: size.width,
+      height: size.height,
+      zIndex: zIndex
+    }: null}
+    onClick={handleWindowFocus}
+  >{content}</div>
 
-  return (
-    <div
-      ref={windowRef}
-      className={cls(
-        `mini-win-container`,
-        isOpen ? 'opened': 'closed',
-        isDarkMode && 'dark-mode',
-        isOwner && 'owner-win',
-      )}
-      style={isOpen || isBrowser? {
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-        zIndex: zIndex
-      }: null}
-      onClick={handleWindowFocus}
-    >
-      {isOpen || isBrowser? <><div
+  return showed? wrapper(
+    isOpen || isBrowser?
+      <><div
         className="mini-win-titlebar"
         onDoubleClick={e=>{
           setIsOwner(!isOwner)
@@ -196,9 +196,9 @@ const MiniWin = ({ id, title, isOpen, onClose, initialPosition, initialSize, btn
       <ResizeHandle
         onResizeStart={(e) => startResize(e, size)}
       />
-      </>:null}
-    </div>
-  );
+    </>:
+    null
+  ): wrapper()
 };
 
 export default MiniWin;
