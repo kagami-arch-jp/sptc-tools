@@ -11,8 +11,10 @@ import React from 'react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import {useDarkMode} from '@/store/globalSettingStore'
-import toolStore, { reorderTools, TOOLS_DATA } from '@/store/toolStore'
+import toolStore, { reorderTools, TOOLS_DATA, settingKey, config } from '@/store/toolStore'
 import SortableToolCard from './ToolCard/SortableToolCard';
+import { ModalButton } from '@/components/Modal';
+import SettingPanelCommon from '@/components/SettingPanelCommon';
 
 import './index.scss';
 
@@ -36,6 +38,13 @@ const Tool = () => {
 
   return (
     <div className={`tool-page-container ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className="tool-header">
+        <div className="tool-header-right">
+          <ModalButton id="tool-global-config" className="config-button" text="⚙ 全局配置">
+            <SettingPanelCommon settingKey={settingKey} config={config} title="ツール全体設定" />
+          </ModalButton>
+        </div>
+      </div>
 
       <main className="tool-main-content">
 

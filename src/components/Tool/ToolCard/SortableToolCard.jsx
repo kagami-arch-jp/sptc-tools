@@ -3,9 +3,13 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import MiniWin from '@/components/MiniWin'
 import Item from './Item'
+import { settingKey, settingConfig } from '@/store/toolStore';
 
 const SortableToolCard = ({ tool }) => {
-  const isAutoOpen=false // tool.id===7
+
+  const config = settingConfig.useValue();
+  const autoOpenToolId = config?.autoOpenTool;
+  const isAutoOpen = autoOpenToolId && autoOpenToolId !== 'none' && String(tool.id) === autoOpenToolId;
   const [isOpen, setIsOpen] = React.useState(isAutoOpen);
 
   const {

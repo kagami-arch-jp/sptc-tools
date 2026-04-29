@@ -1,16 +1,6 @@
 import { createStoreSharedState } from './storage';
+import { getCommonSettingStore } from '@/store/commonSettingStore';
 
-const DEFAULT_TOOL_ORDER = [2, 3, 5, 7];
-
-const toolStore = createStoreSharedState('tool-btns', {
-  toolOrder: DEFAULT_TOOL_ORDER,
-})
-
-export const reorderTools = (newOrder) => {
-  toolStore.setValue({toolOrder: newOrder})
-}
-
-export default toolStore
 
 import React from 'react'
 import ImageGenerator from '@/components/Tool/tools/ImageGenerator'
@@ -64,3 +54,31 @@ export const TOOLS_DATA = [
     config: chatConfig,
   }
 ];
+
+const toolStore = createStoreSharedState('tool-btns', {
+  toolOrder: TOOLS_DATA.map(x=>x.id),
+})
+
+export const settingKey='toolStore-setting'
+export const config=[
+  {
+    key: 'autoOpenTool',
+    type: 'select',
+    info: '自動的に開くツール',
+    selection: [
+      { name: 'none', value: 'なし' },
+      ...TOOLS_DATA.map(x=>({
+        name: x.id,
+        value: x.name,
+      }))
+    ]
+  }
+]
+
+export const settingConfig=getCommonSettingStore(settingKey);
+
+export const reorderTools = (newOrder) => {
+  toolStore.setValue({toolOrder: newOrder})
+}
+
+export default toolStore
