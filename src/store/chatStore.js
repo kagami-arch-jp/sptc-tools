@@ -241,29 +241,45 @@ chatStore.deleteSession=(id)=>{
   })
 }
 
-chatStore.sendMessage=async content=>{
-  const sessionId=chatStore.getValue().currentSessionId
+chatStore.sendMessage=async (content, options = {})=>{
+  const {retryMsgId, sessionId: specifiedSessionId} = options
+  const sessionId=specifiedSessionId || chatStore.getValue().currentSessionId
   const session=chatStore.getSessionById(sessionId)
 
-  if (!session || !content.trim()) return;
-  let msgId=undefined
+  if (!session) return;
+
+  if(!retryMsgId && (!content || !content.trim())) return;
+  let msgId=retryMsgId
 
   try{
 
     const whoToSend=session.who
     const roleConfig = roleBtnList[whoToSend]
-    const isStartMessage=session.messages.length==0 && roleConfig.autoSendHi
 
-    const userMsg = { role: 'user', content };
-    if(!isStartMessage) {
-      chatStore.addMessage(sessionId, userMsg);
+    if(!retryMsgId) {
+      const isStartMessage=session.messages.length==0 && roleConfig.autoSendHi
+      const userMsg = { role: 'user', content };
+      if(!isStartMessage) {
+        chatStore.addMessage(sessionId, userMsg);
+      }
     }
 
     let history=[
       roleConfig?.enableUserImage && {role: 'system', content: userImage.getValue().profile},
     ]
-    if (roleConfig?.sendWithHistory) {
-      history=history.concat(session.zipped.map(m => ({ role: m.role, content: m.content })))
+
+    if(roleConfig?.sendWithHistory) {
+      for(let msg of session.zipped) {
+        if(msg.id===retryMsgId) break
+        history.push(msg)
+      }
+    }else{
+      let userMsg=null
+      for(let msg of session.zipped) {
+        if(msg.id===retryMsgId) break
+        userMsg=msg
+      }
+      history.push(userMsg)
     }
 
     history=history.filter(x=>x?.content).map(c=>({
@@ -271,7 +287,12 @@ chatStore.sendMessage=async content=>{
       content: c.role==='user'? `<Text>${c.content}</Text>`: c.content,
     }))
 
-    msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true, isSpeaking: false })
+    if(retryMsgId) {
+      chatStore.updateMessage(sessionId, retryMsgId, { role: 'system', content: '', isLoading: true, isSpeaking: false })
+    } else {
+      msgId=chatStore.addMessage(sessionId, { role: 'system', content: '', isLoading: true, isSpeaking: false })
+    }
+
     chatStore.updateSessionById(sessionId, {isLoading: true})
 
     const Speaker=speech.getSpeaker()
@@ -328,6 +349,10 @@ chatStore.sendMessage=async content=>{
       abortHandler: undefined,
     })
   }
+}
+
+chatStore.retryMessage=async (sessionId, msgId)=>{
+  await chatStore.sendMessage(null, {retryMsgId: msgId, sessionId})
 }
 
 chatStore.tiggerMessageSpeak=async (sessionId, message)=>{

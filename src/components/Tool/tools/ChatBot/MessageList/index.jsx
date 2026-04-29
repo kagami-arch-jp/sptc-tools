@@ -21,6 +21,7 @@ const MessageList = ({ sessionId }) => {
 
   useEffect(() => {
     if (!session.isLoading) return;
+    if (!session.messages[session.messages.length-1]?.isLoading) return;
     scrollToBottom()
   }, [session]);
 

@@ -55,19 +55,37 @@
     }
   }
 
-  .message-bubble {
-    width: 90%;
-    padding: 10px 14px;
-    font-size: 16px;
-    line-height: 1.4;
-    word-wrap: break-word;
-    transition: .3s ease;
-    .message-area .markdown-content{
-      margin: 0;
-      font-size: 16px;
-    }
-  }
-}
+   .message-bubble {
+     width: 90%;
+     padding: 10px 14px;
+     font-size: 16px;
+     line-height: 1.4;
+     word-wrap: break-word;
+     transition: .3s ease;
+     .message-area .markdown-content{
+       margin: 0;
+       font-size: 16px;
+     }
+   }
+
+   .retry-btn {
+     margin-top: 8px;
+     padding: 4px 12px;
+     border: 1px solid rgba(255, 149, 0, 0.5);
+     border-radius: 4px;
+     background-color: rgba(255, 149, 0, 0.98);
+     font-weight: 500;
+     opacity: 0.9;
+     transition: all 0.2s ease;
+     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+     &:hover {
+       opacity: 1;
+       background-color: rgba(255, 149, 0, 0.95);
+       border-color: rgba(255, 149, 0, 0.8);
+       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+     }
+   }
+ }
 
 .chat-bot-container.dark-mode {
   .message-item {

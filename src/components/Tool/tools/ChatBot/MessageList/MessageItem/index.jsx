@@ -62,6 +62,11 @@ const MessageItem = ({ message, sessionId }) => {
             <div className='message-area'>Unknown Error</div>:
             <MarkdownViewer className='message-area' content={message.content} />
         }
+        {!isUser && !message.isLoading && (
+          <Button className="retry-btn" size="small" color="warning" status="normal" onClick={()=>{
+            chatStore.retryMessage(sessionId, message.id)
+          }}>再試行</Button>
+        )}
       </div>
     </div>
   );
