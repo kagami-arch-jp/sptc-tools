@@ -30,6 +30,10 @@ export async function sendMessage(history, onData, who, abortHandler) {
 export async function summaryMessage(history, onData) {
   return fetchStream('/ollama/chatSummary', {history, ...getCommonParams()}, onData)
 }
-export async function updateUserImage(history, onData) {
-  return fetchStream('/ollama/chatUserImage', {history, ...getCommonParams()}, onData)
+export async function updateUserImage(history, isMerge) {
+  const {newProfile}=await fetchStream('/ollama/chatUserImage', {history, isMerge, ...getCommonParams()}, ({content: txt, err}, ctx)=>{
+    ctx.newProfile=ctx.newProfile || ''
+    ctx.newProfile+=txt || ''
+  })
+  return newProfile.match(/<UserImage>\s*([\s\S]+?)\s*<\/UserImage>|$/)[1] || null
 }

@@ -63,7 +63,7 @@ class OllamaHelper{
       onData(e, true, null);
     }
 
-    resolve.resolve()
+    resolver.resolve()
   }
   async startStreamEcho(msg) {
     // let res='', think=true

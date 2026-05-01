@@ -121,9 +121,9 @@ const chatStore=createStoreSharedState('chatBot-v2', {
 export default chatStore
 
 const userImage=createStoreSharedState('chatBot.userImage', {
-  counter: 0,
   profile: '',
   stacks: [],
+  fragments: [],
 })
 
 chatStore.setCurrentSession=(sessionId)=>{
@@ -264,19 +264,21 @@ chatStore.sendMessage=async (content, options = {})=>{
       }
     }
 
-    let history=[
-      roleConfig?.enableUserImage && {role: 'system', content: userImage.getValue().profile},
-    ]
+    let history=[]
+
+    if(roleConfig?.enableUserImage) {
+      history.push(...chatStore.getUserImage())
+    }
 
     if(roleConfig?.sendWithHistory) {
       for(let msg of session.zipped) {
-        if(msg.id===retryMsgId) break
+        if(retryMsgId && msg.id===retryMsgId) break
         history.push(msg)
       }
     }else{
       let userMsg=null
       for(let msg of session.zipped) {
-        if(msg.id===retryMsgId) break
+        if(retryMsgId && msg.id===retryMsgId) break
         userMsg=msg
       }
       history.push(userMsg)
@@ -349,6 +351,14 @@ chatStore.sendMessage=async (content, options = {})=>{
       abortHandler: undefined,
     })
   }
+}
+
+chatStore.getUserImage=()=>{
+  const {profile, fragments=[]}=userImage.getValue()
+  return [profile, ...fragments].map(c=>({
+    role: 'system',
+    content: `<UserImage>${c}</UserImage>`,
+  }))
 }
 
 chatStore.retryMessage=async (sessionId, msgId)=>{
@@ -445,42 +455,49 @@ chatStore.stopReceiveMessage=(sessionId, msgId)=>{
   chatStore.updateMessage(sessionId, msgId, {isLoading: false})
 }
 
-chatStore.checkUserImage=async (sessionId, updateUserImageCount=2)=>{
-  userImage.setValue(prev=>{
-    return {...prev, counter: (prev.counter+1)%updateUserImageCount}
-  })
-  const {counter, stacks, profile}=userImage.getValue()
-  async function _generate(zipped) {
-    const {newProfile}=await updateUserImage([
-      ...zipped,
-      {role: 'system', content: profile},
-    ], ({content: txt, err}, ctx)=>{
-      ctx.newProfile=ctx.newProfile || ''
-      ctx.newProfile+=txt || ''
+chatStore.checkUserImage=async (sessionId, maxFragment=2)=>{
+
+  const {stacks, profile}=userImage.getValue()
+
+  async function _updateUserImage(zipped, updater) {
+    const newProfile=await updateUserImage(zipped, false)
+    if(newProfile===null) throw new Error('failed to update userImage')
+    userImage.setValue(prev=>{
+      updater && updater(prev)
+      return {
+        ...prev,
+        profile,
+        fragments: [...(prev.fragments || []), newProfile.trim()].filter(Boolean),
+      }
     })
-    const _newProfile=newProfile.match(/<UserImage>\s*([\s\S]+?)\s*<\/UserImage>|$/)[1] || ''
-    if(!_newProfile) throw new Error('failed to update userImage')
-    return `<UserImage>\n${_newProfile}\n</UserImage>`
   }
   if(stacks.length) {
     const zipped=stacks.shift()
     try{
-      const newProfile=await _generate(zipped)
-      userImage.setValue(prev=>{
+      await _updateUserImage(zipped, prev=>{
         prev.stacks=prev.stacks.filter(v=>v!==zipped)
-        return {...prev, profile: newProfile}
       })
     }catch(e) {
       stacks.unshift(zipped)
     }
-  }else if(counter===0) {
+  }else{
     const {zipped}=chatStore.getSessionById(sessionId) || {}
     if(zipped.length<3) return;
     try{
-      const newProfile=await _generate(zipped)
-      userImage.setValue(prev=>{
-        return {...prev, profile: newProfile}
-      })
+      await _updateUserImage(zipped)
     }catch(e) {}
+  }
+
+  const frags=chatStore.getUserImage()
+
+  if(frags?.length>maxFragment) {
+    const mergedProfile=await updateUserImage(frags, true)
+    if(mergedProfile) {
+      userImage.setValue(prev=>({
+        ...prev,
+        profile: mergedProfile,
+        fragments: [],
+      }))
+    }
   }
 }

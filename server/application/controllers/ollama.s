@@ -102,7 +102,20 @@ class ollamaController extends apiController{
     ].map(x=>({role: 'user', content: x})))
   }
 
+  async _debugStreamResponse() {
+    this._initOllama()
+    for(let i=0; i<10; i++) {
+      await Utils.sleep(2e2)
+      echo(JSON.stringify({content: 'xx'})+'\n')
+      flush()
+    }
+    echo(JSON.stringify({done: true})+'\n')
+  }
+
   async chatAction() {
+    //await this._debugStreamResponse()
+    //return;
+
     const {history, who='mennsetsu'}=this.postData
     if(!history) return;
     const helper=this._initOllama()
@@ -128,6 +141,9 @@ class ollamaController extends apiController{
     return await helper.startStreamEcho(msgs)
   }
   async chatSummaryAction() {
+    //await this._debugStreamResponse()
+    //return;
+
     const {history}=this.postData
     if(!history) return;
     const helper=this._initOllama()
@@ -143,11 +159,19 @@ class ollamaController extends apiController{
     return await helper.startStreamEcho(msgs)
   }
   async chatUserImageAction() {
-    const {history}=this.postData
+    //await this._debugStreamResponse()
+    //return;
+
+    const {history, isMerge}=this.postData
     if(!history) return;
     const helper=this._initOllama()
     const msgs=[
-      {
+      isMerge? {
+        role: 'user',
+        content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/1-userImage-merge.md.s', {
+          lang: this.systemSetting.lang,
+        }),
+      }: {
         role: 'user',
         content: FileHelper.loadSptcDocumentFile(__DOC_DIR__+'/chatBot/userImage.md.s', {
           lang: this.systemSetting.lang,

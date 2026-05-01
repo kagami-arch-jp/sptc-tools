@@ -30,6 +30,7 @@
       float: right;
       display: flex;
       justify-content: space-between;
+      z-index: 10;
     }
   }
 
@@ -96,8 +97,8 @@
     pointer-events: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
-    top: 0;
-    right: 45px;
+    top: -8px;
+    right: 35px;
 
     &.expanded {
       opacity: 1;
