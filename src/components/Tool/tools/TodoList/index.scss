@@ -20,6 +20,33 @@
     }
   }
 
+  .add-task-btn {
+    margin: 20px;
+    padding: 12px;
+    width: calc(100% - 40px);
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &.dark-mode {
+    .add-task-btn {
+      background: #0a84ff;
+    }
+  }
+
   &.dark-mode {
     color: #eee;
   }
@@ -38,6 +65,8 @@
     width: 100%;
     height: 100%;
     overflow: auto;
+    padding: 10px 0;
+    &::-webkit-scrollbar { display: none;}
   }
 
   .empty-state {

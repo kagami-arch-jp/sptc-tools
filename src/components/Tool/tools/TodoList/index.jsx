@@ -15,17 +15,15 @@
  * - 完了済みタスクの履歴表示（期間フィルタリング機能付き）
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import confetti from 'canvas-confetti';
 import Dialog from '@/components/Dialog';
+import Modal from '@/components/Modal';
 
 import { todoStore, addTask, updateTask, completeTask, reorderTasks } from '@/store/todoStore';
-import { useTimer } from '@/hooks/useTimer';
-import { isWithinRange, formatDate } from '@/utils/dateUtils';
 import { ModalButton } from '@/components/Modal'
-import SizeObserver from '@/components/SizeObserver'
 import {cls} from '@/utils/css'
 
 import TaskForm from './TaskForm';
@@ -37,34 +35,54 @@ const PRESET_COLORS = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#
 
 const TodoList = () => {
   const { tasks, isConfettiActive } = todoStore.useValue();
-  const [newTaskText, setNewTaskText] = useState('');
-  const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  const [formText, setFormText] = useState('');
+  const [formColor, setFormColor] = useState(PRESET_COLORS[0]);
+  const [enableDate, setEnableDate] = useState(false);
+  const [expectedDate, setExpectedDate] = useState('');
 
-  // 完了ロジック用のタイマー
-  const { isPending, startTimer, cancelTimer, cleanup } = useTimer(
-    () => {
-      // 確定時の処理
-      // 実際にはどのタスクが完了されるかを特定する必要があるため、
-      // 本来はTaskCard側からIDを渡す設計が望ましいが、ここでは簡略化のため
-      // 最後に操作されたタスクを管理する仕組みを想定
-    },
-    2000
-  );
-
-  // 完了処理のラッパー
-  const handleCompleteRequest = (id) => {
-    // 2秒待機ロジックをTaskCard内で個別に管理するか、
-    // ここでグローバルな「進行中の操作」として管理する
-    // 今回は要件に基づき、TaskCard側でタイマーを制御する実装とする
+  const handleOpenCreate = () => {
+    setEditingTask(null);
+    setFormText('');
+    setFormColor(PRESET_COLORS[0]);
+    setEnableDate(false);
+    setExpectedDate('');
+    setIsModalOpen(true);
   };
 
-  const handleAddTask = () => {
-    if (!newTaskText.trim()) {
+  const handleOpenEdit = (task) => {
+    setEditingTask(task);
+    setFormText(task.text);
+    setFormColor(task.color);
+    if (task.expectedDate) {
+      setEnableDate(true);
+      const d = new Date(task.expectedDate);
+      const localDateTime = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+      setExpectedDate(localDateTime);
+    } else {
+      setEnableDate(false);
+      setExpectedDate('');
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleSaveTask = () => {
+    if (!formText.trim()) {
       Dialog.toast('タスクを入力してください');
       return;
     }
-    addTask({ text: newTaskText, color: selectedColor });
-    setNewTaskText('');
+    const taskData = {
+      text: formText,
+      color: formColor,
+      expectedDate: enableDate && expectedDate ? new Date(expectedDate) : null
+    };
+    if (editingTask) {
+      updateTask(editingTask.id, taskData);
+    } else {
+      addTask(taskData);
+    }
+    setIsModalOpen(false);
   };
 
   const handleDragEnd = (event) => {
@@ -77,24 +95,30 @@ const TodoList = () => {
     }
   };
 
-  useEffect(() => {
-    return cleanup;
-  }, [cleanup]);
-
   return (
     <div className="todo-list-container">
-      <SizeObserver getClassName={e=>{
-        return cls('todo-main', e.width<400? 'small-form': '')
-      }}>
+      <div className='todo-main'>
+        <button className="add-task-btn" onClick={handleOpenCreate}>
+          タスクを追加
+        </button>
+      </div>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <TaskForm
-          text={newTaskText}
-          setText={setNewTaskText}
-          color={selectedColor}
-          setColor={setSelectedColor}
-          onAdd={handleAddTask}
+          isEditing={!!editingTask}
+          text={formText}
+          setText={setFormText}
+          color={formColor}
+          setColor={setFormColor}
+          expectedDate={expectedDate}
+          setExpectedDate={setExpectedDate}
+          enableDate={enableDate}
+          setEnableDate={setEnableDate}
+          onSave={handleSaveTask}
+          onCancel={() => setIsModalOpen(false)}
           colors={PRESET_COLORS}
         />
-      </SizeObserver>
+      </Modal>
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
@@ -104,6 +128,7 @@ const TodoList = () => {
                 key={task.id}
                 task={task}
                 onComplete={completeTask}
+                onEdit={handleOpenEdit}
                 onTriggerConfetti={async () => {
                   for(let i=0; i<6; i++) {
                     confetti({ particleCount: 35, spread: 65, zIndex: 1000, origin: { y: 0.6, x:-.1 }, angle: 25+i*15 })
@@ -117,8 +142,6 @@ const TodoList = () => {
           </div>
         </SortableContext>
       </DndContext>
-
-      {/* 演出用コンポーネント（必要に応じて） */}
     </div>
   );
 };

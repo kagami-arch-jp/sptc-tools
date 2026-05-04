@@ -1,21 +1,260 @@
 .dark-mode{
   .task-form{
-    background: #000;
+    h3 {
+      color: #eee;
+    }
+
+    .preview-toggle {
+      background: #333;
+      border-color: #555;
+      color: #ccc;
+
+      &:hover {
+        background: #444;
+      }
+
+      &.active {
+        background: #0a84ff;
+        border-color: #0a84ff;
+        color: #fff;
+      }
+    }
+
+    .markdown-preview {
+      background: #1c1c1e;
+      border-color: #444;
+      color: #ddd;
+
+      code {
+        background: #333;
+      }
+
+      pre {
+        background: #333;
+        code {
+          background: none;
+        }
+      }
+
+      blockquote {
+        border-color: #555;
+        color: #aaa;
+      }
+
+      table {
+        th, td {
+          border-color: #444;
+        }
+        th {
+          background: #333;
+        }
+      }
+    }
   }
   .task-input {
     background: #222;
+    color: #ddd;
+    border-color: #444;
+  }
+  .date-section {
+    .date-checkbox {
+      color: #ccc;
+    }
+    .date-input {
+      background: #222;
+      color: #ddd;
+      border-color: #444;
+    }
+  }
+  .color-swatch {
+    &.active {
+      border-color: #eee;
+    }
+  }
+  .cancel-btn {
+    background: #444;
+    color: #ddd;
+  }
+  .task-input {
+    background: #222;
+    color: #ddd;
+    border-color: #444;
+  }
+  .date-section {
+    .date-checkbox {
+      color: #ccc;
+    }
+    .date-input {
+      background: #222;
+      color: #ddd;
+      border-color: #444;
+    }
+  }
+  .color-swatch {
+    &.active {
+      border-color: #eee;
+    }
+  }
+  .cancel-btn {
+    background: #444;
+    color: #ddd;
+  }
+  .task-input {
+    background: #222;
+    color: #ddd;
+    border-color: #444;
+  }
+  .color-swatch {
+    &.active {
+      border-color: #eee;
+    }
+  }
+  .cancel-btn {
+    background: #444;
     color: #ddd;
   }
 }
 
 .task-form {
-  background: #fff;
-  margin: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .editor-header {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .preview-toggle {
+    padding: 4px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f5f5f5;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #e0e0e0;
+    }
+
+    &.active {
+      background: #007aff;
+      color: white;
+      border-color: #007aff;
+    }
+  }
+
+  .markdown-preview {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    min-height: 100px;
+    max-height: 300px;
+    overflow: auto;
+    background: #fafafa;
+    font-size: 14px;
+    line-height: 1.6;
+
+    h1, h2, h3, h4, h5, h6 {
+      margin: 8px 0;
+    }
+
+    p {
+      margin: 4px 0;
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+
+    pre {
+      background: #f0f0f0;
+      padding: 8px;
+      border-radius: 6px;
+      overflow-x: auto;
+
+      code {
+        background: none;
+        padding: 0;
+      }
+    }
+
+    ul, ol {
+      padding-left: 20px;
+    }
+
+    blockquote {
+      border-left: 3px solid #ddd;
+      margin: 8px 0;
+      padding-left: 12px;
+      color: #666;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+
+      th, td {
+        border: 1px solid #ddd;
+        padding: 6px 8px;
+        text-align: left;
+      }
+
+      th {
+        background: #f5f5f5;
+      }
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .date-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+
+      input[type="checkbox"] {
+        cursor: pointer;
+      }
+    }
+
+    .date-input {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: #007aff;
+      }
+    }
+  }
 
   .task-input {
     padding: 10px;
@@ -28,9 +267,10 @@
     box-sizing: border-box;
     field-sizing: content;
     max-height: 10lh;
+    resize: vertical;
+    font-family: inherit;
 
     &:focus {
-      border-capacity: 1px;
       border-color: #007aff;
     }
   }
@@ -59,14 +299,40 @@
     }
   }
 
-  .add-btn {
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 15px;
+  }
+
+  .cancel-btn {
+    font-size: 14px;
+    flex: 1;
+    padding: 12px;
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .add-btn {
+    font-size: 14px;
+    flex: 1;
     padding: 12px;
     background: #007aff;
     color: white;
     border: none;
     border-radius: 8px;
     font-weight: 600;
+    cursor: pointer;
     transition: opacity 0.2s;
 
     &:hover {

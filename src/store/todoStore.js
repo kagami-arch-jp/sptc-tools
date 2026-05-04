@@ -33,7 +33,7 @@ export const filter=createSharedState({
 export const addTask = (task) => {
   todoStore.setValue(prev => ({
     ...prev,
-    tasks: [{ ...task, id: newId(), createdAt: new Date() }, ...prev.tasks]
+    tasks: [{ ...task, id: newId(), createdAt: new Date(), expectedDate: task.expectedDate || null }, ...prev.tasks]
   }));
 };
 
