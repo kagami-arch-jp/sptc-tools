@@ -7,6 +7,9 @@
 
 import { createStoreSharedState } from '@/store/storage';
 import createSharedState from 'react-cross-component-state';
+
+import {newId} from '@/utils/base'
+
 // タスクの型定義（モック）
 // id: string, text: string, color: string, completedAt?: Date, createdAt: Date
 
@@ -30,7 +33,7 @@ export const filter=createSharedState({
 export const addTask = (task) => {
   todoStore.setValue(prev => ({
     ...prev,
-    tasks: [{ ...task, id: crypto.randomUUID(), createdAt: new Date() }, ...prev.tasks]
+    tasks: [{ ...task, id: newId(), createdAt: new Date() }, ...prev.tasks]
   }));
 };
 

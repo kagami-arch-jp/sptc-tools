@@ -42,7 +42,7 @@ import './index.scss';
  * @param {Object} props.initialSize - 初期サイズ {width, height}
  * @param {React.ReactNode} props.children - コンテンツエリアの内容
  */
-const MiniWin = ({ id, title, initIsOwner, isOpen, onClose, initialPosition, initialSize, btns, config, settingKey, children }) => {
+const MiniWin = ({ id, title, initIsOwner, isOpen, onClose, initialPosition, initialSize, config, settingKey, children }) => {
   const [position, setPosition] = useState(initialPosition);
   const [size, setSize] = useState(initialSize);
   const isDarkMode = useGlobalSetting('darkMode')
@@ -182,7 +182,6 @@ const MiniWin = ({ id, title, initIsOwner, isOpen, onClose, initialPosition, ini
       >
         <span className="title-text">{title}</span>
         <div className='btn-area'>
-          {btns}
           {config && settingKey && (
             <ModalButton id={`${settingKey}-modal`} text="⚙">
               <SettingPanelCommon settingKey={settingKey} config={config} />

@@ -95,6 +95,7 @@ class LibSSR{
 		const IS_FORCE_CSR=disableSSR || $_QUERY.force_csr==='1'
 
 		const data={
+			host: $_RAW_REQUEST.headers.host.replace(/\:\d+/g, ''),
 			ssrData: {
 				degradeCsr: IS_FORCE_CSR,
 				payload: null,

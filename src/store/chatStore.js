@@ -14,6 +14,8 @@ import {fetchModels} from '@/api/settings'
 import {getCommonSettingStore} from '@/store/commonSettingStore'
 import {getLanguage} from '@/store/globalSettingStore'
 
+import {newId} from '@/utils/base'
+
 export const settingKey='ChatBot-SettingsV1'
 export const config=[
   {
@@ -95,10 +97,6 @@ export const config=[
 ]
 
 export const chatSettingStore=getCommonSettingStore(settingKey)
-
-function newId() {
-  return (Date.now()+Math.random()).toString(36)
-}
 
 const chatStore=createStoreSharedState('chatBot-v2', {
   sessions: [],

@@ -34,14 +34,14 @@
       border: none;
       outline: none;
       field-sizing: content;
-      max-height: 10lh;
+      //max-height: 10lh;
     }
 
     .task-text{
       width: 100%;
       display: block;
       white-space: break-spaces;
-      overflow: auto;
+      overflow: visible;
     }
 
     .edit-input {

@@ -48,9 +48,6 @@ const SortableToolCard = ({ tool }) => {
         initialPosition={{ x: 100, y: 100 }}
         initIsOwner={isAutoOpen}
         initialSize={{ width: innerWidth * .6 | 0, height: innerHeight * .6 | 0 }}
-        btns={[
-          tool.SettingBtn,
-        ].filter(Boolean)}
         children={tool.Component}
         settingKey={tool.settingKey}
         config={tool.config}
