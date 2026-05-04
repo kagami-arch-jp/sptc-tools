@@ -76,7 +76,7 @@ const TaskCard = ({ task, onComplete, onTriggerConfetti, onEdit }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    backgroundColor: task.color
+    backgroundColor: task.color,
   };
 
   const handleToggleComplete = () => {
@@ -96,8 +96,9 @@ const TaskCard = ({ task, onComplete, onTriggerConfetti, onEdit }) => {
     return diff > 1000 * 60 * 60;
   })();
 
-  return (
+   return (
     <div
+      ref={setNodeRef}
       style={style}
       className={`task-card ${isPending ? 'pending' : ''}`}
     >
@@ -106,7 +107,7 @@ const TaskCard = ({ task, onComplete, onTriggerConfetti, onEdit }) => {
           {countdown}
         </div>
       )}
-      <div className='move' ref={setNodeRef} {...attributes} {...listeners}>⠿</div>
+      <div className='move' {...attributes} {...listeners}>⠿</div>
       <div className="task-content">
         <div className="task-text-wrapper">
           <div className="task-markdown">
@@ -127,20 +128,22 @@ const TaskCard = ({ task, onComplete, onTriggerConfetti, onEdit }) => {
         </div>
       </div>
 
-      <div className="task-actions">
-        <button
-          className="edit-btn"
-          onClick={(e) => { e.stopPropagation(); onEdit(task); }}
-        >
-          ✏️
-        </button>
-        <button
-          className={`complete-btn ${isPending ? 'loading' : ''}`}
-          onClick={(e) => { e.stopPropagation(); handleToggleComplete(); }}
-        >
-          {isPending ? '...' : '✅'}
-        </button>
-      </div>
+       <div className="task-actions">
+         <button
+           className="edit-btn"
+           onClick={(e) => { e.stopPropagation(); onEdit(task); }}
+           onPointerDown={(e) => e.stopPropagation()}
+         >
+           ✏️
+         </button>
+         <button
+           className={`complete-btn ${isPending ? 'loading' : ''}`}
+           onClick={(e) => { e.stopPropagation(); handleToggleComplete(); }}
+           onPointerDown={(e) => e.stopPropagation()}
+         >
+           {isPending ? '...' : '✅'}
+         </button>
+       </div>
     </div>
   );
 };

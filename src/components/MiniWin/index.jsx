@@ -112,7 +112,11 @@ const MiniWin = ({ id, title, initIsOwner, isOpen, onClose, initialPosition, ini
   React.useEffect(updateBodyOverflow, [isOwner])
 
   // ドラッグロジック
-  const { startDrag } = useDraggable(
+  const { startDrag, dragHandlers } = useDraggable(
+    e=>{
+      handleWindowFocus(id)
+      startDrag(e, { x: position.x, y: position.y })
+    },
     (newx, newy) => {
       setPosition(prev => ({
         x: newx,
@@ -175,10 +179,7 @@ const MiniWin = ({ id, title, initIsOwner, isOpen, onClose, initialPosition, ini
         onDoubleClick={e=>{
           setIsOwner(!isOwner)
         }}
-        onMouseDown={(e) => {
-          handleWindowFocus(id)
-          startDrag(e, { x: position.x, y: position.y })
-        }}
+        {...dragHandlers}
       >
         <span className="title-text">{title}</span>
         <div className='btn-area'>

@@ -1,6 +1,6 @@
 {
   "name": "sptc-tools",
-  "version": "1.0.14",
+  "version": "1.0.16",
   "description": "AI tools for development efficiency",
   "main": "index.js",
   "bin": {

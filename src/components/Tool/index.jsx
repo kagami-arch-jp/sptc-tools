@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import {useDarkMode} from '@/store/globalSettingStore'
 import toolStore, { reorderTools, TOOLS_DATA, settingKey, config } from '@/store/toolStore'
@@ -21,6 +21,14 @@ import './index.scss';
 const Tool = () => {
   const isDarkMode = useDarkMode();
   const toolOrder = toolStore.useValue().toolOrder;
+
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      delay: 10,
+      tolerance: 5,
+    },
+  });
+  const sensors = useSensors(pointerSensor);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -49,7 +57,7 @@ const Tool = () => {
       <main className="tool-main-content">
 
         <section className="tools-grid-section">
-          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={toolOrder} strategy={horizontalListSortingStrategy}>
               <div className="tools-grid">
                 {sortedTools.map((tool) => (

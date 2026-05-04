@@ -29,17 +29,19 @@ const SortableToolCard = ({ tool }) => {
 
   return (
     <div ref={setNodeRef} style={style} className="sortable-tool-card">
-      <div className='drag-handle' {...attributes} {...listeners}>
+      <div className='drag-handle' style={{ touchAction: 'none' }} {...attributes} {...listeners}>
         ⠿
       </div>
-      <Item
-        image={tool.image}
-        title={tool.name}
-        description={tool.description}
-        onClick={() => {
-          setIsOpen(true)
-        }}
-      />
+      <div onPointerDown={(e) => e.stopPropagation()}>
+        <Item
+          image={tool.image}
+          title={tool.name}
+          description={tool.description}
+          onClick={() => {
+            setIsOpen(true)
+          }}
+        />
+      </div>
       <MiniWin
         id={"win" + tool.id}
         title={tool.name}

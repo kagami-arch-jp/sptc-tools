@@ -16,7 +16,7 @@
  */
 
 import React, { useState } from 'react';
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import confetti from 'canvas-confetti';
 import Dialog from '@/components/Dialog';
@@ -41,6 +41,14 @@ const TodoList = () => {
   const [formColor, setFormColor] = useState(PRESET_COLORS[0]);
   const [enableDate, setEnableDate] = useState(false);
   const [expectedDate, setExpectedDate] = useState('');
+
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      delay: 10,
+      tolerance: 5,
+    },
+  });
+  const sensors = useSensors(pointerSensor);
 
   const handleOpenCreate = () => {
     setEditingTask(null);
@@ -120,7 +128,7 @@ const TodoList = () => {
         />
       </Modal>
 
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
           <div className="task-list">
             {tasks.map((task) => (

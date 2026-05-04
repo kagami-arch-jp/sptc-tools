@@ -10,6 +10,7 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
   user-select: none;
   transition: transform .3s ease, opacity .2s ease;
+  touch-action: none;
 
   &.owner-win{
     left: 0!important;
