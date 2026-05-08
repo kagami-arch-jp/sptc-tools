@@ -28,6 +28,7 @@ import {cls} from '@/utils/css'
 
 import TaskForm from './TaskForm';
 import TaskCard from './TaskCard';
+import CalendarPanel from './CalendarPanel';
 
 import './index.scss';
 
@@ -36,6 +37,7 @@ const PRESET_COLORS = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#
 const TodoList = () => {
   const { tasks, isConfettiActive } = todoStore.useValue();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [formText, setFormText] = useState('');
   const [formColor, setFormColor] = useState(PRESET_COLORS[0]);
@@ -109,6 +111,9 @@ const TodoList = () => {
         <button className="add-task-btn" onClick={handleOpenCreate}>
           タスクを追加
         </button>
+        <button className="calendar-btn" onClick={() => setIsCalendarOpen(true)}>
+          📅
+        </button>
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -126,6 +131,10 @@ const TodoList = () => {
           onCancel={() => setIsModalOpen(false)}
           colors={PRESET_COLORS}
         />
+      </Modal>
+
+      <Modal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)}>
+        <CalendarPanel onEdit={handleOpenEdit} />
       </Modal>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

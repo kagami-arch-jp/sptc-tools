@@ -1,7 +1,7 @@
 import {startDance, stopDance} from './title'
 
 function clientFetch(action, data) {
-  if("@IS_DEV") {
+  if("@IS_DEV"==="true") {
     action=location.origin+action
   }
   return window.fetch(action, {

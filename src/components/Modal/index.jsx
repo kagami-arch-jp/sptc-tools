@@ -3,18 +3,34 @@
  * @created 2026-04-14
  * @usage <Modal isOpen={isOpen} onClose={onClose}><Content /></Modal>
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import './index.scss';
 import { useDarkMode } from '@/store/globalSettingStore';
 import {registerId} from '@/store/modalButton'
+import modalZIndexStore, { getNextModalZIndex } from '@/store/modalZIndexStore';
 
 function Modal({ isOpen, onClose, children }) {
+  const [zIndex, setZIndex] = React.useState(modalZIndexStore.getValue());
+
+  useEffect(() => {
+    if (isOpen) {
+      const val=modalZIndexStore.getValue()+1
+      modalZIndexStore.setValue(val)
+      setZIndex(val)
+    }
+  }, [isOpen]);
+
   return (
-    <div className={`modal-container ${isOpen ? 'open' : ''}`} onMouseDown={e=>{
-      e.stopPropagation()
-    }} onDoubleClick={e=>{
-      e.stopPropagation()
-    }}>
+    <div
+      className={`modal-container ${isOpen ? 'open' : ''}`}
+      style={{zIndex}}
+      onMouseDown={e=>{
+        e.stopPropagation()
+      }}
+      onDoubleClick={e=>{
+        e.stopPropagation()
+      }}
+    >
       <div className="modal-overlay" onClick={onClose} />
       <div className="modal-content">
         {children}

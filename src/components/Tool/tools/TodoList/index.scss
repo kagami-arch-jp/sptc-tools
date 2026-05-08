@@ -9,6 +9,9 @@
 
   .todo-main{
     width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 20px;
     &.small-form{
       *{
         font-size: 12px;
@@ -21,9 +24,8 @@
   }
 
   .add-task-btn {
-    margin: 20px;
+    flex: 1;
     padding: 12px;
-    width: calc(100% - 40px);
     background: #007aff;
     color: white;
     border: none;
@@ -41,9 +43,40 @@
     }
   }
 
+  .calendar-btn {
+    width: 44px;
+    height: 44px;
+    background: #f2f2f7;
+    color: #333;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #e5e5ea;
+    }
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
   &.dark-mode {
     .add-task-btn {
       background: #0a84ff;
+    }
+    .calendar-btn {
+      background: #2c2c2e;
+      color: #eee;
+
+      &:hover {
+        background: #3a3a3c;
+      }
     }
   }
 
