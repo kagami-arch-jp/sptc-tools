@@ -3,6 +3,25 @@ const pkg=require(APP_PATH+'/package.json')
 const chalk=require('chalk')
 const fs=require('fs')
 
+async function getAvailablePort() {
+  const net = require('net');
+  function isPortAvailable(port) {
+    return new Promise((resolve) => {
+      const server = net.createServer();
+      server.once('error', () => resolve(false));
+      server.once('listening', () => {
+        server.close();
+        resolve(true);
+      });
+      server.listen(port);
+    });
+  }
+  for(let i=9090; i<65535; i++) {
+    if(await isPortAvailable(i)) return i
+  }
+  throw new Error('no available port')
+}
+
 const RUNTIME_RND_STR=Date.now().toString(36)
 function getRuntimeArgv() {
   const p=process.argv[2]
@@ -93,4 +112,5 @@ module.exports={
   getRuntimeArgv,
   checkEnv,
   run,
+  getAvailablePort,
 }

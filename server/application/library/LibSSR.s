@@ -96,6 +96,7 @@ class LibSSR{
 
 		const data={
 			host: $_RAW_REQUEST.headers.host.replace(/\:\d+/g, ''),
+			dev_port: (process.argv.find(x=>x.indexOf('DEV_PORT=')>-1)||'').match(/\d+|$/)[0] || 3000,
 			ssrData: {
 				degradeCsr: IS_FORCE_CSR,
 				payload: null,

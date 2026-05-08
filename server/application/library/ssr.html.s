@@ -3,7 +3,7 @@
 <html>
 <head>
 <?js if(__IS_DEV__) { ?>
-<base href='http://<?js echo(host) ?>:3000' />
+<base href='http://<?js echo(host) ?>:<?js echo(dev_port) ?>' />
 <?js } ?>
   <link rel="icon" href="data:,">
   <base target='_blank' />

@@ -13,6 +13,7 @@ const {
   getRuntimeArgv,
   checkEnv,
   run,
+  getAvailablePort,
 }=require(__dirname+'/lib')
 const {NPM_ARGV, IS_DEV, IS_BUILD, IS_SERVE}=getRuntimeArgv()
 
@@ -258,13 +259,13 @@ function resolveAssets(assets) {
   return ret
 }
 
-function devServer() {
+function devServer(port) {
   const WebpackDevServer=require('webpack-dev-server')
   const multiCompiler=getWebpackCompiler()
   const devServerOptions = {
     compress: false,
     hot: true,
-    port: 3000,
+    port,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': 'true',
@@ -281,7 +282,7 @@ function devServer() {
     await devServer.start();
   };
 
-  run('sptcd', '-d -rindex.s -wserver'.split(' '))
+  run('sptcd', `-d -rindex.s -wserver -- DEV_PORT=${port}`.split(' '))
 
   runServer();
 
@@ -312,7 +313,7 @@ async function cleanDir(dir, stack=[]) {
 cleanDir(APP_PATH+'/'+outputPath).catch(e=>{}).finally(()=>{
 
   if(IS_DEV) {
-    devServer()
+    getAvailablePort().then(devServer)
   }else if(IS_BUILD) {
     build()
   }
