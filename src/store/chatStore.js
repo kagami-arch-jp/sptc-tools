@@ -455,7 +455,7 @@ chatStore.stopReceiveMessage=(sessionId, msgId)=>{
   chatStore.updateMessage(sessionId, msgId, {isLoading: false})
 }
 
-chatStore.checkUserImage=async (sessionId, maxFragment=2)=>{
+chatStore.checkUserImage=async (sessionId, maxFragment=6)=>{
 
   const {stacks, profile}=userImage.getValue()
 
