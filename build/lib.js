@@ -16,7 +16,7 @@ async function getAvailablePort() {
       server.listen(port);
     });
   }
-  for(let i=9090; i<65535; i++) {
+  for(let i=19090; i<65535; i++) {
     if(await isPortAvailable(i)) return i
   }
   throw new Error('no available port')

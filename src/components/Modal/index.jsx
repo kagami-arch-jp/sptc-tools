@@ -9,7 +9,7 @@ import { useDarkMode } from '@/store/globalSettingStore';
 import {registerId} from '@/store/modalButton'
 import modalZIndexStore, { getNextModalZIndex } from '@/store/modalZIndexStore';
 
-function Modal({ isOpen, onClose, children }) {
+function Modal({ isOpen, onClose, children, width = 50 }) {
   const [zIndex, setZIndex] = React.useState(modalZIndexStore.getValue());
 
   useEffect(() => {
@@ -32,7 +32,7 @@ function Modal({ isOpen, onClose, children }) {
       }}
     >
       <div className="modal-overlay" onClick={onClose} />
-      <div className="modal-content">
+      <div className="modal-content" style={{ width: width + '%' }}>
         {children}
       </div>
     </div>

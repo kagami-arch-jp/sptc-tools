@@ -1,63 +1,52 @@
-/**
- * @file TodoList Component
- * @description タスクの作成、管理、および履歴表示を行うメインコンポーネント。
- * @version 1.0.0
- * @create 2026-04-17
- * @usage <TodoList />
- * @author kagami-arch
- *
- * 機能リスト:
- * - タスクの新規作成（テキスト入力、カラーパレット選択）
- * - タスクの編集
- * - ドラッグ＆ドロップによる並べ替え
- * - 2秒待機によるタスク完了ロジック
- * - 完了時のお祝いエフェクト（Confetti）
- * - 完了済みタスクの履歴表示（期間フィルタリング機能付き）
- */
-
-import React, { useState } from 'react';
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import confetti from 'canvas-confetti';
+import React, { useState, useCallback, useMemo } from 'react';
 import Dialog from '@/components/Dialog';
 import Modal from '@/components/Modal';
-
-import { todoStore, addTask, updateTask, completeTask, reorderTasks } from '@/store/todoStore';
-import { ModalButton } from '@/components/Modal'
-import {cls} from '@/utils/css'
-
+import SizeObserver from '@/components/SizeObserver';
+import { todoStore, addTask, updateTask } from '@/store/todoStore';
 import TaskForm from './TaskForm';
-import TaskCard from './TaskCard';
-import CalendarPanel from './CalendarPanel';
-
+import CalendarPanel, { CalendarTaskItem, getDateKey } from './CalendarPanel';
 import './index.scss';
 
 const PRESET_COLORS = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF'];
 
 const TodoList = () => {
-  const { tasks, isConfettiActive } = todoStore.useValue();
+  const { tasks } = todoStore.useValue();
+  const [containerWidth, setContainerWidth] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(getDateKey());
+
+  const handleResize = useCallback(({ width }) => {
+    setContainerWidth(width);
+  }, []);
+
+  const isWide = containerWidth > 640;
   const [editingTask, setEditingTask] = useState(null);
   const [formText, setFormText] = useState('');
   const [formColor, setFormColor] = useState(PRESET_COLORS[0]);
-  const [enableDate, setEnableDate] = useState(false);
   const [expectedDate, setExpectedDate] = useState('');
 
-  const pointerSensor = useSensor(PointerSensor, {
-    activationConstraint: {
-      delay: 10,
-      tolerance: 5,
-    },
-  });
-  const sensors = useSensors(pointerSensor);
+  const tasksByDate = useMemo(() => {
+    const map = {};
+    tasks.forEach(task => {
+      if (!task.expectedDate) return;
+      const d = new Date(task.expectedDate);
+      const key = getDateKey(d);
+      if (!map[key]) map[key] = [];
+      map[key].push(task);
+    });
+    return map;
+  }, [tasks]);
+
+  const selectedTasks = selectedDate ? tasksByDate[selectedDate] || [] : [];
 
   const handleOpenCreate = () => {
     setEditingTask(null);
     setFormText('');
     setFormColor(PRESET_COLORS[0]);
-    setEnableDate(false);
-    setExpectedDate('');
+    const d = new Date();
+    d.setHours(d.getHours() + 1, 0, 0, 0);
+    const localDateTime = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    setExpectedDate(localDateTime);
     setIsModalOpen(true);
   };
 
@@ -66,13 +55,14 @@ const TodoList = () => {
     setFormText(task.text);
     setFormColor(task.color);
     if (task.expectedDate) {
-      setEnableDate(true);
       const d = new Date(task.expectedDate);
       const localDateTime = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
       setExpectedDate(localDateTime);
     } else {
-      setEnableDate(false);
-      setExpectedDate('');
+      const d = new Date();
+      d.setHours(d.getHours() + 1, 0, 0, 0);
+      const localDateTime = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+      setExpectedDate(localDateTime);
     }
     setIsModalOpen(true);
   };
@@ -85,7 +75,7 @@ const TodoList = () => {
     const taskData = {
       text: formText,
       color: formColor,
-      expectedDate: enableDate && expectedDate ? new Date(expectedDate) : null
+      expectedDate: new Date(expectedDate)
     };
     if (editingTask) {
       updateTask(editingTask.id, taskData);
@@ -95,28 +85,15 @@ const TodoList = () => {
     setIsModalOpen(false);
   };
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    if (active.id !== over.id) {
-      const oldIndex = tasks.findIndex((t) => t.id === active.id);
-      const newIndex = tasks.findIndex((t) => t.id === over.id);
-      const newOrder = arrayMove(tasks, oldIndex, newIndex);
-      reorderTasks(newOrder);
-    }
-  };
-
   return (
-    <div className="todo-list-container">
+    <SizeObserver className="todo-list-container" onChangeSize={handleResize}>
       <div className='todo-main'>
         <button className="add-task-btn" onClick={handleOpenCreate}>
           タスクを追加
         </button>
-        <button className="calendar-btn" onClick={() => setIsCalendarOpen(true)}>
-          📅
-        </button>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} width={isWide ? 50 : 85}>
         <TaskForm
           isEditing={!!editingTask}
           text={formText}
@@ -125,41 +102,60 @@ const TodoList = () => {
           setColor={setFormColor}
           expectedDate={expectedDate}
           setExpectedDate={setExpectedDate}
-          enableDate={enableDate}
-          setEnableDate={setEnableDate}
           onSave={handleSaveTask}
           onCancel={() => setIsModalOpen(false)}
           colors={PRESET_COLORS}
         />
       </Modal>
 
-      <Modal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)}>
-        <CalendarPanel onEdit={handleOpenEdit} />
-      </Modal>
-
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-          <div className="task-list">
-            {tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onComplete={completeTask}
-                onEdit={handleOpenEdit}
-                onTriggerConfetti={async () => {
-                  for(let i=0; i<6; i++) {
-                    confetti({ particleCount: 35, spread: 65, zIndex: 1000, origin: { y: 0.6, x:-.1 }, angle: 25+i*15 })
-                    confetti({ particleCount: 35, spread: 65, zIndex: 1000, origin: { y: 0.6, x:1.1 }, angle: 155-i*15 })
-                    await new Promise(r=>setTimeout(r, 100))
-                  }
-                }}
-              />
-            ))}
-            {tasks.length === 0 && <div className="empty-state">タスクはありません</div>}
+      {isWide ? (
+        <div className="todo-layout">
+          <div className="todo-left">
+            <CalendarPanel
+              isWide
+              selectedDate={selectedDate}
+              onSelectDate={setSelectedDate}
+              onEdit={handleOpenEdit}
+            />
           </div>
-        </SortableContext>
-      </DndContext>
-    </div>
+          <div className="todo-right">
+            <div className="selected-date-tasks">
+              <div className="selected-date-header">
+                {selectedDate.replace(/-/g, '/')} のタスク
+              </div>
+              {selectedTasks.length === 0 ? (
+                <div className="no-tasks">タスクはありません</div>
+              ) : (
+                selectedTasks.map(task => (
+                  <CalendarTaskItem key={task.id} task={task} onEdit={handleOpenEdit} />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="narrow-content">
+          <CalendarPanel
+            isWide={false}
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+            onEdit={handleOpenEdit}
+          />
+          <div className="selected-date-tasks">
+            <div className="selected-date-header">
+              {selectedDate.replace(/-/g, '/')} のタスク
+            </div>
+            {selectedTasks.length === 0 ? (
+              <div className="no-tasks">タスクはありません</div>
+            ) : (
+              selectedTasks.map(task => (
+                <CalendarTaskItem key={task.id} task={task} onEdit={handleOpenEdit} />
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </SizeObserver>
   );
 };
 

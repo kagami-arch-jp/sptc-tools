@@ -10,7 +10,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './index.scss';
 
-const TaskForm = ({ isEditing, text, setText, color, setColor, expectedDate, setExpectedDate, enableDate, setEnableDate, onSave, onCancel, colors }) => {
+const TaskForm = ({ isEditing, text, setText, color, setColor, expectedDate, setExpectedDate, onSave, onCancel, colors }) => {
   const [isPreview, setIsPreview] = useState(false);
 
   return (
@@ -54,22 +54,13 @@ const TaskForm = ({ isEditing, text, setText, color, setColor, expectedDate, set
       </div>
 
       <div className="date-section">
-        <label className="date-checkbox">
-          <input
-            type="checkbox"
-            checked={enableDate}
-            onChange={(e) => setEnableDate(e.target.checked)}
-          />
-          <span>期限を設定</span>
-        </label>
-        {enableDate && (
-          <input
-            type="datetime-local"
-            className="date-input"
-            value={expectedDate}
-            onChange={(e) => setExpectedDate(e.target.value)}
-          />
-        )}
+        <label className="date-label">期限</label>
+        <input
+          type="datetime-local"
+          className="date-input"
+          value={expectedDate}
+          onChange={(e) => setExpectedDate(e.target.value)}
+        />
       </div>
 
       <div className="form-actions">

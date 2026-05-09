@@ -1,120 +1,3 @@
-.dark-mode{
-  .task-form{
-    h3 {
-      color: #eee;
-    }
-
-    .preview-toggle {
-      background: #333;
-      border-color: #555;
-      color: #ccc;
-
-      &:hover {
-        background: #444;
-      }
-
-      &.active {
-        background: #0a84ff;
-        border-color: #0a84ff;
-        color: #fff;
-      }
-    }
-
-    .markdown-preview {
-      background: #1c1c1e;
-      border-color: #444;
-      color: #ddd;
-
-      code {
-        background: #333;
-      }
-
-      pre {
-        background: #333;
-        code {
-          background: none;
-        }
-      }
-
-      blockquote {
-        border-color: #555;
-        color: #aaa;
-      }
-
-      table {
-        th, td {
-          border-color: #444;
-        }
-        th {
-          background: #333;
-        }
-      }
-    }
-  }
-  .task-input {
-    background: #222;
-    color: #ddd;
-    border-color: #444;
-  }
-  .date-section {
-    .date-checkbox {
-      color: #ccc;
-    }
-    .date-input {
-      background: #222;
-      color: #ddd;
-      border-color: #444;
-    }
-  }
-  .color-swatch {
-    &.active {
-      border-color: #eee;
-    }
-  }
-  .cancel-btn {
-    background: #444;
-    color: #ddd;
-  }
-  .task-input {
-    background: #222;
-    color: #ddd;
-    border-color: #444;
-  }
-  .date-section {
-    .date-checkbox {
-      color: #ccc;
-    }
-    .date-input {
-      background: #222;
-      color: #ddd;
-      border-color: #444;
-    }
-  }
-  .color-swatch {
-    &.active {
-      border-color: #eee;
-    }
-  }
-  .cancel-btn {
-    background: #444;
-    color: #ddd;
-  }
-  .task-input {
-    background: #222;
-    color: #ddd;
-    border-color: #444;
-  }
-  .color-swatch {
-    &.active {
-      border-color: #eee;
-    }
-  }
-  .cancel-btn {
-    background: #444;
-    color: #ddd;
-  }
-}
-
 .task-form {
   padding: 20px;
   display: flex;
@@ -134,6 +17,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    height: 100%;
   }
 
   .editor-header {
@@ -228,32 +112,6 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-
-    .date-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #555;
-
-      input[type="checkbox"] {
-        cursor: pointer;
-      }
-    }
-
-    .date-input {
-      padding: 8px 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-
-      &:focus {
-        border-color: #007aff;
-      }
-    }
   }
 
   .task-input {
@@ -264,9 +122,9 @@
     outline: none;
     transition: border-color 0.2s;
     width: 100%;
+    height: 100%;
     box-sizing: border-box;
     field-sizing: content;
-    max-height: 10lh;
     resize: vertical;
     font-family: inherit;
 
@@ -296,6 +154,31 @@
 
     &:hover {
       transform: scale(1.1);
+    }
+  }
+
+  .date-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .date-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .date-input {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: #007aff;
+      }
     }
   }
 
@@ -341,6 +224,89 @@
 
     &:active {
       transform: scale(0.98);
+    }
+  }
+}
+
+.dark-mode {
+  .task-form {
+    h3 {
+      color: #eee;
+    }
+
+    .preview-toggle {
+      background: #333;
+      border-color: #555;
+      color: #ccc;
+
+      &:hover {
+        background: #444;
+      }
+
+      &.active {
+        background: #0a84ff;
+        border-color: #0a84ff;
+        color: #fff;
+      }
+    }
+
+    .markdown-preview {
+      background: #1c1c1e;
+      border-color: #444;
+      color: #ddd;
+
+      code {
+        background: #333;
+      }
+
+      pre {
+        background: #333;
+        code {
+          background: none;
+        }
+      }
+
+      blockquote {
+        border-color: #555;
+        color: #aaa;
+      }
+
+      table {
+        th, td {
+          border-color: #444;
+        }
+        th {
+          background: #333;
+        }
+      }
+    }
+
+    .date-section {
+      .date-label {
+        color: #ccc;
+      }
+      .date-input {
+        background: #222;
+        color: #ddd;
+        border-color: #444;
+      }
+    }
+
+    .task-input {
+      background: #222;
+      color: #ddd;
+      border-color: #444;
+    }
+
+    .color-swatch {
+      &.active {
+        border-color: #eee;
+      }
+    }
+
+    .cancel-btn {
+      background: #444;
+      color: #ddd;
     }
   }
 }

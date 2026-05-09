@@ -10,7 +10,16 @@ import './index.scss';
 
 const DAYS_OF_WEEK = ['日', '月', '火', '水', '木', '金', '土'];
 
-const CalendarTaskItem = ({ task, onEdit }) => {
+const BADGE_COLORS = [
+  '#81C784', // 1 task
+  '#64B5F6', // 2 tasks
+  '#FFB74D', // 3 tasks
+  '#E57373', // 4 tasks
+  '#BA68C8', // 5 tasks
+  '#90A4AE', // 6+ tasks
+];
+
+export const CalendarTaskItem = ({ task, onEdit }) => {
   const { isPending, startTimer, cancelTimer } = useTimer(
     () => {
       completeTask(task.id);
@@ -35,11 +44,6 @@ const CalendarTaskItem = ({ task, onEdit }) => {
 
   return (
     <div className={`calendar-task-item ${isPending ? 'pending' : ''}`} style={{ borderLeftColor: task.color }}>
-      <div className="calendar-task-text">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {task.text}
-        </ReactMarkdown>
-      </div>
       <div className="calendar-task-actions">
         <button
           className="edit-btn"
@@ -54,22 +58,30 @@ const CalendarTaskItem = ({ task, onEdit }) => {
           {isPending ? '...' : '✅'}
         </button>
       </div>
+      <div className="calendar-task-text">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {task.text}
+        </ReactMarkdown>
+      </div>
     </div>
   );
 };
 
-const CalendarPanel = ({ onEdit }) => {
+export function getDateKey(d=new Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+const CalendarPanel = ({ onEdit, isWide = true, selectedDate, onSelectDate }) => {
   const { tasks } = todoStore.useValue();
   const isDarkMode = useDarkMode();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
 
   const tasksByDate = useMemo(() => {
     const map = {};
     tasks.forEach(task => {
       if (!task.expectedDate) return;
       const d = new Date(task.expectedDate);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const key = getDateKey(d)
       if (!map[key]) map[key] = [];
       map[key].push(task);
     });
@@ -84,7 +96,7 @@ const CalendarPanel = ({ onEdit }) => {
   const daysInPrevMonth = new Date(year, month, 0).getDate();
 
   const today = new Date();
-  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const todayKey = getDateKey(today);
 
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
@@ -103,8 +115,6 @@ const CalendarPanel = ({ onEdit }) => {
     }
   }
 
-  const selectedTasks = selectedDate ? tasksByDate[selectedDate] || [] : [];
-
   return (
     <div className={`calendar-panel ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="calendar-header">
@@ -119,8 +129,19 @@ const CalendarPanel = ({ onEdit }) => {
       </div>
       <div className="calendar-grid">
         {cells.map((cell, idx) => {
-          const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
-          const hasTasks = tasksByDate[key]?.length > 0;
+          let keyYear = year;
+          let keyMonth = month;
+          if (cell.isOtherMonth) {
+            if (idx < firstDay) {
+              keyMonth -= 1;
+            } else {
+              keyMonth += 1;
+            }
+            if (keyMonth < 0) { keyMonth = 11; keyYear -= 1; }
+            if (keyMonth > 11) { keyMonth = 0; keyYear += 1; }
+          }
+          const key = `${keyYear}-${String(keyMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+          const taskCount = tasksByDate[key]?.length || 0;
           const isToday = key === todayKey;
           const isSelected = key === selectedDate;
           return (
@@ -131,30 +152,33 @@ const CalendarPanel = ({ onEdit }) => {
                 cell.isOtherMonth ? 'other-month' : '',
                 isToday ? 'today' : '',
                 isSelected ? 'selected' : '',
-                hasTasks ? 'has-tasks' : '',
+                taskCount > 0 ? 'has-tasks' : '',
               ].filter(Boolean).join(' ')}
-              onClick={() => setSelectedDate(isSelected ? null : key)}
+              onClick={() => {
+                if (cell.isOtherMonth) {
+                  if (idx < firstDay) prevMonth();
+                  else nextMonth();
+                }
+                onSelectDate(key);
+              }}
             >
               <span className="day-number">{cell.day}</span>
-              {hasTasks && <div className="task-dot" />}
+              {taskCount > 0 && (
+                isWide ? (
+                  <span
+                    className="task-badge"
+                    style={{ backgroundColor: BADGE_COLORS[Math.min(taskCount - 1, 5)] }}
+                  >
+                    {taskCount}
+                  </span>
+                ) : (
+                  <span className="task-dot" />
+                )
+              )}
             </div>
           );
         })}
       </div>
-      {selectedDate && (
-        <div className="selected-date-tasks">
-          <div className="selected-date-header">
-            {selectedDate.replace(/-/g, '/')} のタスク
-          </div>
-          {selectedTasks.length === 0 ? (
-            <div className="no-tasks">タスクはありません</div>
-          ) : (
-            selectedTasks.map(task => (
-              <CalendarTaskItem key={task.id} task={task} onEdit={onEdit} />
-            ))
-          )}
-        </div>
-      )}
     </div>
   );
 };
