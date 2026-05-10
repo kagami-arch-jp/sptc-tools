@@ -79,6 +79,19 @@ const Dialog = {
   },
 
   /**
+   * 加载中提示框（不可关闭，需手动调用 close()）
+   * @param {Object} options
+   * @param {string} [options.message='ネットワークに接続できません'] - 提示内容
+   */
+  loading: ({ message } = {}) => {
+    init()
+    dialogStore.setValue({
+      type: 'loading',
+      message: message || 'ネットワークに接続できません',
+    });
+  },
+
+  /**
    * 关闭当前弹窗
    */
   close: () => {

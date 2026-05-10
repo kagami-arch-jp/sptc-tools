@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import dialogStore from '@/store/dialogStore';
+import Spinner from '@/components/Spinner';
 import './index.scss';
 
 /**
@@ -111,6 +112,16 @@ function DialogRenderer() {
     return (
       <div className="dialog-toast">
         <div className="toast-content">{dialog.message}</div>
+      </div>
+    );
+  }
+
+  if (dialog.type === 'loading') {
+    return (
+      <div className="dialog-overlay" onClick={(e) => e.stopPropagation()}>
+        <div className="dialog-loading">
+          <Spinner msg={dialog.message || 'ネットワークに接続できません'} />
+        </div>
       </div>
     );
   }

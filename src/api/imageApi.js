@@ -19,10 +19,10 @@ function getCommonParams() {
  * @returns {Promise<string>} 生成された画像のURL
  */
 export async function generateImage(params, onProgress) {
-  await fetchStream('/ollama/generateImage', {
+  await fetchStream({ action: '/ollama/generateImage', data: {
     ...params,
     ...getCommonParams()
-  }, p=>{
+  }, onData: p=>{
     onProgress(p.progress, p.image)
-  })
+  } })
 }

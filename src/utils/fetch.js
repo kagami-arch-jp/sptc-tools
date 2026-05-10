@@ -44,9 +44,9 @@ export async function fetch(action, data) {
   }
 }
 
-export async function fetchStream(action, data, onData, abortHandler) {
+export async function fetchStream({ action, data, onData, abortHandler, disableDance }) {
   try{
-    startDance()
+    if(!disableDance) startDance()
     const response = await clientFetch(action, data)
 
     // Network‑level error handling
@@ -90,7 +90,7 @@ export async function fetchStream(action, data, onData, abortHandler) {
   }catch(e) {
     throw e
   }finally{
-    stopDance()
+    if(!disableDance) stopDance()
   }
 }
 

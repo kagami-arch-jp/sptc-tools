@@ -25,15 +25,19 @@ export async function reset() {
   return fetch('/ollama/reset')
 }
 export async function sendMessage(history, onData, who, abortHandler) {
-  return fetchStream('/ollama/chat', {history, who, ...getCommonParams()}, onData, abortHandler)
+  return fetchStream({ action: '/ollama/chat', data: {history, who, ...getCommonParams()}, onData, abortHandler })
 }
 export async function summaryMessage(history, onData) {
-  return fetchStream('/ollama/chatSummary', {history, ...getCommonParams()}, onData)
+  return fetchStream({ action: '/ollama/chatSummary', data: {history, ...getCommonParams()}, onData })
 }
 export async function updateUserImage(history, isMerge) {
-  const {newProfile}=await fetchStream('/ollama/chatUserImage', {history, isMerge, ...getCommonParams()}, ({content: txt, err}, ctx)=>{
-    ctx.newProfile=ctx.newProfile || ''
-    ctx.newProfile+=txt || ''
+  const {newProfile}=await fetchStream({
+    action: '/ollama/chatUserImage',
+    data: {history, isMerge, ...getCommonParams()},
+    onData: ({content: txt, err}, ctx)=>{
+      ctx.newProfile=ctx.newProfile || ''
+      ctx.newProfile+=txt || ''
+    }
   })
   return newProfile.match(/<UserImage>\s*([\s\S]+?)\s*<\/UserImage>|$/)[1] || null
 }

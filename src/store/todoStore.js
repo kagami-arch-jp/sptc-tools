@@ -16,9 +16,15 @@ import {newId} from '@/utils/base'
 export const settingKey='todoStore-setting'
 export const config=[]
 
+const today = new Date();
+const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
 export const todoStore = createStoreSharedState('todoStore', {
   tasks: [],        // 現在のタスク一覧
-  isConfettiActive: false // 花火エフェクトの制御
+  isConfettiActive: false, // 花火エフェクトの制御
+  selectedDate: todayKey,  // カレンダーで選択中の日付
+}, ()=>{
+  todoStore.setValue(prev=>({...prev, selectedDate: todayKey}))
 });
 
 export const filter=createSharedState({
@@ -73,5 +79,16 @@ export const reorderTasks = (newOrder) => {
   todoStore.setValue(prev => ({
     ...prev,
     tasks: newOrder
+  }));
+};
+
+/**
+ * カレンダーで選択中の日付を設定する
+ * @param {string} dateKey YYYY-MM-DD 形式
+ */
+export const setSelectedDate = (dateKey) => {
+  todoStore.setValue(prev => ({
+    ...prev,
+    selectedDate: dateKey,
   }));
 };

@@ -7,12 +7,14 @@
  * @usage <Tool />
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import {useDarkMode} from '@/store/globalSettingStore'
 import toolStore, { reorderTools, TOOLS_DATA, settingKey, config } from '@/store/toolStore'
 import SortableToolCard from './ToolCard/SortableToolCard';
+import { checkAlive } from '@/api/alive';
+import Dialog from '@/components/Dialog';
 import { ModalButton } from '@/components/Modal';
 import SettingPanelCommon from '@/components/SettingPanelCommon';
 
@@ -29,6 +31,41 @@ const Tool = () => {
     },
   });
   const sensors = useSensors(pointerSensor);
+
+  useEffect(() => {
+    let cancelled = false;
+    let timerId = null;
+
+    let networkErrorShown = false;
+
+    const poll = async () => {
+      while (!cancelled) {
+        try {
+          await checkAlive(()=>{
+            if (networkErrorShown) {
+              Dialog.close();
+              networkErrorShown = false;
+            }
+          });
+        } catch (e) {
+          if (!networkErrorShown) {
+            Dialog.loading();
+            networkErrorShown = true;
+          }
+        }
+        await new Promise(resolve => {
+          timerId = setTimeout(resolve, 1000);
+        });
+      }
+    };
+
+    poll();
+
+    return () => {
+      cancelled = true;
+      if (timerId) clearTimeout(timerId);
+    };
+  }, []);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;

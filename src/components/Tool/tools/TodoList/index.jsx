@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import Dialog from '@/components/Dialog';
 import Modal from '@/components/Modal';
 import SizeObserver from '@/components/SizeObserver';
-import { todoStore, addTask, updateTask } from '@/store/todoStore';
+import { todoStore, addTask, updateTask, setSelectedDate } from '@/store/todoStore';
 import TaskForm from './TaskForm';
 import CalendarPanel, { CalendarTaskItem, getDateKey } from './CalendarPanel';
 import './index.scss';
@@ -10,16 +10,15 @@ import './index.scss';
 const PRESET_COLORS = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF'];
 
 const TodoList = () => {
-  const { tasks } = todoStore.useValue();
+  const { tasks, selectedDate } = todoStore.useValue();
   const [containerWidth, setContainerWidth] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(getDateKey());
 
   const handleResize = useCallback(({ width }) => {
     setContainerWidth(width);
   }, []);
 
-  const isWide = containerWidth > 640;
+  const isWide = containerWidth > 600;
   const [editingTask, setEditingTask] = useState(null);
   const [formText, setFormText] = useState('');
   const [formColor, setFormColor] = useState(PRESET_COLORS[0]);
@@ -45,7 +44,8 @@ const TodoList = () => {
     setFormColor(PRESET_COLORS[0]);
     const d = new Date();
     d.setHours(d.getHours() + 1, 0, 0, 0);
-    const localDateTime = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    const datePart = selectedDate || getDateKey(d);
+    const localDateTime = `${datePart}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     setExpectedDate(localDateTime);
     setIsModalOpen(true);
   };

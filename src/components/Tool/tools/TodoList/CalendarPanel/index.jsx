@@ -43,7 +43,7 @@ export const CalendarTaskItem = ({ task, onEdit }) => {
   };
 
   return (
-    <div className={`calendar-task-item ${isPending ? 'pending' : ''}`} style={{ borderLeftColor: task.color }}>
+    <div className={`calendar-task-item ${isPending ? 'pending' : ''}`} style={{ backgroundColor: task.color }}>
       <div className="calendar-task-actions">
         <button
           className="edit-btn"

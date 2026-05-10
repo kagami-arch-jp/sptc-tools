@@ -21,5 +21,5 @@ function getCommonParams() {
 }
 
 export async function querySuggestion(param, onData) {
-  await fetchStream('/ollama/writerSuggestion', {...param, ...getCommonParams()}, onData)
+  await fetchStream({ action: '/ollama/writerSuggestion', data: {...param, ...getCommonParams()}, onData })
 }

@@ -95,6 +95,20 @@ $transition-speed: 0.3s;
   }
 }
 
+.dialog-loading {
+  background-color: $color-bg-light;
+  padding: 24px 32px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: scaleUp $transition-speed ease;
+}
+
+:global(.dark-mode) {
+  .dialog-loading {
+    background-color: $color-bg-dark;
+  }
+}
+
 .dialog-toast {
   position: fixed;
   top: 50px;
