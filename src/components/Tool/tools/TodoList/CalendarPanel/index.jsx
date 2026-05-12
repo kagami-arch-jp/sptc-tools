@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useDarkMode } from '@/store/globalSettingStore';
 import { todoStore, completeTask } from '@/store/todoStore';
 import ReactMarkdown from 'react-markdown';
@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import confetti from 'canvas-confetti';
 import Dialog from '@/components/Dialog';
 import { useTimer } from '@/hooks/useTimer';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 import './index.scss';
 
 const DAYS_OF_WEEK = ['日', '月', '火', '水', '木', '金', '土'];
@@ -19,7 +20,52 @@ const BADGE_COLORS = [
   '#90A4AE', // 6+ tasks
 ];
 
+const CountdownBadge = ({ expectedDate }) => {
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  if (!expectedDate) return null;
+
+  const diff = new Date(expectedDate) - now;
+
+  const getCountdownClass = (diffMs) => {
+    if (diffMs <= 0) return 'expired';
+    const s = Math.floor(diffMs / 1000);
+    if (s <= 1800) return 'urgent';
+    if (s <= 3600) return 'soon';
+    if (s <= 86400) return 'today';
+    return 'far';
+  };
+
+  const formatCountdown = (diffMs) => {
+    if (diffMs <= 0) return '已过期';
+    const totalSec = Math.floor(diffMs / 1000);
+    const d = Math.floor(totalSec / 86400);
+    const h = Math.floor((totalSec % 86400) / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if (d > 0) return `${d}日${h}時間`;
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  };
+
+  return (
+    <span className={`countdown-badge countdown-${getCountdownClass(diff)}`}>
+      {formatCountdown(diff)}
+    </span>
+  );
+};
+
 export const CalendarTaskItem = ({ task, onEdit }) => {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `task-${task.id}`,
+    data: { task },
+  });
+
   const { isPending, startTimer, cancelTimer } = useTimer(
     () => {
       completeTask(task.id);
@@ -43,8 +89,21 @@ export const CalendarTaskItem = ({ task, onEdit }) => {
   };
 
   return (
-    <div className={`calendar-task-item ${isPending ? 'pending' : ''}`} style={{ backgroundColor: task.color }}>
+    <div
+      ref={setNodeRef}
+      className={`calendar-task-item ${isPending ? 'pending' : ''} ${isDragging ? 'dragging' : ''}`}
+      style={{ backgroundColor: task.color }}
+    >
+      <CountdownBadge expectedDate={task.expectedDate} />
       <div className="calendar-task-actions">
+        <button
+          className="drag-handle-btn"
+          style={{ touchAction: 'none', cursor: 'grab' }}
+          {...attributes}
+          {...listeners}
+        >
+          ⠿
+        </button>
         <button
           className="edit-btn"
           onClick={(e) => { e.stopPropagation(); onEdit(task); }}
@@ -70,6 +129,61 @@ export const CalendarTaskItem = ({ task, onEdit }) => {
 export function getDateKey(d=new Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
+
+const CalendarDayCell = ({ cell, idx, firstDay, year, month, todayKey, isWide, tasksByDate, selectedDateKey, onSelectDate, prevMonth, nextMonth }) => {
+  let keyYear = year;
+  let keyMonth = month;
+  if (cell.isOtherMonth) {
+    if (idx < firstDay) {
+      keyMonth -= 1;
+    } else {
+      keyMonth += 1;
+    }
+    if (keyMonth < 0) { keyMonth = 11; keyYear -= 1; }
+    if (keyMonth > 11) { keyMonth = 0; keyYear += 1; }
+  }
+  const key = `${keyYear}-${String(keyMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+  const taskCount = tasksByDate[key]?.length || 0;
+  const isToday = key === todayKey;
+  const isSelected = key === selectedDateKey;
+
+  const { isOver, setNodeRef } = useDroppable({ id: key, data: { dateKey: key } });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={[
+        'calendar-day',
+        cell.isOtherMonth ? 'other-month' : '',
+        isToday ? 'today' : '',
+        isSelected ? 'selected' : '',
+        taskCount > 0 ? 'has-tasks' : '',
+        isOver ? 'drag-over' : '',
+      ].filter(Boolean).join(' ')}
+      onClick={() => {
+        if (cell.isOtherMonth) {
+          if (idx < firstDay) prevMonth();
+          else nextMonth();
+        }
+        onSelectDate(key);
+      }}
+    >
+      <span className="day-number">{cell.day}</span>
+      {taskCount > 0 && (
+        isWide ? (
+          <span
+            className="task-badge"
+            style={{ backgroundColor: BADGE_COLORS[Math.min(taskCount - 1, 5)] }}
+          >
+            {taskCount}
+          </span>
+        ) : (
+          <span className="task-dot" />
+        )
+      )}
+    </div>
+  );
+};
 
 const CalendarPanel = ({ onEdit, isWide = true, selectedDate, onSelectDate }) => {
   const { tasks } = todoStore.useValue();
@@ -128,56 +242,23 @@ const CalendarPanel = ({ onEdit, isWide = true, selectedDate, onSelectDate }) =>
         ))}
       </div>
       <div className="calendar-grid">
-        {cells.map((cell, idx) => {
-          let keyYear = year;
-          let keyMonth = month;
-          if (cell.isOtherMonth) {
-            if (idx < firstDay) {
-              keyMonth -= 1;
-            } else {
-              keyMonth += 1;
-            }
-            if (keyMonth < 0) { keyMonth = 11; keyYear -= 1; }
-            if (keyMonth > 11) { keyMonth = 0; keyYear += 1; }
-          }
-          const key = `${keyYear}-${String(keyMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
-          const taskCount = tasksByDate[key]?.length || 0;
-          const isToday = key === todayKey;
-          const isSelected = key === selectedDate;
-          return (
-            <div
-              key={idx}
-              className={[
-                'calendar-day',
-                cell.isOtherMonth ? 'other-month' : '',
-                isToday ? 'today' : '',
-                isSelected ? 'selected' : '',
-                taskCount > 0 ? 'has-tasks' : '',
-              ].filter(Boolean).join(' ')}
-              onClick={() => {
-                if (cell.isOtherMonth) {
-                  if (idx < firstDay) prevMonth();
-                  else nextMonth();
-                }
-                onSelectDate(key);
-              }}
-            >
-              <span className="day-number">{cell.day}</span>
-              {taskCount > 0 && (
-                isWide ? (
-                  <span
-                    className="task-badge"
-                    style={{ backgroundColor: BADGE_COLORS[Math.min(taskCount - 1, 5)] }}
-                  >
-                    {taskCount}
-                  </span>
-                ) : (
-                  <span className="task-dot" />
-                )
-              )}
-            </div>
-          );
-        })}
+        {cells.map((cell, idx) => (
+          <CalendarDayCell
+            key={idx}
+            cell={cell}
+            idx={idx}
+            firstDay={firstDay}
+            year={year}
+            month={month}
+            todayKey={todayKey}
+            isWide={isWide}
+            tasksByDate={tasksByDate}
+            selectedDateKey={selectedDate}
+            onSelectDate={onSelectDate}
+            prevMonth={prevMonth}
+            nextMonth={nextMonth}
+          />
+        ))}
       </div>
     </div>
   );

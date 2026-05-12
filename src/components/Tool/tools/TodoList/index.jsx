@@ -5,6 +5,7 @@ import SizeObserver from '@/components/SizeObserver';
 import { todoStore, addTask, updateTask, setSelectedDate } from '@/store/todoStore';
 import TaskForm from './TaskForm';
 import CalendarPanel, { CalendarTaskItem, getDateKey } from './CalendarPanel';
+import { DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import './index.scss';
 
 const PRESET_COLORS = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF'];
@@ -19,6 +20,7 @@ const TodoList = () => {
   }, []);
 
   const isWide = containerWidth > 600;
+  const [activeTask, setActiveTask] = useState(null);
   const [editingTask, setEditingTask] = useState(null);
   const [formText, setFormText] = useState('');
   const [formColor, setFormColor] = useState(PRESET_COLORS[0]);
@@ -37,6 +39,11 @@ const TodoList = () => {
   }, [tasks]);
 
   const selectedTasks = selectedDate ? tasksByDate[selectedDate] || [] : [];
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
+  );
 
   const handleOpenCreate = () => {
     setEditingTask(null);
@@ -85,6 +92,33 @@ const TodoList = () => {
     setIsModalOpen(false);
   };
 
+  const handleDragStart = useCallback((event) => {
+    setActiveTask(event.active.data.current?.task ?? null);
+  }, []);
+
+  const handleDragEnd = useCallback((event) => {
+    setActiveTask(null);
+    const { active, over } = event;
+    if (!over) return;
+
+    const task = active.data.current?.task;
+    const targetDateKey = over.data.current?.dateKey;
+    if (!task || !targetDateKey) return;
+
+    const origDate = task.expectedDate ? new Date(task.expectedDate) : new Date();
+    const currentDateKey = task.expectedDate ? getDateKey(origDate) : null;
+    if (currentDateKey === targetDateKey) return;
+
+    Dialog.confirm({
+      message: `「${task.text}」の日付を${targetDateKey.replace(/-/g, '/')}に変更しますか？`,
+      onConfirm: () => {
+        const [y, m, d] = targetDateKey.split('-').map(Number);
+        const newDate = new Date(y, m - 1, d, origDate.getHours(), origDate.getMinutes(), origDate.getSeconds());
+        updateTask(task.id, { expectedDate: newDate });
+      }
+    });
+  }, []);
+
   return (
     <SizeObserver className="todo-list-container" onChangeSize={handleResize}>
       <div className='todo-main'>
@@ -108,17 +142,40 @@ const TodoList = () => {
         />
       </Modal>
 
-      {isWide ? (
-        <div className="todo-layout">
-          <div className="todo-left">
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        {isWide ? (
+          <div className="todo-layout">
+            <div className="todo-left">
+              <CalendarPanel
+                isWide
+                selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
+                onEdit={handleOpenEdit}
+              />
+            </div>
+            <div className="todo-right">
+              <div className="selected-date-tasks">
+                <div className="selected-date-header">
+                  {selectedDate.replace(/-/g, '/')} のタスク
+                </div>
+                {selectedTasks.length === 0 ? (
+                  <div className="no-tasks">タスクはありません</div>
+                ) : (
+                  selectedTasks.map(task => (
+                    <CalendarTaskItem key={task.id} task={task} onEdit={handleOpenEdit} />
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="narrow-content">
             <CalendarPanel
-              isWide
+              isWide={false}
               selectedDate={selectedDate}
               onSelectDate={setSelectedDate}
               onEdit={handleOpenEdit}
             />
-          </div>
-          <div className="todo-right">
             <div className="selected-date-tasks">
               <div className="selected-date-header">
                 {selectedDate.replace(/-/g, '/')} のタスク
@@ -132,29 +189,27 @@ const TodoList = () => {
               )}
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="narrow-content">
-          <CalendarPanel
-            isWide={false}
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            onEdit={handleOpenEdit}
-          />
-          <div className="selected-date-tasks">
-            <div className="selected-date-header">
-              {selectedDate.replace(/-/g, '/')} のタスク
+        )}
+        <DragOverlay dropAnimation={null} style={{ width: 'auto', height: 'auto' }}>
+          {activeTask ? (
+            <div style={{ transform: 'translate(-50%, -50%)' }}>
+              <div
+                className="calendar-task-item"
+                style={{
+                  backgroundColor: activeTask.color,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+                  opacity: 0.75,
+                  transform: 'rotate(3deg)',
+                }}
+              >
+                <div className="calendar-task-text calendar-task-overlay-text">
+                  {activeTask.text}
+                </div>
+              </div>
             </div>
-            {selectedTasks.length === 0 ? (
-              <div className="no-tasks">タスクはありません</div>
-            ) : (
-              selectedTasks.map(task => (
-                <CalendarTaskItem key={task.id} task={task} onEdit={handleOpenEdit} />
-              ))
-            )}
-          </div>
-        </div>
-      )}
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </SizeObserver>
   );
 };
