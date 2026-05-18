@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { useDarkMode } from '@/store/globalSettingStore';
 import { todoStore, completeTask } from '@/store/todoStore';
 import ReactMarkdown from 'react-markdown';
@@ -61,10 +61,27 @@ const CountdownBadge = ({ expectedDate }) => {
 };
 
 export const CalendarTaskItem = ({ task, onEdit }) => {
+  const handleRef = useRef(null);
+  const [itemNode, setItemNode] = useState(null);
+  const [handleOffsetX, setHandleOffsetX] = useState(0);
+
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `task-${task.id}`,
-    data: { task },
+    data: { task, handleOffsetX },
   });
+
+  const setCombinedRef = useCallback((node) => {
+    setItemNode(node);
+    setNodeRef(node);
+  }, [setNodeRef]);
+
+  useLayoutEffect(() => {
+    if (itemNode && handleRef.current) {
+      const itemRect = itemNode.getBoundingClientRect();
+      const handleRect = handleRef.current.getBoundingClientRect();
+      setHandleOffsetX(handleRect.left - itemRect.left);
+    }
+  }, [itemNode]);
 
   const { isPending, startTimer, cancelTimer } = useTimer(
     () => {
@@ -90,20 +107,26 @@ export const CalendarTaskItem = ({ task, onEdit }) => {
 
   return (
     <div
-      ref={setNodeRef}
+      ref={setCombinedRef}
       className={`calendar-task-item ${isPending ? 'pending' : ''} ${isDragging ? 'dragging' : ''}`}
       style={{ backgroundColor: task.color }}
     >
-      <CountdownBadge expectedDate={task.expectedDate} />
+      {task.batchId && (
+        <span className="batch-task-label">批</span>
+      )}
+      {!task.batchId && <CountdownBadge expectedDate={task.expectedDate} />}
       <div className="calendar-task-actions">
-        <button
-          className="drag-handle-btn"
-          style={{ touchAction: 'none', cursor: 'grab' }}
-          {...attributes}
-          {...listeners}
-        >
-          ⠿
-        </button>
+        {!task.batchId && (
+          <button
+            ref={handleRef}
+            className="drag-handle-btn"
+            style={{ touchAction: 'none', cursor: 'grab' }}
+            {...attributes}
+            {...listeners}
+          >
+            ⠿
+          </button>
+        )}
         <button
           className="edit-btn"
           onClick={(e) => { e.stopPropagation(); onEdit(task); }}

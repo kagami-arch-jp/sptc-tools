@@ -162,10 +162,49 @@
     flex-direction: column;
     gap: 8px;
 
-    .date-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #555;
+    .batch-toggle {
+      display: flex;
+      align-items: center;
+      background: #e5e5ea;
+      border-radius: 20px;
+      padding: 2px;
+      cursor: pointer;
+      position: relative;
+      height: 30px;
+      user-select: none;
+
+      .batch-toggle-knob {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: calc(50% - 3px);
+        height: calc(100% - 4px);
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        transition: transform 0.25s ease;
+        z-index: 1;
+      }
+
+      &.active .batch-toggle-knob {
+        transform: translateX(calc(100% + 2px));
+      }
+
+      .batch-toggle-option {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 26px;
+        position: relative;
+        z-index: 2;
+        color: #888;
+        transition: color 0.25s ease;
+
+        &.selected {
+          color: #007aff;
+        }
+      }
     }
 
     .date-input {
@@ -178,6 +217,23 @@
 
       &:focus {
         border-color: #007aff;
+      }
+    }
+
+    .batch-date-inputs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .date-input {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .batch-date-sep {
+        color: #888;
+        font-size: 14px;
+        flex-shrink: 0;
       }
     }
   }
@@ -282,13 +338,29 @@
     }
 
     .date-section {
-      .date-label {
-        color: #ccc;
+      .batch-toggle {
+        background: #3a3a3c;
+
+        .batch-toggle-knob {
+          background: #636366;
+        }
+
+        .batch-toggle-option {
+          color: #8e8e93;
+
+          &.selected {
+            color: #0a84ff;
+          }
+        }
       }
+
       .date-input {
         background: #222;
         color: #ddd;
         border-color: #444;
+      }
+      .batch-date-sep {
+        color: #aaa;
       }
     }
 

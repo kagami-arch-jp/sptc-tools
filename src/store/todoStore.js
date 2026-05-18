@@ -56,6 +56,50 @@ export const updateTask = (id, updates) => {
 };
 
 /**
+ * 複数タスクを一括追加する
+ * @param {Array} tasks
+ */
+export const batchAddTasks = (tasks) => {
+  todoStore.setValue(prev => ({
+    ...prev,
+    tasks: [
+      ...tasks.map(task => ({
+        ...task,
+        id: newId(),
+        createdAt: new Date(),
+        expectedDate: task.expectedDate || null,
+      })),
+      ...prev.tasks
+    ]
+  }));
+};
+
+/**
+ * 複数タスクを一括更新する
+ * @param {Array<{id: string, updates: Object}>} updates
+ */
+export const batchUpdateTasks = (updates) => {
+  todoStore.setValue(prev => ({
+    ...prev,
+    tasks: prev.tasks.map(t => {
+      const u = updates.find(item => item.id === t.id);
+      return u ? { ...t, ...u.updates } : t;
+    })
+  }));
+};
+
+/**
+ * 複数タスクを一括削除する
+ * @param {string[]} ids
+ */
+export const batchRemoveTasks = (ids) => {
+  todoStore.setValue(prev => ({
+    ...prev,
+    tasks: prev.tasks.filter(t => !ids.includes(t.id))
+  }));
+};
+
+/**
  * タスクを完了（アーカイブ）する
  * @param {string} id
  */

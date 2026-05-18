@@ -10,7 +10,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './index.scss';
 
-const TaskForm = ({ isEditing, text, setText, color, setColor, expectedDate, setExpectedDate, onSave, onCancel, colors }) => {
+const TaskForm = ({ isEditing, text, setText, color, setColor, expectedDate, setExpectedDate, isBatch, setIsBatch, batchStartDate, setBatchStartDate, batchEndDate, setBatchEndDate, onSave, onCancel, colors }) => {
   const [isPreview, setIsPreview] = useState(false);
 
   return (
@@ -54,13 +54,40 @@ const TaskForm = ({ isEditing, text, setText, color, setColor, expectedDate, set
       </div>
 
       <div className="date-section">
-        <label className="date-label">期限</label>
-        <input
-          type="datetime-local"
-          className="date-input"
-          value={expectedDate}
-          onChange={(e) => setExpectedDate(e.target.value)}
-        />
+        <div
+          className={`batch-toggle ${isBatch ? 'active' : ''}`}
+          onClick={() => setIsBatch(!isBatch)}
+        >
+          <div className="batch-toggle-knob" />
+          <span className={`batch-toggle-option ${!isBatch ? 'selected' : ''}`}>期限</span>
+          <span className={`batch-toggle-option ${isBatch ? 'selected' : ''}`}>一括追加</span>
+        </div>
+        {isBatch ? (
+          <div className="batch-date-inputs">
+            <input
+              type="date"
+              className="date-input"
+              value={batchStartDate}
+              onChange={(e) => setBatchStartDate(e.target.value)}
+              placeholder="開始日"
+            />
+            <span className="batch-date-sep">~</span>
+            <input
+              type="date"
+              className="date-input"
+              value={batchEndDate}
+              onChange={(e) => setBatchEndDate(e.target.value)}
+              placeholder="終了日"
+            />
+          </div>
+        ) : (
+          <input
+            type="datetime-local"
+            className="date-input"
+            value={expectedDate}
+            onChange={(e) => setExpectedDate(e.target.value)}
+          />
+        )}
       </div>
 
       <div className="form-actions">
