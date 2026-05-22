@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { useDarkMode } from '@/store/globalSettingStore';
-import { todoStore, completeTask } from '@/store/todoStore';
+import { todoStore, completeTask, batchRemoveTasks } from '@/store/todoStore';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import confetti from 'canvas-confetti';
@@ -105,6 +105,21 @@ export const CalendarTaskItem = ({ task, onEdit }) => {
     }
   };
 
+  const handleDeleteBatch = (e) => {
+    e.stopPropagation();
+    Dialog.confirm({
+      message: 'このバッチタスクを全て削除しますか？',
+      onConfirm: () => {
+        const allTasks = todoStore.getValue().tasks;
+        const batchTaskIds = allTasks
+          .filter(t => t.batchId === task.batchId)
+          .map(t => t.id);
+        batchRemoveTasks(batchTaskIds);
+        Dialog.toast('バッチタスクを削除しました');
+      },
+    });
+  };
+
   return (
     <div
       ref={setCombinedRef}
@@ -139,6 +154,14 @@ export const CalendarTaskItem = ({ task, onEdit }) => {
         >
           {isPending ? '...' : '✅'}
         </button>
+        {task.batchId && (
+          <button
+            className="delete-batch-btn"
+            onClick={handleDeleteBatch}
+          >
+            🗑️
+          </button>
+        )}
       </div>
       <div className="calendar-task-text">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
