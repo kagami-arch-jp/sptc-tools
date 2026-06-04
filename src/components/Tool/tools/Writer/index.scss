@@ -6,6 +6,7 @@
   width: 100%;
   overflow: hidden;
   background-color: #fff;
+  position: relative;
 
   * {
     user-select: text !important;
@@ -15,10 +16,18 @@
     flex: 0 0 25%;
     border-right: 1px solid #ddd;
     padding: 1rem;
-    overflow-y: hidden;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     background-color: #f8f8f8;
+    transition: flex 0.3s ease, padding 0.3s ease, border-width 0.3s ease;
+
+    &.collapsed {
+      flex: 0 0 0;
+      padding: 0;
+      border-width: 0;
+      min-width: 0;
+    }
 
     .writer__sidebar-header {
       padding: 16px 0;
@@ -123,15 +132,50 @@
     cursor: pointer;
   }
 
+  /* expand toggle buttons */
+  .writer__expand-btn {
+    cursor: pointer;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    background: #f8f8f8;
+    color: #333;
+    transition: background 0.2s;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 60px;
+    padding: 0;
+
+    &:hover {
+      background: #e8e8e8;
+    }
+
+    &--left {
+      left: 0;
+      border-radius: 0 4px 4px 0;
+      border-left: none;
+    }
+
+    &--right {
+      right: 0;
+      border-radius: 4px 0 0 4px;
+      border-right: none;
+    }
+  }
+
   /* 中メイン */
   .writer__main {
-    flex: 0 0 45%;
+    flex: 1;
     padding: 1rem;
     overflow-y: hidden;
     display: flex;
     flex-direction: column;
     background: white;
-    border-right: 1px solid #ddd;
 
     .writer__textarea {
       width: 100%;
@@ -164,15 +208,25 @@
   .writer__aside {
     border-left: none;
     padding: 1rem;
-    overflow-y: hidden;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     flex: 1;
     background: white;
+    transition: flex 0.3s ease, padding 0.3s ease, border-width 0.3s ease;
+
+    &.collapsed {
+      flex: 0 0 0;
+      padding: 0;
+      border-width: 0;
+      min-width: 0;
+      overflow: hidden;
+    }
 
     .writer__textarea {
       width: 100%;
       resize: none;
+      height: 100%;
       padding: .5rem;
       box-sizing: border-box;
       font-size: 1rem;
@@ -192,6 +246,8 @@
   .writer__rule {
     margin-bottom: 1.5rem;
     flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
 
     li {
       line-height: 1.5;
@@ -330,134 +386,14 @@
       }
     }
   }
-}
 
-/* 左サイドバー */
-.writer__sidebar {
-  flex: 0 0 25%;
-  border-right: 1px solid #ddd;
-  padding: 1rem;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.writer__section-title {
-  margin: 0 0 .5rem 0;
-  font-size: 1.1rem;
-  display: flex;
-  justify-content: space-between;
-  .markdown-btn{
-    border-radius: 5px;
-    display: flex;
-    cursor: pointer;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    color: #fff;
-    background: #8876a6;
-    align-items: center;
-    justify-content: center;
-    width: 80px;
-  }
-}
-.writer__markdown{
-  overflow: auto;
-  height: 100%;
-}
-.writer__list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow-y: auto;
-}
-.writer__list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: .6rem;
-  &.active{
-    .writer__title-btn {
-      font-weight: bold;
-    }
-  }
-  .writer__title-btn{
-    background: none;
-    border: none;
-    font-size: 1rem;
-    text-align: left;
-    cursor: pointer;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-.writer__item-actions button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-left: .2rem;
-}
-.writer__add-btn {
-  margin-top: 1rem;
-  width: 100%;
-  padding: .4rem;
-  cursor: pointer;
-}
+  .writer__expand-btn {
+    background: #222;
+    border-color: #333;
+    color: #eee;
 
-/* 中メイン */
-.writer__main {
-  flex: 0 0 45%;
-  padding: 1rem;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.writer__textarea {
-  width: 100%;
-  height: calc(100% - 2rem);
-  resize: none;
-  padding: .5rem;
-  box-sizing: border-box;
-  font-size: 1rem;
-}
-.writer__placeholder {
-  color: #999;
-}
-
-/* 右サイド */
-.writer__aside {
-  border-left: 1px solid #ddd;
-  padding: 1rem;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.writer__instructions,
-.writer__rule {
-  margin-bottom: 1.5rem;
-  flex: 0 0 40%;
-  li{
-    line-height: 1.5;
-    margin: 5px 0;
-  }
-}
-.writer__instructions{
-  flex: 0 0 55%;
-  overflow: auto;
-}
-.writer__inst-list {
-  padding-left: 1.2rem;
-}
-.suggestion{
-  overflow: auto;
-  border: 1px solid #ccc;
-  padding: 0 1rem;
-  white-space: break-spaces;
-  &.active{
-    cursor: pointer;
-    &:hover{
-      background: #eee;
+    &:hover {
+      background: #333;
     }
   }
 }

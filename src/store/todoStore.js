@@ -9,6 +9,7 @@ import { createStoreSharedState } from '@/store/storage';
 import createSharedState from 'react-cross-component-state';
 
 import {newId} from '@/utils/base'
+import {removeFile} from '@/api/storage'
 
 // タスクの型定義（モック）
 // id: string, text: string, color: string, completedAt?: Date, createdAt: Date
@@ -103,16 +104,21 @@ export const batchRemoveTasks = (ids) => {
  * タスクを完了（アーカイブ）する
  * @param {string} id
  */
-export const completeTask = (id) => {
-  todoStore.setValue(prev => {
-    const taskToComplete = prev.tasks.find(t => t.id === id);
-    if (!taskToComplete) return prev;
+export const completeTask = async (id) => {
+  const state = todoStore.getValue()
+  const task = state.tasks.find(t => t.id === id)
+  if (!task) return
 
-    return {
-      ...prev,
-      tasks: prev.tasks.filter(t => t.id !== id),
-    };
-  });
+  if (!task.batchId && task.files?.length) {
+    for (const f of task.files) {
+      try { await removeFile(f.savedName) } catch (_) {}
+    }
+  }
+
+  todoStore.setValue(prev => ({
+    ...prev,
+    tasks: prev.tasks.filter(t => t.id !== id),
+  }));
 };
 
 /**

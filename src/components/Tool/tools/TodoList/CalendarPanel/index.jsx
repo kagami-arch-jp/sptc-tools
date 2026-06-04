@@ -7,6 +7,7 @@ import confetti from 'canvas-confetti';
 import Dialog from '@/components/Dialog';
 import { useTimer } from '@/hooks/useTimer';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
+import FileList from '../FileList';
 import './index.scss';
 
 const DAYS_OF_WEEK = ['日', '月', '火', '水', '木', '金', '土'];
@@ -167,6 +168,7 @@ export const CalendarTaskItem = ({ task, onEdit }) => {
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {task.text}
         </ReactMarkdown>
+        <FileList files={task.files} readonly />
       </div>
     </div>
   );

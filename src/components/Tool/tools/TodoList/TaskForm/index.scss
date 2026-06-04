@@ -157,6 +157,49 @@
     }
   }
 
+  .file-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .file-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .file-section-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .file-add-btn {
+      padding: 6px 14px;
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+
+    .file-hint {
+      font-size: 11px;
+      color: #aaa;
+    }
+  }
+
   .date-section {
     display: flex;
     flex-direction: column;
@@ -334,6 +377,21 @@
         th {
           background: #333;
         }
+      }
+    }
+
+    .file-section {
+      .file-section-label {
+        color: #aaa;
+      }
+
+      .file-add-btn {
+        background: #0a84ff;
+      }
+
+
+      .file-hint {
+        color: #666;
       }
     }
 

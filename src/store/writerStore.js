@@ -85,6 +85,8 @@ function newId() {
 const writerSessions = createStoreSharedState('writer_sessions', {
   sessions: [],
   selectedId: '',
+  sidebarCollapsed: false,
+  asideCollapsed: false,
 });
 
 export default writerSessions
@@ -93,6 +95,20 @@ writerSessions.setSelectedSession=(sessionId)=>{
   writerSessions.setValue(prev=>({
     ...prev,
     selectedId: sessionId,
+  }))
+}
+
+writerSessions.setSidebarCollapsed=(collapsed)=>{
+  writerSessions.setValue(prev=>({
+    ...prev,
+    sidebarCollapsed: collapsed,
+  }))
+}
+
+writerSessions.setAsideCollapsed=(collapsed)=>{
+  writerSessions.setValue(prev=>({
+    ...prev,
+    asideCollapsed: collapsed,
   }))
 }
 

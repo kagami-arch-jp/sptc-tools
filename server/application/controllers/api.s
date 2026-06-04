@@ -1,32 +1,36 @@
 <?js
 
-// const POSTDATA_MAXSIZE=50e3
+const {formidable} = require('formidable')
+const path=require('path')
+const mime = require('mime-types')
 
 async function resolvePOSTData() {
-	return new Promise(resolve=>{
-		/*
-		if(!($_RAW_REQUEST.headers['content-length'] <= POSTDATA_MAXSIZE)) {
-			resolve(null)
-			return
-		}
-		*/
-		const buf=[]
-    let size=0
-		$_RAW_REQUEST
-		  .on('data', c=>{
-        // if(size>POSTDATA_MAXSIZE) return;
-        buf.push(c)
-        size+=c.length
+  const ct = ($_RAW_REQUEST.headers['content-type'] || '').toLowerCase()
+
+  if (ct.includes('application/json')) {
+    return new Promise(resolve => {
+      const buf = []
+      $_RAW_REQUEST
+        .on('data', c => buf.push(c))
+        .on('end', () => {
+          try { resolve(JSON.parse(Buffer.concat(buf).toString())) }
+          catch { resolve(null) }
+        })
+        .on('error', () => resolve(null))
+    })
+  }
+
+  if (ct.includes('multipart/form-data') || ct.includes('application/x-www-form-urlencoded')) {
+    return new Promise(resolve => {
+      const form = formidable({ multiples: true, maxFileSize: 50 * 1024 * 1024 })
+      form.parse($_RAW_REQUEST, (err, fields, files) => {
+        if (err) return resolve(null)
+        resolve({ ...fields, ...files })
       })
-		  .on('end', ()=>{
-        try{
-          resolve(JSON.parse(Buffer.concat(buf).toString()))
-        }catch(e) {
-          resolve(null)
-        }
-      })
-			.on('error', ()=>resolve(null))
-	})
+    })
+  }
+
+  return null
 }
 
 class apiController{
@@ -41,11 +45,13 @@ class apiController{
 		echo(' '.repeat(4096))
 		flush()
 	}
+  sendFile(filepath) {
+    const mimeType = mime.lookup(path.extname(filepath)) || 'application/octet-stream'
+    this.isSendFile=true
+    sendFile(filepath, { 'content-type': mimeType })
+  }
   finish(err, ret) {
-
-		if(this.isStream) {
-			// if(err) echo(err?.message || err)
-			// else echo('\n\ndone.')
+    if(this.isSendFile || this.isStream) {
 			return;
 		}
 

@@ -17,7 +17,7 @@ import Dialog from '@/components/Dialog';
 
 export default function Writer() {
   const isDarkMode = useDarkMode();
-  const [{ sessions, selectedId }] = writerSessions.use();
+  const [{ sessions, selectedId, sidebarCollapsed, asideCollapsed }] = writerSessions.use();
   const contentRef = useRef(null);
   const ruleRef = useRef(null);
 
@@ -96,7 +96,7 @@ export default function Writer() {
   return (
     <div className={`writer ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* 左サイドバー：セッション一覧 */}
-      <aside className="writer__sidebar">
+      <aside className={`writer__sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
         <div className="writer__sidebar-header">
           <button className="writer__add-btn" onClick={handleNewSession}>
             ＋ 新規作成
@@ -128,6 +128,14 @@ export default function Writer() {
         </ul>
       </aside>
 
+      <button
+        className="writer__expand-btn writer__expand-btn--left"
+        onClick={() => writerSessions.setSidebarCollapsed(!sidebarCollapsed)}
+        title={sidebarCollapsed ? 'サイドバーを展開' : 'サイドバーを折りたたむ'}
+      >
+        {sidebarCollapsed ? '▶' : '◀'}
+      </button>
+
       {/* 中メイン：会話内容入力 */}
       <main className="writer__main">
         {current ? (
@@ -156,8 +164,16 @@ export default function Writer() {
         )}
       </main>
 
+      <button
+        className="writer__expand-btn writer__expand-btn--right"
+        onClick={() => writerSessions.setAsideCollapsed(!asideCollapsed)}
+        title={asideCollapsed ? 'サイドパネルを展開' : 'サイドパネルを折りたたむ'}
+      >
+        {asideCollapsed ? '◀' : '▶'}
+      </button>
+
       {/* 右サイド：操作説明 + 補助書き込み規則 */}
-      <aside className="writer__aside">
+      <aside className={`writer__aside ${asideCollapsed ? 'collapsed' : ''}`}>
         {current && (
           <section className="writer__rule">
             <h2 className="writer__section-title">補助書き込み規則</h2>

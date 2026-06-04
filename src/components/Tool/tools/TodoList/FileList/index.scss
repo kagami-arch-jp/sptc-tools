@@ -1,0 +1,120 @@
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #e8e8e8;
+  }
+}
+
+.file-item-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.file-thumbnail {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.file-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.file-name {
+  font-size: 13px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-remove-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(0,0,0,0.08);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255,59,48,0.2);
+    color: #ff3b30;
+  }
+}
+
+.dark-mode {
+  .file-item {
+    background: #2c2c2e;
+
+    &:hover {
+      background: #3a3a3c;
+    }
+  }
+
+  .file-item-link {
+    color: inherit;
+  }
+
+  .file-icon {
+    background: #444;
+  }
+
+  .file-name {
+    color: #ddd;
+  }
+
+  .file-remove-btn {
+    background: rgba(255,255,255,0.1);
+    color: #aaa;
+
+    &:hover {
+      background: rgba(255,59,48,0.3);
+      color: #ff453a;
+    }
+  }
+}

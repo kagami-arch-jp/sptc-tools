@@ -30,6 +30,7 @@ const TodoList = () => {
   const [isBatch, setIsBatch] = useState(false);
   const [batchStartDate, setBatchStartDate] = useState('');
   const [batchEndDate, setBatchEndDate] = useState('');
+  const [formFiles, setFormFiles] = useState([]);
 
   const tasksByDate = useMemo(() => {
     const map = {};
@@ -62,6 +63,7 @@ const TodoList = () => {
     setIsBatch(false);
     setBatchStartDate('');
     setBatchEndDate('');
+    setFormFiles([]);
     setIsModalOpen(true);
   };
 
@@ -69,6 +71,7 @@ const TodoList = () => {
     setEditingTask(task);
     setFormText(task.text);
     setFormColor(task.color);
+    setFormFiles(task.files || []);
     if (task.batchId) {
       setIsBatch(true);
       setBatchStartDate(task.batchStartDate || '');
@@ -139,6 +142,7 @@ const TodoList = () => {
                 color: formColor,
                 batchStartDate,
                 batchEndDate,
+                files: formFiles,
               }
             });
           } else {
@@ -165,6 +169,7 @@ const TodoList = () => {
               batchId,
               batchStartDate,
               batchEndDate,
+              files: formFiles,
             });
           }
         }
@@ -184,6 +189,7 @@ const TodoList = () => {
             batchId,
             batchStartDate,
             batchEndDate,
+            files: formFiles,
           });
         }
         batchAddTasks(tasksToAdd);
@@ -192,7 +198,8 @@ const TodoList = () => {
       const taskData = {
         text: formText,
         color: formColor,
-        expectedDate: new Date(expectedDate)
+        expectedDate: new Date(expectedDate),
+        files: formFiles
       };
       if (editingTask) {
         updateTask(editingTask.id, taskData);
@@ -259,6 +266,8 @@ const TodoList = () => {
           onSave={handleSaveTask}
           onCancel={() => setIsModalOpen(false)}
           colors={PRESET_COLORS}
+          files={formFiles}
+          setFiles={setFormFiles}
         />
       </Modal>
 

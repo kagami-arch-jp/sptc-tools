@@ -8,6 +8,7 @@ define('__DEV_WWW_DIR__', __dirname+'/..')
 define('__WWW_DIR__', __dirname+'/public')
 
 define('__STORAGE_DIR__', require('os').homedir()+'/sptc-tool-storage')
+define('__STORAGE_DIR_UPLOAD__', __STORAGE_DIR__+'/uploads')
 
 define('__DOC_DIR__', __dirname+'/docs')
 
